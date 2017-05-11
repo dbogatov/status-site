@@ -1,0 +1,84 @@
+stages:
+- build
+- test
+- release
+
+before_script:
+- export DOTNET_TAG="$CI_BUILD_REF_NAME"
+
+build:
+  image: registry.gitlab.com/rweda/docker:dotnet-core-latest
+  stage: build
+  script:
+  - export ASPNETCORE_ENVIRONMENT="Production"
+  - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
+  - ./build.sh
+  artifacts:
+    expire_in: 90 min
+    paths:
+    - src/web/bin/
+    - src/daemons/bin/
+  tags:
+  - docker
+
+test-dotnet:
+  stage: test
+  image: microsoft/dotnet:1.1.1-sdk
+  script:
+  - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
+  - cd test
+  - dotnet restore
+  - ./test-dotnet.sh | tee tests.out
+  - "cat tests.out | grep 'Failed: 0.'"
+  tags:
+  - docker
+
+tidy:
+  stage: test
+  image: registry.gitlab.com/rweda/docker:dotnet-core-latest
+  dependencies:
+  - build
+  before_script:
+  - export ASPNETCORE_ENVIRONMENT="Staging"
+  - cd src/web/bin/release/netcoreapp1.1/publish/
+  - dotnet web.dll > /dev/null &
+  - sleep 15
+  script:
+  - curl -Ls http://localhost:5555/ | tidy -e
+  - curl -Ls http://localhost:5555/home/metric/CpuLoad/the-source | tidy -e
+  tags:
+  - docker
+  
+blc:
+  stage: test
+  image: registry.gitlab.com/rweda/docker:dotnet-core-latest
+  dependencies:
+  - build
+  before_script:
+  - export ASPNETCORE_ENVIRONMENT="Staging"
+  - cd src/web/bin/release/netcoreapp1.1/publish/
+  - dotnet web.dll > /dev/null &
+  - sleep 15
+  script:
+  - blc --filter-level 3 --input http://localhost:5555 -rog --exclude "*linkedin.*" --exclude "*authenticate*"
+  tags:
+  - docker
+
+release:
+  stage: release
+  dependencies:
+  - build
+  before_script:
+  script:
+  - ./build.sh -f build-docker-images
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - ./build.sh -f push-docker-images
+  - cp src/appsettings.production.json appsettings.json.example
+  artifacts:
+    paths:
+    - nginx/
+    - docker-compose.yml
+    - .env.example
+    - appsettings.json.example
+  tags:
+  - shell

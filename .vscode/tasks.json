@@ -1,0 +1,34 @@
+{
+	"version": "0.1.0",
+	"command": "bash",
+	"isShellCommand": true,
+	"args": ["-c"],
+	"tasks": [{
+			"taskName": "build-web",
+			"suppressTaskName": true,
+			"args": [
+				"dotnet build ${workspaceRoot}/src/web/web.csproj"
+			],
+			"isBuildCommand": true,
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"taskName": "build-daemons",
+			"suppressTaskName": true,
+			"args": [
+				"dotnet build ${workspaceRoot}/src/daemons/daemons.csproj"
+			],
+			"isBuildCommand": true,
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"taskName": "build-test",
+			"suppressTaskName": true,
+			"args": [
+				"dotnet build ${workspaceRoot}/test/test.csproj"
+			],
+			"isBuildCommand": true,
+			"problemMatcher": "$msCompile"
+		}
+	]
+}

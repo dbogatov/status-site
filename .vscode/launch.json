@@ -1,0 +1,45 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		
+		{
+			"name": "web (console)",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "build-web",
+			"justMyCode": false,
+			"program": "${workspaceRoot}/src/web/bin/Debug/netcoreapp1.1/web.dll",
+			"args": [],
+			"cwd": "${workspaceRoot}/src/web",
+			"externalConsole": false,
+			"stopAtEntry": false,
+			"internalConsoleOptions": "openOnSessionStart"
+		},
+		{
+			"name": "daemons (console)",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "build-daemons",
+			"justMyCode": false,
+			"program": "${workspaceRoot}/src/daemons/bin/Debug/netcoreapp1.1/daemons.dll",
+			"args": [],
+			"cwd": "${workspaceRoot}/src/daemons",
+			"externalConsole": false,
+			"stopAtEntry": false,
+			"internalConsoleOptions": "openOnSessionStart"
+		},
+		{
+			"name": "test (console)",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "build-test",
+			"justMyCode": false,
+			"program": "${workspaceRoot}/test/bin/Debug/netcoreapp1.1/test.dll",
+			"args": [],
+			"cwd": "${workspaceRoot}/test",
+			"externalConsole": false,
+			"stopAtEntry": false,
+			"internalConsoleOptions": "openOnSessionStart"
+		}
+	]
+}
