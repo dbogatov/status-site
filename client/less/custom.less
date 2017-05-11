@@ -1,0 +1,132 @@
+@text-muted: #777;
+
+.metric-current-value {
+	padding: 13px 17px 12px;
+	text-align: center;
+	strong {
+		font-size: 30px;
+		font-weight: normal;
+		color: #333;
+		line-height: 100%;
+	}
+	small {
+		display: block;
+		margin-top: 3px;
+		color: @text-muted;
+	}
+}
+
+.metric-stat-value {
+	padding: 8px 10px 8px;
+	strong {
+		font-size: 15px;
+		font-weight: normal;
+		color: #333;
+		line-height: 100%;
+	}
+	small {
+		display: block;
+		margin-top: 3px;
+		color: @text-muted;
+	}
+}
+
+.metric {
+	padding: 5px;
+	.card-header {
+		padding-top: 20px;
+		padding-bottom: 5px;
+	}
+}
+
+#metric-detailed-plot {
+	height: 300px;
+}
+
+#metric-overview-plot {
+	height: 50px;
+}
+
+.metric-labels {
+	div {
+		text-align: center;
+	}
+	span {
+		display: inline-block;
+		border: 1px solid #f0f0f0;
+		margin: 2px 2px 2px 0;
+		padding: 2px 5px;
+		text-align: center;
+	}
+}
+
+.table-text-color-white {
+	color: white;
+	a {
+		color: white;
+	}
+}
+
+.table-text-color-black {
+	color: black;
+	a {
+		color: black;
+	}
+}
+
+.modal-color-white {
+	h5 {
+		color: white !important;
+	}
+	h4 {
+		color: white !important;
+	}
+	color: white !important;
+}
+
+.modal-color-black {
+	h5 {
+		color: black !important;
+	}
+	h4 {
+		color: black !important;
+	}
+	color: black !important;
+}
+
+div.dataTables_wrapper div.dataTables_filter input {
+	width: 100%;
+}
+
+.ellipsis {
+	text-overflow: ellipsis;
+	/* Required for text-overflow to do anything */
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#logs-dt {
+	table-layout: fixed;
+}
+
+@media only screen and (max-width: 900px) {
+	#logs-dt {
+		.variable-width {
+			width: 300px;
+		}
+		.fixed-width {
+			width: 70px;
+		}
+	}
+}
+
+@media only screen and (min-width: 900px) {
+	#logs-dt {
+		.fixed-width {
+			width: 15% !important;
+		}
+		.variable-width {
+			width: 25% !important;
+		}
+	}
+}

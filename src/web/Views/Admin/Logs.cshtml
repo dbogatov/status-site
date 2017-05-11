@@ -1,0 +1,306 @@
+@using StatusMonitor.Shared.Models.Entities
+@using StatusMonitor.Shared.Extensions
+
+@{ 
+    ViewData["Title"] = "Logs"; 
+} 
+
+@model StatusMonitor.Web.ViewModels.LogMessagesFilterViewModel
+
+@functions {
+
+	public string GetSeverityClass(int severityId)
+    {
+		switch((LogEntrySeverities)severityId)
+		{
+			case LogEntrySeverities.Error:
+			case LogEntrySeverities.Fatal:
+				return "danger table-text-color-white";
+			case LogEntrySeverities.Info:
+			case LogEntrySeverities.User:
+				return "info table-text-color-black";
+			case LogEntrySeverities.Warn:
+				return "warning table-text-color-white";
+			case LogEntrySeverities.Detail:
+			case LogEntrySeverities.Debug:
+				return "table-text-color-black";
+			default:
+				return "";
+		}
+	}
+}
+
+
+<div class="container">
+
+	<div class="block-header">
+		<h2>Log Messages</h2>
+	</div>
+
+	@if (ViewBag.Messages.Count > 0)
+	{
+		<div class="card">
+			<div class="card-header">
+				<h2>Log Messages Filter
+					<small>
+						Use this form to filter the log messages.
+						This setup us preserved if you share the link.
+					</small>
+				</h2>
+			</div>
+
+			<div class="card-body card-padding">
+				<form 
+					role="form" 
+					id="filter-form"
+					asp-controller="Admin" 
+					asp-action="Logs" 
+					method="get"
+					novalidate
+				>
+
+					<h4>Filter by ...</h4>
+
+					<div class="row">
+
+						<div class="col-sm-4">
+							<h5>Sources</h5>
+
+							<select class="selectpicker" id="sources-ui" multiple data-live-search="true">
+								@foreach (var source in @ViewBag.FilterData.Sources)
+								{
+									<option value="@source">@source</option>
+								}
+							</select>
+
+							<input type="text" hidden name="sources" />
+						</div>
+
+						<div class="col-sm-4">
+							<h5>Categories</h5>
+
+							<select class="selectpicker" id="categories-ui" multiple>
+								@foreach (var category in @ViewBag.FilterData.Categories)
+								{
+									<option>@category</option>
+								}
+							</select>
+
+							<input type="text" hidden name="categories" />
+						</div>
+
+						<div class="col-sm-4">
+							<h5>Severities</h5>
+
+							<select class="selectpicker" id="severities-ui" multiple data-live-search="true">
+								@foreach (var severity in Enum.GetValues(typeof(LogEntrySeverities)))
+								{
+									var disabled = string.Empty;
+									@if (!ViewBag.FilterData.Severities.Contains((LogEntrySeverities)severity))
+									{
+										disabled = "disabled='disabled'";
+									}
+									@: <option @disabled>@((LogEntrySeverities)severity)</option>
+								}
+							</select>
+
+							<input type="text" hidden name="severities" />
+						</div>
+					</div>
+
+					<br />
+
+					<div class="row">
+						<div class="col-sm-4">
+							<h5>Start timestamp</h5>
+
+							<div class="input-group form-group">
+								<span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+								<div class="dtp-container">
+									<input type='text' id="start-ui" class="form-control date-time-picker" placeholder="Click here...">
+
+									<input type="text" hidden name="start" />
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-4">
+							<h5>End timestamp</h5>
+
+							<div class="input-group form-group">
+								<span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+								<div class="dtp-container">
+									<input type='text' id="end-ui" class="form-control date-time-picker" placeholder="Click here...">
+
+									<input type="text" hidden name="end" />
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-4">
+							<h5>Keywords (case-sensitive, coma separated, no whitespace)</h5>
+
+							<div class="input-group">
+								<span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+								<div class="fg-line">
+									<input type="text" name="keywords" class="form-control" placeholder="user,sign,...">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<h4>... or select single</h4>
+
+					<div class="row">
+						<div class="col-sm-6">
+							<h5>Identifier</h5>
+
+							<div class="input-group">
+								<span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+								<div class="fg-line">
+									<input type="text" name="id" class="form-control" placeholder="Unique identifier, eq: 3232">
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-6" style="text-align: right;">
+							<button type="submit" class="btn btn-primary btn-lg waves-effect">Apply filter</button>
+						</div>
+					</div>
+
+				</form>
+
+			</div>
+
+		</div>
+
+		<div class="card">
+			<div class="card-header">
+				<h2>Log Messages
+					<small>
+						These are all log messages collected by the status server including status server's own log messages.
+					</small>
+				</h2>
+			</div>
+
+			<div class="card-body card-padding">
+
+				@if (ViewBag.SelectedMessage != null)
+				{
+					<h1>Id: @ViewBag.SelectedMessage.Id</h1>
+				}
+
+				@if (ViewBag.Messages != null)
+				{
+					<div class="table-responsive">
+						<table id="logs-dt" class="table table-striped">
+							<thead>
+							<tr>
+								<th class="fixed-width">Id</th>
+								<th class="fixed-width">Source</th>
+								<th class="fixed-width">Category</th>
+								<th class="fixed-width">Severity</th>
+								<th class="variable-width">Message</th>
+								<th class="fixed-width">Timestamp</th>
+							</tr>
+							</thead>
+							<tfoot>
+							<tr>
+								<th>Id</th>
+								<th>Source</th>
+								<th>Category</th>
+								<th>Severity</th>
+								<th>Message</th>
+								<th>Timestamp</th>
+							</tr>
+							</tfoot>
+							<tbody>
+								@foreach (var logEntry in @ViewBag.Messages)
+								{
+									<tr class="@(GetSeverityClass(logEntry.Severity.Id))">
+										<td>
+											<a data-toggle="modal" href="#modal-view-@(logEntry.Id)" class="view-log" data-log-id="@(logEntry.Id)">
+												<u>@(logEntry.Id)</u>
+											</a>
+										</td>
+										<td>
+											<strong>@(logEntry.Source.ToUpper())</strong>
+										</td>
+										<td>@(logEntry.Category)</td>
+										<td>@(logEntry.Severity.Description)</td>
+										<td class="ellipsis">@(logEntry.Message)</td>
+										<!--<td><utc-time time="@(logEntry.Timestamp)" /></td>-->
+										<td>@(logEntry.Timestamp)</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+
+			</div>
+		</div>
+	}
+
+</div>
+
+@if (ViewBag.Messages.Count > 0)
+{
+	@foreach (var logEntry in ViewBag.Messages)
+	{
+		<div 
+			class="modal fade" 
+			data-log-id="@(logEntry.Id)" 
+			id="modal-view-@(logEntry.Id)" 
+			tabindex="-1" 
+			role="dialog" 
+			aria-hidden="true" 
+			style="display: none;"
+		>
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+
+					@await Component.InvokeAsync("LogView", new { model = logEntry, modal = true })
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">
+							Close
+						</button>
+						<a 
+							asp-controller="Admin" 
+							asp-action="Log" 
+							asp-route-id="@(logEntry.Id)" 
+							class="btn btn-link waves-effect"
+						>
+							View
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+@section scripts {
+
+	<script>
+
+		var filterModel = {
+			sources: "@(Model.Sources)",
+			categories: "@(Model.Categories)",
+			severities: "@(Model.Severities)",
+			start: "@(Model.Start)",
+			end: "@(Model.End)",
+			keywords: "@(Model.Keywords)"
+		};
+        
+    </script>
+
+	<environment names="Development">
+		<script src="/js/ts/logs.js"></script>
+	</environment>
+	<environment names="Staging,Production">
+		<script src="/js/logs.min.js"></script>
+	</environment>
+
+}

@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"sourceMap": true,
+		"pretty": true,
+		"target": "ES6",
+		"allowJs": true
+	},
+	"include": [
+		"ts/**/*.ts",
+		"typings/index.d.ts"
+	]
+}

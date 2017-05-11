@@ -1,0 +1,35 @@
+﻿@{ 
+	ViewData["Title"] = "Overview"; 
+}
+@model System.Collections.Generic.List<StatusMonitor.Shared.Models.Entities.Metric>
+
+<div class="container">
+	<div class="block-header">
+		<h2>CPU Load</h2>
+	</div>
+
+	<div class="row">
+		
+		@foreach (var metric in Model)
+		{
+			<div class="col-md-3">
+				<metric-card metric="@metric">
+					<metric-values metric="@metric"></metric-values>
+				</metric-card>
+			</div>
+		}
+	</div>
+
+</div>
+
+@section scripts {
+	
+	<environment names="Development">
+		<script src="/js/ts/overview.js"></script>
+	</environment>
+	<environment names="Staging,Production">
+		<script src="/js/overview.min.js"></script>
+	</environment>
+
+}
+

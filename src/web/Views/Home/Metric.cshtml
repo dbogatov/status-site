@@ -1,0 +1,197 @@
+@{ 
+    ViewData["Title"] = Model.Title; 
+} 
+
+@model StatusMonitor.Shared.Models.Entities.Metric
+
+<div class="container">
+    <div class="block-header">
+        <h2>
+			@Model.Title from @Model.Source | 
+			Report generated on <utc-time time="@Model.LastUpdated" /> | 
+			<a href="javascript:window.location.href=window.location.href">Reload</a>
+		</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Plotted data <small>Data is requested for a day back.</small></h2>
+                </div>
+                <div class="card-body card-padding">
+                    <div id="metric-detailed-plot" class="flot-chart"></div>
+                    <div id="metric-overview-plot" class="flc-visits"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        
+        <div class="col-md-8 col-sm-12 col-xs-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Data points <small>Data is requested for a day back.</small></h2>
+                </div>
+                <div class="card-body card-padding">
+
+                    <div class="table-responsive">
+                        <table id="metric-data" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Value</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+								<!-- -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-4 col-sm-12 col-xs-12">
+
+			<div class="row">
+				<div class="col-md-12">
+
+					<div class="card metric">
+						<div class="card-header">
+							<h2>
+								Metric metadata 
+								<small>Last updated at <utc-time time="@Model.LastUpdated" />. Current value is up-to-date.</small>
+							</h2>
+						</div>
+						<div class="card-body card-padding">
+							<metric-values metric="@Model"></metric-values>
+						</div>
+					</div>
+
+				</div>
+
+				@if (Context.User.Identity.IsAuthenticated)
+				{
+
+					<div class="col-md-12">
+
+						<div class="card metric">
+							<div class="card-header">
+								<h2>
+									Metric settings 
+									<small>Use this controlls to change setting for this particular metric.</small>
+								</h2>
+							</div>
+							<div class="card-body card-padding">
+
+								<div class="row">
+									<div class="col-md-6">
+								
+										<form 
+											role="form" 
+											asp-controller="Admin" 
+											asp-action="UpdateMetric" 
+											method="post"
+											novalidate
+										>
+
+											<div class="row">
+
+												<div class="col-md-12">
+													<h5>Set manual label</h5>
+
+													<select class="selectpicker" name="manualLabelId">
+														@foreach (var label in @ViewBag.ManualLabels)
+														{
+															@: <option @(Model.ManualLabel.Id == label.Id ? "selected": "")  value="@(label.Id)">
+																	@( string.IsNullOrWhiteSpace(label.Title) ? "none" : label.Title )
+															@: </option>
+														}
+													</select>
+												</div>
+
+												<div class="col-md-12">
+													<h5>Show to public</h5>
+
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" asp-for="Public" @(Model.Public ? "checked" : "") value="@(Model.Public)" />
+															<i class="input-helper"></i>
+														</label>
+													</div>
+
+												</div>
+
+												<div class="col-md-12">
+													<button type="submit" class="btn btn-primary btn-md waves-effect">Apply changes</button>
+												</div>
+											</div>
+
+											<input hidden type="text" name="source" value="@(Model.Source)" />
+											<input hidden type="text" name="type" value="@(Model.Type)" />
+										</form>
+									</div>
+
+								<br>
+
+									<div class="col-md-6">
+
+										<form 
+											role="form" 
+											asp-controller="Admin" 
+											asp-action="DeleteMetric" 
+											method="post"
+											novalidate
+										>
+											<div class="row">
+												<div class="col-md-6">
+													<h5>Remove metric (cannot be undone)</h5>
+
+													<button type="submit" class="btn btn-danger btn-md waves-effect">Remove metric</button>
+												</div>
+											</div>
+
+											<input hidden type="text" name="source" value="@(Model.Source)" />
+											<input hidden type="text" name="type" value="@(Model.Type)" />
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				}
+			</div>
+        </div>
+
+    </div>
+
+</div>
+
+@section scripts {
+
+    <script>
+        var source = "@Model.Source";
+        var type = @Model.Type;
+    </script>
+
+    <environment names="Development">
+        <script src="/js/ts/metric.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="/js/metric.min.js"></script>
+    </environment>
+
+}

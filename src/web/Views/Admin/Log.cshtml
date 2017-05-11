@@ -1,0 +1,30 @@
+@{ 
+    ViewData["Title"] = $"Log #{Model.Id}"; 
+} 
+
+@model StatusMonitor.Shared.Models.Entities.LogEntry
+
+<div class="container">
+	
+	<div class="block-header">
+		<h2>Log Message</h2>
+	</div>
+
+	<div class="row">
+		<div class="card col-md-8 col-md-offset-2">
+			@await Component.InvokeAsync("LogView", new { model = Model })
+		</div>
+	</div>
+
+</div>
+
+@section scripts {
+
+	<environment names="Development">
+		<script src="/js/ts/log.js"></script>
+	</environment>
+	<environment names="Staging,Production">
+		<script src="/js/log.min.js"></script>
+	</environment>
+
+}

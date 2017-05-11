@@ -1,0 +1,129 @@
+@using StatusMonitor.Shared.Models.Entities
+
+@{ 
+    ViewData["Title"] = "Admin panel"; 
+} 
+
+<div class="container">
+
+	<div class="block-header">
+		<h2>Admin panel</h2>
+	</div>
+
+	<div class="row">
+		<div class="col-md-3">
+			<div class="card">
+				<div class="card-header">
+					<h2>
+						Manual cleaunup
+						<small>
+							Run clean service manually with a specified max age
+						</small>
+					</h2>
+				</div>
+				<div class="card-body card-padding">
+					<div class="row">
+						<form 
+							role="form" 
+							asp-controller="Admin" 
+							asp-action="Clean" 
+							method="post"
+							novalidate
+						>
+							<div class="col-md-8 col-sm-12">
+
+								<h5>Set max age</h5>
+
+								<select class="selectpicker" name="maxAge">
+									<option value="0">Everything</option>
+									<option value="1">1 minutes</option>
+									<option value="10">10 minutes</option>
+									<option value="20">30 minutes</option>
+									<option value="60">1 hour</option>
+									<option value="240">4 hours</option>
+									<option value="720">12 hours</option>
+									<option value="1440">1 day</option>
+									<option value="4320">3 days</option>
+									<option value="10080">1 week</option>
+									<option value="43200">1 month</option>
+								</select>
+							</div>
+							<div class="col-md-4 col-sm-12">
+								<button type="submit" class="btn btn-danger btn-md waves-effect">Clean</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-3">
+			<div class="card">
+				<div class="card-header">
+					<h2>
+						Go to metric
+						<small>
+							Go to the metric's page
+						</small>
+					</h2>
+				</div>
+				<div class="card-body card-padding">
+					<div class="row">
+						<form 
+							role="form" 
+							asp-controller="Admin" 
+							asp-action="Metric" 
+							method="get"
+							novalidate
+						>
+							<div class="col-md-8 col-sm-12">
+
+								<h5>Metric</h5>
+
+								<select class="selectpicker" name="metric" data-live-search="true">
+									@foreach (var metric in ViewBag.Metrics)
+									{
+										<option value="@((Metrics)metric.Type)@@@(metric.Source)">@(metric.Title) from @(metric.Source)</option>
+									}
+								</select>
+							</div>
+							<div class="col-md-4 col-sm-12">
+								<button type="submit" class="btn btn-primary btn-md waves-effect">Go</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-header">
+					<h2>
+						Current settings
+						<small>
+							These are the settings read from <em>appsettings.json</em>.
+							Modify the file to update them.
+						</small>
+					</h2>
+				</div>
+				<div class="card-body card-padding">
+					<settings-viewer />
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+@section scripts {
+
+	<environment names="Development">
+		<script src="/js/ts/admin.js"></script>
+	</environment>
+	<environment names="Staging,Production">
+		<script src="/js/admin.min.js"></script>
+	</environment>
+
+}

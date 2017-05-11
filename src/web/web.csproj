@@ -1,0 +1,55 @@
+<Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>netcoreapp1.1</TargetFramework>
+		<PreserveCompilationContext>true</PreserveCompilationContext>
+	</PropertyGroup>
+	<PropertyGroup>
+		<PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="../shared/shared.csproj">
+			<Name>shared</Name>
+		</ProjectReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="1.1.0" />
+		<PackageReference Include="Npgsql" Version="3.1.9" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="1.1.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.0" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="1.1.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="1.1.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.0" />
+		<PackageReference Include="CommonMark.NET" Version="0.14.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Razor.Tools" Version="1.1.0-preview4-final" />
+		<PackageReference Include="Microsoft.AspNetCore.Routing" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.0" />
+		<PackageReference Include="Moq" Version="4.6.38-alpha" />
+		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Cors" Version="1.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Session" Version="1.1.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<AppSettings Include="../appsettings*.json;../version.json"/>
+	</ItemGroup>
+	<Target Name="CopyAppsettings" AfterTargets="Build">
+		<Copy SourceFiles="@(AppSettings)" DestinationFolder="$(OutputPath)/publish" ContinueOnError="false" />
+		<Copy SourceFiles="@(AppSettings)" DestinationFolder="$(OutputPath)/" ContinueOnError="false" />
+	</Target>
+</Project>

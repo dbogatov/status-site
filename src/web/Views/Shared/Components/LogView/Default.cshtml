@@ -1,0 +1,89 @@
+@using Microsoft.AspNetCore.Html
+
+@using StatusMonitor.Shared.Models.Entities
+
+@functions {
+
+	public string GetSeverityColor(int severityId)
+    {
+		switch((LogEntrySeverities)severityId)
+		{
+			case LogEntrySeverities.Error:
+			case LogEntrySeverities.Fatal:
+				return "#FF5722";
+			case LogEntrySeverities.Info:
+			case LogEntrySeverities.User:
+				return "#607D8B";
+			case LogEntrySeverities.Warn:
+				return "#FF9800";
+			case LogEntrySeverities.Detail:
+			case LogEntrySeverities.Debug:
+				return "#9E9E9E";
+			default:
+				return "";
+		}
+	}
+}
+
+<div class="@(ViewBag.Modal ? "modal-header" : "card-header")">
+	@(new HtmlString(ViewBag.Modal ? "<h4 class='modal-title'>" : "<h2>"))
+		Log message #@(Model.Id) received on <utc-time time="@(Model.Timestamp)" />
+		<small>
+			This is a log message #@(Model.Id).
+			Use <a asp-controller="Admin" asp-action="Log" asp-route-id="@(Model.Id)">permanent link</a> to share the message.
+			Keep in mind that log message will be cleaned from the database after some time.
+		</small>
+	@(new HtmlString(ViewBag.Modal ? "</h4>" : "</h2>"))
+	@if (!ViewBag.Modal)
+	{
+		<ul class="actions">
+			<li>
+				<a asp-controller="Admin" asp-action="Log" asp-route-id="@(Model.Id)">
+					<i class="zmdi zmdi-link"></i>
+				</a>
+			</li>
+		</ul>
+	}
+</div>
+
+<div class="@(ViewBag.Modal ? "modal-body" : "card-body card-padding")">
+
+	<div class="row" style="background-color: @GetSeverityColor(Model.Severity.Id)">
+		<br />
+	</div>
+
+	<div class="row">
+		<div class="col-md-4 col-xs-4">
+			<h5>Source:</h5> 
+			<strong>@(Model.Source.ToUpper())</strong>
+		</div>
+		<div class="col-md-4 col-xs-4">
+			<h5>Category:</h5> 
+			@(Model.Category)
+		</div>
+		<div class="col-md-4 col-xs-4">
+			<h5>Severity:</h5> 
+			<strong>@(Model.Severity.Description.ToUpper())</strong>
+		</div>
+		
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<h5>Message:</h5>
+			@(Model.Message)
+		</div>
+		<div class="col-md-6">
+			<h5>Auxiliary Data:</h5>
+			@if (string.IsNullOrWhiteSpace(Model.AuxiliaryData))
+			{
+				<p>No data</p>
+			}
+			else
+			{
+				<pre style="padding-left: 15px;" class="json-renderer">
+					@(Model.AuxiliaryData.Replace("\n", "").Replace("\t", ""))
+				</pre>
+			}
+		</div>
+	</div>
+</div>

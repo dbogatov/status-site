@@ -1,0 +1,21 @@
+{
+  "name": "status-site",
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "css-loader": "^0.26.1",
+    "extract-text-webpack-plugin": "^2.0.0-beta",
+    "less": "^2.7.2",
+    "less-loader": "^2.2.3",
+    "optimize-css-assets-webpack-plugin": "^1.3.1",
+    "spectacle-docs": "^0.8.2",
+    "style-loader": "^0.13.1",
+    "typedoc": "^0.5.7",
+    "typescript": "^2.1.6",
+    "typings": "^2.1.0",
+    "uglify-js": "git://github.com/mishoo/UglifyJS2#harmony",
+    "uglifyjs-webpack-plugin": "^0.4.3",
+    "url-loader": "^0.5.7",
+    "webpack": "^2.2.1"
+  }
+}

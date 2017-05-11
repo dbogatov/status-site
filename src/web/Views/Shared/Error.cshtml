@@ -1,0 +1,39 @@
+﻿@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration Config
+
+@{
+    Layout = null;
+}
+
+@model StatusMonitor.Web.ViewModels.ErrorViewModel
+
+<!DOCTYPE html>
+    <!--[if IE 9 ]><html class="ie9"><![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>@Config["CompanyName"] Status Server | @Model.Code</title>
+        
+		<environment names="Development">
+			<link href="/css/app.css" rel="stylesheet">
+		</environment>
+		<environment names="Staging,Production">
+			<link href="/css/app.min.css" rel="stylesheet">
+		</environment>
+    </head>
+    
+    <body>
+        <div class="four-zero">
+            <div class="fz-block">
+                <h2>@Model.Code</h2>
+                <small>@Model.Message</small>
+
+                <div class="fzb-links">
+                    <a asp-action="Index" asp-controller="Home"><i class="zmdi zmdi-home"></i></a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,54 @@
+version: '2'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - 5555:5555
+    links:
+      - "web:web"
+      - "logging:logging"
+    volumes:
+      - ./nginx/web.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
+      - logging
+  web:
+    image: registry.gitlab.com/rweda/status-site:web-${DOTNET_TAG} # if DOTNET_TAG not set, use ""
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - postgres
+    links:
+      - "postgres:database"
+    volumes:
+      - ./appsettings.json:/srv/appsettings.production.json
+    restart: on-failure
+  logging:
+    image: registry.gitlab.com/rweda/status-site:web-${DOTNET_TAG}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - postgres
+    links:
+      - "postgres:database"
+    volumes:
+      - ./appsettings.json:/srv/appsettings.production.json
+    restart: on-failure
+  daemons:
+    image: registry.gitlab.com/rweda/status-site:daemons-${DOTNET_TAG}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - postgres
+    links:
+      - "postgres:database"
+    volumes:
+      - ./appsettings.json:/srv/appsettings.production.json
+    restart: on-failure
+  postgres:
+    image: postgres:latest
+    environment: # define connection credentials to be used in app
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}

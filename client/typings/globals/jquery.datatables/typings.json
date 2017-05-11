@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/91ffde5df1f7067254394d117d3654faea23c862/jquery.datatables/index.d.ts",
+    "raw": "registry:dt/jquery.datatables#1.10.9+20170207101311",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/91ffde5df1f7067254394d117d3654faea23c862/jquery.datatables/index.d.ts"
+  }
+}

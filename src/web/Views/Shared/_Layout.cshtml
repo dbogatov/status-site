@@ -1,0 +1,188 @@
+﻿@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration Config
+
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9"><![endif]-->
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>@Config["CompanyName"] Status Server | @ViewData["Title"]</title>
+
+		<!-- CSS -->
+		<environment names="Development">
+			<link href="/css/app.css" rel="stylesheet">
+		</environment>
+		<environment names="Staging,Production">
+			<link href="/css/app.min.css" rel="stylesheet">
+		</environment>
+		
+		@RenderSection("styles", required: false)
+
+	</head>
+
+	<body>
+		<header id="header" class="clearfix" data-ma-theme="blue">
+			<ul class="h-inner">
+				<li class="hi-trigger ma-trigger" data-ma-action="sidebar-open" data-ma-target="#sidebar">
+					<div class="line-wrap">
+						<div class="line top"></div>
+						<div class="line center"></div>
+						<div class="line bottom"></div>
+					</div>
+				</li>
+
+				<li class="hi-logo hidden-xs">
+					<a asp-controller="Home" asp-action="Index">@Config["CompanyName"] | Status</a>
+				</li>
+
+				<li class="pull-right">
+
+					<ul class="hi-menu">
+
+							@if (Context.User.Identity.IsAuthenticated)
+							{
+								<li>
+									<a asp-controller="Admin" asp-action="Index" >
+										<i class="him-icon zmdi zmdi-settings"><!-- --></i>
+									</a>
+								</li>
+								<li>
+									<a asp-controller="Admin" asp-action="Logs" >
+										<i class="him-icon zmdi zmdi-comment-alert"><!-- --></i>
+									</a>
+								</li>
+								<li>
+									<a 
+										asp-controller="Account" 
+										asp-action="Logout" 
+										asp-route-returnurl="@(Context.Request.GetDisplayUrl())"
+									>
+										<i class="him-icon zmdi zmdi-power"><!-- --></i>
+									</a>
+								</li>
+							}
+							else
+							{
+								<li>
+									<a 
+										asp-controller="Account" 
+										asp-action="Login" 
+										asp-route-returnurl="@(Context.Request.GetDisplayUrl())"
+									>
+										<i class="him-icon zmdi zmdi-sign-in"><!-- --></i>
+									</a>
+								</li>
+							}
+					</ul>
+					
+				</li>
+
+
+			</ul>
+		</header>
+
+		<section id="main">
+			<section id="content">
+
+				@if (TempData["MessageContent"] != null)
+				{
+					<div class="alert alert-@(TempData["MessageSeverity"]) alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">×</span>
+						</button>
+						@(TempData["MessageContent"])
+					</div>
+				}
+
+				@RenderBody()
+			</section>
+		</section>
+
+		<footer id="footer">
+			Copyright &copy; @Html.DisplayTextFor(model => DateTime.Now.Year) @Config["CompanyName"] @await Component.InvokeAsync("VersionHash")
+
+			<ul class="f-menu">
+				<li><a asp-controller="Home" asp-action="Index">Home</a></li>
+				@if (Context.User.Identity.IsAuthenticated)
+				{
+					<li>
+						<a 
+							asp-controller="Account" 
+							asp-action="Logout" 
+							asp-route-returnurl="@(Context.Request.GetDisplayUrl())"
+						>
+							Logout
+						</a>
+					</li>
+				}
+				else
+				{
+					<li>
+						<a 
+							asp-controller="Account" 
+							asp-action="Login" 
+							asp-route-returnurl="@(Context.Request.GetDisplayUrl())"
+						>
+							Login
+						</a>
+					</li>
+				}
+				<li><a href="/">Contact</a></li> <!-- TODO: -->
+			</ul>
+		</footer>
+
+		<!-- Page Loader -->
+		<div id="page-loader" class="page-loader">
+			<div class="preloader pls-blue">
+				<svg class="pl-circular" viewBox="25 25 50 50">
+					<circle class="plc-path" cx="50" cy="50" r="20" />
+				</svg>
+
+				<p>Please wait...</p>
+			</div>
+		</div>
+
+		@RenderSection("scripts", required: false)
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				
+				// Borrowed from http://stackoverflow.com/questions/13733912/javascript-fade-in-fade-out-without-jquery-and-css3
+				var fadeOut = function fadeOut(elem, ms) {
+					if (!elem)
+						return;
+
+					if (ms) {
+						var opacity = 1;
+						var timer = setInterval(function () {
+							opacity -= 50 / ms;
+							if (opacity <= 0) {
+								clearInterval(timer);
+								opacity = 0;
+								elem.style.display = "none";
+								elem.style.visibility = "hidden";
+							}
+							elem.style.opacity = opacity;
+							elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+						}, 50);
+					}
+					else {
+						elem.style.opacity = 0;
+						elem.style.filter = "alpha(opacity=0)";
+						elem.style.display = "none";
+						elem.style.visibility = "hidden";
+					}
+				};
+
+				setTimeout(function () {
+					fadeOut(document.getElementById("page-loader"), 400);
+				}, 500);
+			});
+		</script>
+
+	</body>
+
+</html>
