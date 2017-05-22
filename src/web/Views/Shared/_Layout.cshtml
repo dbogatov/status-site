@@ -12,12 +12,13 @@
 		<title>@Config["CompanyName"] Status Server | @ViewData["Title"]</title>
 
 		<!-- CSS -->
-		<environment names="Development">
+		<link href="@Config["Assets:MainStyleSheet"]" rel="stylesheet">
+		<!--<environment names="Development">
 			<link href="/css/app.css" rel="stylesheet">
 		</environment>
 		<environment names="Staging,Production">
 			<link href="/css/app.min.css" rel="stylesheet">
-		</environment>
+		</environment>-->
 		
 		@RenderSection("styles", required: false)
 
