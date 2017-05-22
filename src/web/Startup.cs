@@ -94,10 +94,10 @@ namespace StatusMonitor.Web
 					OnRedirectToLogin = context =>
 					{
 						// if (context.Request.Path.StartsWithSegments("/api"))
-Console.WriteLine($"Path: {context.Request.Path.Value}"); // TODO: remove
+// Console.WriteLine($"Path: {context.Request.Path.Value}"); // TODO: remove
 						if (context.Request.Path.Value.Contains("/api"))
 						{
-Console.WriteLine($"Trapped path: {context.Request.Path.Value}"); // TODO: remove
+// Console.WriteLine($"Trapped path: {context.Request.Path.Value}"); // TODO: remove
 							context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 							return Task.CompletedTask;
 						}
