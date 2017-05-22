@@ -14,7 +14,7 @@ services:
       - web
       - logging
   web:
-    image: registry.gitlab.com/rweda/status-site:web-${DOTNET_TAG} # if DOTNET_TAG not set, use ""
+    image: dbogatov/status-site:web-${DOTNET_TAG} # if DOTNET_TAG not set, use ""
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
@@ -25,7 +25,7 @@ services:
       - ./appsettings.json:/srv/appsettings.production.json
     restart: on-failure
   logging:
-    image: registry.gitlab.com/rweda/status-site:web-${DOTNET_TAG}
+    image: dbogatov/status-site:web-${DOTNET_TAG}
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
@@ -36,7 +36,7 @@ services:
       - ./appsettings.json:/srv/appsettings.production.json
     restart: on-failure
   daemons:
-    image: registry.gitlab.com/rweda/status-site:daemons-${DOTNET_TAG}
+    image: dbogatov/status-site:daemons-${DOTNET_TAG}
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
     depends_on:

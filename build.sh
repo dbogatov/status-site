@@ -137,10 +137,10 @@ build-docker-images () {
 	fi
 
 	echo "Building web-$DOTNET_TAG"
-	docker build -f web/Dockerfile -t registry.gitlab.com/rweda/status-site:web-$DOTNET_TAG web/
+	docker build -f web/Dockerfile -t dbogatov/status-site:web-$DOTNET_TAG web/
 
 	echo "Building daemons-$DOTNET_TAG"
-	docker build -f daemons/Dockerfile -t registry.gitlab.com/rweda/status-site:daemons-$DOTNET_TAG daemons/
+	docker build -f daemons/Dockerfile -t dbogatov/status-site:daemons-$DOTNET_TAG daemons/
 
 	echo "Done!"
 }
@@ -152,10 +152,10 @@ push-docker-images () {
 	fi
 
 	echo "Pushing web-$DOTNET_TAG"
-	docker push registry.gitlab.com/rweda/status-site:web-$DOTNET_TAG
+	docker push dbogatov/status-site:web-$DOTNET_TAG
 
 	echo "Pushing daemons-$DOTNET_TAG"
-	docker push registry.gitlab.com/rweda/status-site:daemons-$DOTNET_TAG
+	docker push dbogatov/status-site:daemons-$DOTNET_TAG
 
 	echo "Done!"
 }

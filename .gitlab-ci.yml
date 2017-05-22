@@ -7,7 +7,7 @@ before_script:
 - export DOTNET_TAG="$CI_BUILD_REF_NAME"
 
 build:
-  image: registry.gitlab.com/rweda/docker:dotnet-core-latest
+  image: dbogatov/docker-containers:dotnet-core-latest
   stage: build
   script:
   - export ASPNETCORE_ENVIRONMENT="Production"
@@ -35,7 +35,7 @@ test-dotnet:
 
 tidy:
   stage: test
-  image: registry.gitlab.com/rweda/docker:dotnet-core-latest
+  image: dbogatov/docker-containers:dotnet-core-latest
   dependencies:
   - build
   before_script:
@@ -51,7 +51,7 @@ tidy:
   
 blc:
   stage: test
-  image: registry.gitlab.com/rweda/docker:dotnet-core-latest
+  image: dbogatov/docker-containers:dotnet-core-latest
   dependencies:
   - build
   before_script:
@@ -71,7 +71,7 @@ release:
   before_script:
   script:
   - ./build.sh -f build-docker-images
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
   - ./build.sh -f push-docker-images
   - cp src/appsettings.production.json appsettings.json.example
   artifacts:
