@@ -1,10 +1,23 @@
 stages:
+- gen-articles
 - build
 - test
 - release
 
 before_script:
 - export DOTNET_TAG="$CI_BUILD_REF_NAME"
+
+gen-articles:
+  image: dbogatov/docker-containers:mkdocs-latest
+  stage: gen-articles
+  script:
+  - ./build.sh -f gen-articles-docs
+  artifacts:
+    expire_in: 90 min
+    paths:
+    - src/web/wwwroot/docs/articles/
+  tags:
+  - docker
 
 build:
   image: dbogatov/docker-containers:dotnet-core-latest

@@ -16,6 +16,23 @@ install-doc-generators () {
 
 }
 
+# Should be run in a MkDocs container
+gen-articles-docs () { 
+
+	cd $CWD
+
+	echo "Generating articles based documentation... Requires MkDocs (provides mcdocs and pip extensions)"
+	
+	rm -rf src/web/wwwroot/docs/articles
+	mkdir -p src/web/wwwroot/docs/articles
+	
+	cd articles
+	mkdocs build > /dev/null
+	cd ..
+	
+	mv articles/site/* src/web/wwwroot/docs/articles
+}
+
 gen-server-docs () { 
 
 	cd $CWD
