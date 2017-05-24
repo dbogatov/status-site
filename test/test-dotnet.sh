@@ -14,7 +14,7 @@ then
 	dotnet test --filter "FullyQualifiedName~$1"
 else
 	echo "Running dotnet tests..."
-	dotnet test
+	dotnet xunit -parallel none -verbose
 fi
 
 echo "Removing application settings..."
