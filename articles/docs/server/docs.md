@@ -1,5 +1,9 @@
 # Nam disiecit puro paludibus vagantem figurae nomen
 
+!!! note
+    The up-to-date documentation for C# back-end generated with Doxygen is 
+	available [here](/doxygen/).
+
 ## C navis
 
 Lorem markdownum vultu Serpens, nobiliumque, varios est accipit *aera*.

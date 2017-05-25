@@ -7,13 +7,26 @@ CWD=$(pwd)
 
 ## TASKS
 
-install-doc-generators () {
+### DOCUMENTATION START
+
+install-node-tools () {
 
 	cd $CWD
 
-	echo "Installing node modules... Requires Yarn"
-	yarn --ignore-engines > /dev/null
+	echo "Installing node modules... Requires Yarn or MPM"
 
+	if hash yarn 2>/dev/null; then
+        yarn --ignore-engines > /dev/null
+    else
+		npm install > /dev/null
+    fi
+}
+
+clean-doc-folder () {
+
+	echo "Cleaning doc folder..."
+
+	rm -rf documentation/out
 }
 
 # Should be run in a MkDocs container
@@ -23,14 +36,14 @@ gen-articles-docs () {
 
 	echo "Generating articles based documentation... Requires MkDocs (provides mcdocs and pip extensions)"
 	
-	rm -rf src/web/wwwroot/docs/articles
-	mkdir -p src/web/wwwroot/docs/articles
+	rm -rf documentation/out/articles
+	mkdir -p documentation/out/articles
 	
 	cd articles
 	mkdocs build > /dev/null
 	cd ..
 	
-	mv articles/site/* src/web/wwwroot/docs/articles
+	mv articles/site/* documentation/out/articles
 }
 
 gen-server-docs () { 
@@ -39,33 +52,51 @@ gen-server-docs () {
 
 	echo "Generating server side code documentation... Requires Doxygen"
 	
-	rm -rf src/web/wwwroot/docs/server
-	mkdir -p src/web/wwwroot/docs/server
+	rm -rf documentation/out/doxygen
+	mkdir -p documentation/out/doxygen
 	doxygen Doxyfile > /dev/null
-	mv src/web/wwwroot/docs/server/html/* src/web/wwwroot/docs/server
-
 }
 
 gen-client-docs () { 
 
 	cd $CWD
 
-	echo "Generating client side code documentation... Requires TypeDoc (Installed by Yarn)"
-	mkdir -p src/web/wwwroot/docs/client
-	$(yarn bin)/typedoc --logger none client/ts/ > /dev/null
-	printf "\n"
+	echo "Generating client side code documentation... Requires TypeDoc (Installed by Yarn or NPM)"
 	
+	rm -rf documentation/out/typedoc
+	mkdir -p documentation/out/typedoc
+	
+	$(npm bin)/typedoc --logger none client/ts/ > /dev/null
+	
+	printf "\n"
 }
 
 gen-api-docs () {
 
 	cd $CWD
 
-	echo "Generating API documentation... Requires Spectacle (Installed by Yarn)"
-	mkdir -p src/web/wwwroot/docs/api
-	$(yarn bin)/spectacle api.yml -t src/web/wwwroot/docs/api > /dev/null
-
+	echo "Generating API documentation... Requires Spectacle (Installed by NPM)"
+	
+	rm -rf documentation/out/swagger
+	mkdir -p documentation/out/swagger
+	
+	$(npm bin)/spectacle api.yml -t documentation/out/swagger > /dev/null
 }
+
+merge-docs () {
+
+	cd $CWD
+
+	echo "Merging documentation..."
+
+	mv documentation/out/doxygen/html/* documentation/out/doxygen
+	rm -rf documentation/out/doxygen/html
+
+	mv documentation/out/articles/* documentation/out
+	rm -rf documentation/out/articles
+}
+
+### DOCUMENTATION END
 
 install-client-libs () {
 
@@ -147,17 +178,20 @@ build-dev-client () {
 
 build-docker-images () {
 
-	cd $CWD/src
+	cd $CWD
 
 	if [ -z "$DOTNET_TAG" ]; then
 		DOTNET_TAG="local"
 	fi
 
 	echo "Building web-$DOTNET_TAG"
-	docker build -f web/Dockerfile -t dbogatov/status-site:web-$DOTNET_TAG web/
+	docker build -f src/web/Dockerfile -t dbogatov/status-site:web-$DOTNET_TAG src/web/
 
 	echo "Building daemons-$DOTNET_TAG"
-	docker build -f daemons/Dockerfile -t dbogatov/status-site:daemons-$DOTNET_TAG daemons/
+	docker build -f src/daemons/Dockerfile -t dbogatov/status-site:daemons-$DOTNET_TAG src/daemons/
+
+	echo "Building docs-$DOTNET_TAG"
+	docker build -f documentation/Dockerfile -t dbogatov/status-site:docs-$DOTNET_TAG documentation/
 
 	echo "Done!"
 }
@@ -174,6 +208,9 @@ push-docker-images () {
 	echo "Pushing daemons-$DOTNET_TAG"
 	docker push dbogatov/status-site:daemons-$DOTNET_TAG
 
+	echo "Pushing docs-$DOTNET_TAG"
+	docker push dbogatov/status-site:docs-$DOTNET_TAG
+
 	echo "Done!"
 }
 
@@ -184,49 +221,34 @@ build-for-compose () {
 
 ## APP BUILDERS
 
-# Unstable
-build-app-parallel () {
+build-app () {
 
-	install-doc-generators &
-	install-client-libs &
-	restore-dotnet &
-	gen-server-docs &
-
-	wait %install-doc-generators
-	
-	gen-client-docs &
-	gen-api-docs &
-
-	wait %install-client-libs
-	
-	install-typings &
-
-	wait %install-typings
-	
-	generate-client-bundle &
-
-	wait
-	
-	build-dotnet
-
-	echo "Build completed!"
-
-}
-
-build-app-sequential () {
-
-	install-doc-generators
+	install-node-tools
 	install-client-libs
-
-	gen-server-docs
-	gen-client-docs
-	gen-api-docs
 
 	install-typings
 	generate-client-bundle
 	restore-dotnet
 
 	build-dotnet
+
+	echo "Build completed!"
+
+}
+
+build-docs () {
+
+	install-node-tools
+	clean-doc-folder
+
+	gen-articles-docs &
+	gen-server-docs &
+	gen-client-docs &
+	gen-api-docs &
+
+	wait
+
+	merge-docs
 
 	echo "Build completed!"
 
@@ -258,4 +280,4 @@ while getopts "f:d" o; do
 done
 shift $((OPTIND-1))
 
-build-app-sequential
+build-app

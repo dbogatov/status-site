@@ -1,5 +1,4 @@
 stages:
-- gen-articles
 - build
 - test
 - release
@@ -7,19 +6,21 @@ stages:
 before_script:
 - export DOTNET_TAG="$CI_BUILD_REF_NAME"
 
-gen-articles:
+## BUILD
+
+build-docs:
   image: dbogatov/docker-containers:mkdocs-latest
-  stage: gen-articles
+  stage: build
   script:
-  - ./build.sh -f gen-articles-docs
+  - ./build.sh -f build-docs
   artifacts:
     expire_in: 90 min
     paths:
-    - src/web/wwwroot/docs/articles/
+    - documentation/out/
   tags:
   - docker
 
-build:
+build-app:
   image: dbogatov/docker-containers:dotnet-core-latest
   stage: build
   script:
@@ -34,6 +35,8 @@ build:
     - src/daemons/bin/
   tags:
   - docker
+
+## TEST
 
 test-dotnet:
   stage: test
@@ -51,7 +54,7 @@ tidy:
   stage: test
   image: dbogatov/docker-containers:dotnet-core-latest
   dependencies:
-  - build
+  - build-app
   before_script:
   - export ASPNETCORE_ENVIRONMENT="Staging"
   - cd src/web/bin/release/netcoreapp1.1/publish/
@@ -67,7 +70,7 @@ blc:
   stage: test
   image: dbogatov/docker-containers:dotnet-core-latest
   dependencies:
-  - build
+  - build-app
   before_script:
   - export ASPNETCORE_ENVIRONMENT="Staging"
   - cd src/web/bin/release/netcoreapp1.1/publish/
@@ -78,11 +81,13 @@ blc:
   tags:
   - docker
 
+## RELEASE
+
 release:
   stage: release
   dependencies:
-  - build
-  before_script:
+  - build-app
+  - build-docs
   script:
   - ./build.sh -f build-docker-images
   - docker login -u $DOCKER_USER -p $DOCKER_PASS

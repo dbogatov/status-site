@@ -1,5 +1,9 @@
 # Mollibat nostrum iura
 
+!!! note
+    The up-to-date documentation for TypeScript front-end generated with TypeDoc is 
+	available [here](/typedoc/).
+
 ## Cunctosque Caystro nescit carinae dicere nutrix mutua
 
 Lorem markdownum adsiluit, quot est vicisse deos, torsit certamina mensas,

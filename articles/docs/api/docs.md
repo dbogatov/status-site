@@ -1,5 +1,9 @@
 # Gravitate Bacchum
 
+!!! note
+    The up-to-date documentation for API endpoints generated with Spectacle is 
+	available [here](/swagger/).
+
 ## Iamque quod usque diurnis celebrant receptus aures
 
 Lorem markdownum Argo avertere parvo. Sub viri femur ecce vocem se, est furorem

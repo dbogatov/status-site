@@ -7,12 +7,19 @@ services:
     links:
       - "web:web"
       - "logging:logging"
+      - "docs:docs"
     volumes:
       - ./nginx/web.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - web
       - logging
+      - docs
+  docs:
+    image: dbogatov/status-site:docs-${DOTNET_TAG} # if DOTNET_TAG not set, use ""
+    ports:
+      - 5556:80
+    restart: on-failure
   web:
     image: dbogatov/status-site:web-${DOTNET_TAG} # if DOTNET_TAG not set, use ""
     environment:

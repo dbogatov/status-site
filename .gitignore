@@ -48,3 +48,6 @@ appsettings.json
 
 # Articles
 articles/site/
+
+# Documentation
+documentation/out/
