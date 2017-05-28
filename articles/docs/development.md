@@ -1,4 +1,4 @@
-# Development environment
+# Development
 
 ## Requirements
 
@@ -11,6 +11,7 @@ To build/debug/test all parts of the project you will need the following:
 
 ### Documentation
 
+* Yarn <!-- TODO: link -->
 * Doxygen <!-- TODO: link -->
 * MkDocs with Material theme <!-- TODO: link -->
 
@@ -21,16 +22,16 @@ To build/debug/test all parts of the project you will need the following:
 
 !!! tip
     You may want to run most of the tools in Docker.
-	This way you would avoid installing a software on your machine.
-	Docker is powerful enough to let you run several containers for different jobs which operate on a single mounted volume with he app.
-	You may want to examine `.gitlab-ci.yml` to find out which images you may for certain tasks.
+	This way you would avoid installing software on your machine.
+	Docker is powerful enough to let you run several containers for different jobs which operate on a single mounted volume with the app.
+	You may want to examine `.gitlab-ci.yml` to find out which images you may need for certain tasks.
 
 ### Editor
 
 The recommended editor for this project is VS Code <!-- TODO: link -->.
-It has first class support for C# and .NET, as well as TypeScript.
-This project does not depend on a particular editor.
-You may want to use any one (Visual Studio, Atom, Notepad++, etc.)
+It has the first class support for C# and .NET, as well as TypeScript.
+This project does not depend on any particular editor.
+You may use any one (Visual Studio, Atom, Notepad++, etc.)
 
 !!! tip
 	There is `.vscode/` directory in the root of the project.
@@ -42,7 +43,7 @@ You may want to use any one (Visual Studio, Atom, Notepad++, etc.)
 ### Server
 
 Server-side apps[^1] are built with .NET Core.
-Before building the project, make sure all dependencies (nuget packages) are installed - execute `#!bash dotnet restore`
+Before building the project, make sure all dependencies (nuget packages) are installed - execute `#!bash dotnet restore`.
 Then use the command `#!bash dotnet build` to build the app (or `#!bash dotnet publish -c release` to publish[^2] the app). 
 Both commands should be executed in a directory where `*.csproj` is.
 
@@ -85,6 +86,7 @@ It is essential to set env variable `ASPNETCORE_ENVIRONMENT` to `Development` wh
 ## How to generate documentation
 
 We generate 4 different types of documentation.
+HTML output is generated in `documentation/out/` directory.
 
 ### C# Docs
 
@@ -114,10 +116,10 @@ Run `mkdocs build` from `articles/` directory to generate articles.
 
 Testing is fairly simple.
 You need to run `#!bash dotnet test` in the `test/` directory.
-Do not forget to set env variable `ASPNETCORE_ENVIRONMENT` to `Testing`.
+Do not forget to set env variable `ASPNETCORE_ENVIRONMENT` to `Testing` and restore dependencies.
 
 !!! tip
-    For your convenience, there is a `./test-dotnet.sh` script that will do these action for you.
+    For your convenience, there is a `test/test-dotnet.sh` script that will do these actions for you.
 
 Testing provider[^4] will print the results of the testing.
 Specifically, you will see how many tests are failing, passing or being skipped.
@@ -129,7 +131,7 @@ Specifically, you will see how many tests are failing, passing or being skipped.
 We also use little tools like BLC and Tidy to run quality checks on the app.
 In particular, Tidy makes sure that generated HTML is W3C complainant, and BLC is checking for broken links.
 
-To test the app with this tools, install them first, run the app in one process and pipe the HTML output from the app to the tools, like this `#!bash curl -Ls http://localhost:5555/ | tidy -e`.
+To test the app with these tools, install them first, run the app in one process and pipe the HTML output from the app to the tools, like this `#!bash curl -Ls http://localhost:5555/ | tidy -e`.
 
 ## How to package the app
 
