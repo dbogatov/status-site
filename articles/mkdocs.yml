@@ -68,7 +68,7 @@ extra_javascript:
 # Page tree
 pages:
   - Home: index.md
-  - Development environemnt: dev-env.md
+  - Development: development.md
   - Configuration: configuration.md
   - Documentation: documentation.md
   - Deploy: deploy.md
