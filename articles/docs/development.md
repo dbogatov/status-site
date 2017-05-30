@@ -6,19 +6,19 @@ To build/debug/test all parts of the project you will need the following:
 
 ### Main app, client side, and testing
 
-* ASP.Core SDK <!-- TODO: link -->
-* Yarn <!-- TODO: link -->
+* [ASP.Core SDK](https://www.microsoft.com/net/core)
+* [Yarn](https://yarnpkg.com/en/)
 
 ### Documentation
 
-* Yarn <!-- TODO: link -->
-* Doxygen <!-- TODO: link -->
-* MkDocs with Material theme <!-- TODO: link -->
+* [Yarn](https://yarnpkg.com/en/)
+* [Doxygen](http://www.stack.nl/~dimitri/doxygen/)
+* [MkDocs](http://www.mkdocs.org) with [Material theme](http://squidfunk.github.io/mkdocs-material/)
 
 ### Extra
 
-* Docker
-* Docker compose
+* [Docker](https://www.docker.com)
+* [Docker compose](https://docs.docker.com/compose/)
 
 !!! tip
     You may want to run most of the tools in Docker.
@@ -28,7 +28,7 @@ To build/debug/test all parts of the project you will need the following:
 
 ### Editor
 
-The recommended editor for this project is VS Code <!-- TODO: link -->.
+The recommended editor for this project is [VS Code](https://code.visualstudio.com).
 It has the first class support for C# and .NET, as well as TypeScript.
 This project does not depend on any particular editor.
 You may use any one (Visual Studio, Atom, Notepad++, etc.)
@@ -148,5 +148,6 @@ Packaging the app is as simple as running `#!bash docker build ...` on each proj
 !!! summary
     Here are the helpful links:
 	
-	* [link](url)
-	* [link](url)
+	* [ASP.Core Getting Started](https://docs.microsoft.com/en-us/aspnet/core/getting-started)
+	* [Testing and Debugging](https://docs.microsoft.com/en-us/aspnet/core/testing/)
+	* [Hosting and Deployment](https://docs.microsoft.com/en-us/aspnet/core/publishing/)
