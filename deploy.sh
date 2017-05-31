@@ -59,11 +59,11 @@ BRANCH="master"
 EXAMPLE=false
 
 # Process command line arguments
-while getopts "t:b:e" o; do
+while getopts "b:e" o; do
 	case "${o}" in
-		t)
-			TOKEN=$OPTARG
-			;;
+		# t)
+		# 	TOKEN=$OPTARG
+		# 	;;
 		b)
 			BRANCH=$OPTARG
 			;;
@@ -77,15 +77,16 @@ while getopts "t:b:e" o; do
 done
 shift $((OPTIND-1))
 
-[[ -n "$TOKEN" ]] || die "-t is required"
+# [[ -n "$TOKEN" ]] || die "-t is required"
 
-PROJECT_ID="47" # lookup in repo settings
+PROJECT="status-site" # lookup in repo settings
 JOB="release" # change if necessary
 
 echo_info "Downloading artifacts into temporary directory"
 curl \
+	-L \ # for now, Gitlab does not allow downloading public artifacts through API
 	--header "PRIVATE-TOKEN: $TOKEN" \
-	"https://git.dbogatov.org/api/v4/projects/$PROJECT_ID/jobs/artifacts/$BRANCH/download?job=$JOB" \
+	"https://git.dbogatov.org/dbogatov/$PROJECT/builds/artifacts/$BRANCH/download?job=$JOB" \
 > artifacts.zip \
 || die "Could not download artifacts"
 

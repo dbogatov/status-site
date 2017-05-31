@@ -150,6 +150,17 @@ build-dotnet () {
 	dotnet publish -c release web/web.csproj > /dev/null
 }
 
+move-static-files () {
+
+	cd $CWD
+
+	echo "Moving static files..."
+
+	mkdir -p srv/web/wwwroot/sh
+	cp deploy.sh srv/web/wwwroot/sh/
+
+}
+
 build-dev-client () {
 
 	cd $CWD
@@ -231,6 +242,8 @@ build-app () {
 	restore-dotnet
 
 	build-dotnet
+
+	move-static-files
 
 	echo "Build completed!"
 
