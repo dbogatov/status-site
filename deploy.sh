@@ -42,13 +42,12 @@ function usage {
 	GREEN="\033[0;32m"
 	RED="\033[0;31m"
 
-	printf "Usage: ${RED}$0${NOCOLOR} -t ${GREEN}<string | gitlab-access-token>${NOCOLOR} [-b ${CYAN}<string | branch>${NOCOLOR}] [-e]\n"
+	printf "Usage: ${RED}$0${NOCOLOR} [-b ${CYAN}<string | branch>${NOCOLOR}] [-e]\n"
 	
-	printf "Example: ${RED}$0${NOCOLOR} -t ${GREEN}slfkSKDF-asdasas-879${NOCOLOR} -b ${CYAN}19-separate-web-component-from-demons${NOCOLOR} -e\n"
+	printf "Example: ${RED}$0${NOCOLOR} -b ${CYAN}19-separate-web-component-from-demons${NOCOLOR} -e\n"
 
 	printf "where:\n"
 
-	printf "\t-t ${GREEN}gitlab-access-token${NOCOLOR} is gitlab access token needed to access the project repo.\n"
 	printf "\t-b ${CYAN}branch${NOCOLOR} is a branch name from whcih to download artifacts.\n"
 	printf "\t-e is a flag that causes script to use example settings from artifacts archive.\n"
 	
@@ -83,9 +82,10 @@ PROJECT="status-site" # lookup in repo settings
 JOB="release" # change if necessary
 
 echo_info "Downloading artifacts into temporary directory"
-# for now, Gitlab does not allow downloading public artifacts through API
+# for now, Gitlab does not allow downloading public artifacts through API without authentication
 curl \
 	-L \
+	-s \
 	"https://git.dbogatov.org/dbogatov/$PROJECT/builds/artifacts/$BRANCH/download?job=$JOB" \
 > artifacts.zip \
 || die "Could not download artifacts"
