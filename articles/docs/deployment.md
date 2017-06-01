@@ -20,23 +20,33 @@ Run the following command in a directory where you want your configuration files
 
 
 !!! note
-	The `e` parameter in `bash -s -e` specifies that you want to use example configuration.
+	The `e` parameter in `bash -s -- -e` specifies that you want to use example configuration.
 	Example configuration is conservative - most of the features are disabled, but is still enough for a basic operation of the app.
-	If you want to change configuration, modify `appsettings.json` and rerun the command without `-e` argument, otherwise it will override your changes to default example configuration.
+	If you want to change configuration, modify `appsettings.json` and re-run the command without `-e` argument, otherwise it will override your changes to default example configuration.
 
 ## appsettings.json and .env
 
-There are 4 mandatory files that need to be in the directory where `docker-compose.yml`, so that the app can start.
+There are 4 mandatory files that need to be in the directory alongside with `docker-compose.yml`, so that the app can start.
 NGINX files will be deprecated, see further note.
 `appsettings.json` is the main configuration file, see more in [Configuration](/configuration).
 `.env` file is simply a collection of environmental variables for composition.
-Its content is self-explanatory, except for `DOTNET_TAG` which need to point to the branch you want to use (*master* by default).
+Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to the branch you want to use (*master* by default).
 
 	POSTGRES_DB=statussite
 	POSTGRES_USER=statususer
 	POSTGRES_PASSWORD=SomethingWeird15
 
 	DOTNET_TAG=master
+
+!!! warning
+    Environmental variables define database connection settings which you will use in `appsettings.json`.
+	For example, for the above env variables, this would be an appropriate database connection string.
+
+		{
+			"Secrets": {
+				"ConnectionString": "User ID=statususer;Password=SomethingWeird15;Host=database;Port=5432;Database=statussite;Pooling=false;CommandTimeout=300;"
+			}
+		}
 
 ## Manual deployment
 
