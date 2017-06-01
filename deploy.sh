@@ -85,7 +85,6 @@ JOB="release" # change if necessary
 echo_info "Downloading artifacts into temporary directory"
 curl \
 	-L \ # for now, Gitlab does not allow downloading public artifacts through API
-	--header "PRIVATE-TOKEN: $TOKEN" \
 	"https://git.dbogatov.org/dbogatov/$PROJECT/builds/artifacts/$BRANCH/download?job=$JOB" \
 > artifacts.zip \
 || die "Could not download artifacts"

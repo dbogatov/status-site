@@ -156,9 +156,8 @@ move-static-files () {
 
 	echo "Moving static files..."
 
-	mkdir -p srv/web/wwwroot/sh
-	cp deploy.sh srv/web/wwwroot/sh/
-
+	mkdir -p documentation/out/
+	cp deploy.sh documentation/out/
 }
 
 build-dev-client () {
@@ -243,10 +242,7 @@ build-app () {
 
 	build-dotnet
 
-	move-static-files
-
-	echo "Build completed!"
-
+	echo "Build app completed!"
 }
 
 build-docs () {
@@ -259,11 +255,13 @@ build-docs () {
 	gen-client-docs &
 	gen-api-docs &
 
+	move-static-files
+
 	wait
 
 	merge-docs
 
-	echo "Build completed!"
+	echo "Build docs completed!"
 
 }
 
