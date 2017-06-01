@@ -42,6 +42,7 @@ Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to
     Environmental variables define database connection settings which you will use in `appsettings.json`.
 	For example, for the above env variables, this would be an appropriate database connection string.
 
+		#!json hl_lines="3"
 		{
 			"Secrets": {
 				"ConnectionString": "User ID=statususer;Password=SomethingWeird15;Host=database;Port=5432;Database=statussite;Pooling=false;CommandTimeout=300;"
