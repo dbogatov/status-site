@@ -69,9 +69,9 @@ extra_javascript:
 pages:
   - Home: index.md
   - Development: development.md
+  - Deployment: deployment.md
   - Configuration: configuration.md
   - Documentation: documentation.md
-  - Deploy: deploy.md
   - Code structure: code-structure.md
   - Server:
     - Server documentation: server/docs.md

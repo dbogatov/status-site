@@ -158,6 +158,7 @@ move-static-files () {
 
 	mkdir -p documentation/out/
 	cp deploy.sh documentation/out/
+	chmod -x documentation/out/deploy.sh
 }
 
 build-dev-client () {
@@ -255,11 +256,11 @@ build-docs () {
 	gen-client-docs &
 	gen-api-docs &
 
-	move-static-files
-
 	wait
 
 	merge-docs
+
+	move-static-files
 
 	echo "Build docs completed!"
 

@@ -83,8 +83,9 @@ PROJECT="status-site" # lookup in repo settings
 JOB="release" # change if necessary
 
 echo_info "Downloading artifacts into temporary directory"
+# for now, Gitlab does not allow downloading public artifacts through API
 curl \
-	-L \ # for now, Gitlab does not allow downloading public artifacts through API
+	-L \
 	"https://git.dbogatov.org/dbogatov/$PROJECT/builds/artifacts/$BRANCH/download?job=$JOB" \
 > artifacts.zip \
 || die "Could not download artifacts"
@@ -110,7 +111,7 @@ fi
 echo_info "Running composition"
 docker-compose -p statussite pull && \
 docker-compose -p statussite stop && \
-docker-compose -p statussite up -d || \
+docker-compose -p statussite up -d --remove-orphans || \
 die "Could not running a composition"
 
 echo_success "All done!"
