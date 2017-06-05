@@ -148,6 +148,6 @@ Packaging the app is as simple as running `#!bash docker build ...` on each proj
 !!! summary
     Here are the helpful links:
 	
-	* [ASP.Core Getting Started](https://docs.microsoft.com/en-us/aspnet/core/getting-started)
+	* [ASP.Core: Getting Started](https://docs.microsoft.com/en-us/aspnet/core/getting-started)
 	* [Testing and Debugging](https://docs.microsoft.com/en-us/aspnet/core/testing/)
 	* [Hosting and Deployment](https://docs.microsoft.com/en-us/aspnet/core/publishing/)

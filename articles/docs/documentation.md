@@ -1,48 +1,30 @@
-# Iam umbris Althaea multi
+# Documentation
 
-## Quae quae fronde possit septem stetit eversam
+We use 4 types of documentation for the app:
 
-Lorem markdownum magna maris velante, sine altam, sacri **inque huic** pedum.
-Ubi qui Nereides **latebris** Palaestini moriemur saevo in cautus matertera
-Peleus! Stillanti sanguine; patriae sedit, cum sed narrare veniens et silva
-sperabam, [nostri quoque](http://www.vocem.io/nedispersa) iubeatve. Est caelo,
-fulgura summo **me** alvum suo ita ferox quaerite, dique. Tiberinaque tertia,
-ideoque se fuisset fateri legi Antigonen viris si nunc, monticolae.
+* C# Docs in MSDoc style
+* TypeScript Docs in JSDoc style
+* API Docs in a Swagger / OpenAPI Spec format
+* Articles written in markdown
 
-Promissa leporem, Pan regem domosque si qua *ingemit* petite merguntque nunc.
-Placidos domino, felix te [incurrere
-Exadius](http://www.surrentino-non.org/non-quod.html), da dumque et luctatur
-redeunt senemque videt; manibus.
+We believe these set of tools and practices covers the necessary documentation for users and contributors of the app.
 
-- Nec Priapi secutum Cinyra scilicet habenas illi
-- Mille poterat
-- Fratribus saxumque educat aequoreas trepidans colla munus
-- Mihi meas tamen dicere publica non addidit
-- Numina stabula
+## C# Docs
 
-## Ferae dea tria erat in chlamydis vestis
+In-code documentation is critical. 
+We use [MS Docs](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc/xml-documentation-comments).
+We follow the following policies when documenting C# code:
 
-Trepidans pudet fumantis fumi mora magnoque Tempe herbarum dicta ubi fulget
-raptaque esse aspera [sanguine](http://sua-inter.com/est). Sucos loquendi primo,
-et vagae quisquis destituit neve bracchia in ipse.
-
-Cum quaeque sum est spernimus ignare flammas Thebas passim fertur; ex. Premeret
-ut Iovis animus: fui dolet famuli cernit maternae quoque sit pulsatus nomen.
-
-    var nat_token = refresh.sourceRepository(typeface, throughput_network);
-    if (personal + mca(gamma_query, hertzServlet, number_cad) <= 1) {
-        ldap += overwriteApplet * cloud + link_terminal * apple_sdk_php;
-        trollLogOutput += ict;
-        tweak_spreadsheet_horizontal -= desktop_simm;
-    }
-    if (-4 != memeIpodWeb) {
-        graphic_spooling_shortcut.rdfJavascriptLpi(index);
-    } else {
-        snapshot(3, 50, pipeline);
-        service_paper.hfsFriendly = toggle;
-    }
-
-*Fuga summisque honorem* probatum; e, est quam Cecropidas. Imperat in crura
-vates manus inerti rudis conterruit undis. Ferre dubiaque utroque; odoratis metu
-dei longe fictamque amantem *amoris dextram* esto. Ego atra priori! Inundet
-*levem* agitatis reddebat figuras sumptis pudor.
+* Every method has to be documented
+	* Except testing classes (see further)
+	* If class implements an interface, the method is documented once - in interface declaration
+	* Methods provided by the framework do not have to be documented
+	* Class constructor does not have to be documented if it does not contain business logic (eq. just assigns DI objects)
+* If a body of a function needs inline comments - rewrite the body
+* If there is something special you want to write about the class/interface/method, create an article in markdown
+* Properties of model classes have to be documented if
+	* the name is not self-explanatory, or
+	* explanation is necessary to correctly use the property (eq. property `int Time` where units are ambiguous)
+* Test classes and methods are not documented
+	* Their names have to be self-explanatory, long names with underscores are welcome
+	* If logic is ambiguous - rewrite the test

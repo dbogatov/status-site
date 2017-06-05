@@ -71,3 +71,8 @@ Manual deployemnt procedure is as follows:
 Now, the app is served on `http://localhost:5555`.
 
 [^1]: Will be deprecated soon.
+
+!!! summary
+    Here are the helpful links:
+	
+	* [ASP.Core: Hosting and Deployment](https://docs.microsoft.com/en-us/aspnet/core/publishing/)
