@@ -72,14 +72,9 @@ pages:
   - Deployment: deployment.md
   - Configuration: configuration.md
   - Documentation: documentation.md
-  - Code structure: code-structure.md
   - Server:
-    - Server documentation: server/docs.md
-    - Model: server/model.md
-    - View: server/view.md
-    - Controller: server/controller.md
-    - Entity Framework: server/ef.md
-    - Dependency Injection: server/di.md
+    - Home: server/index.md
+    - C# Docs: server/docs.md
   - Client:
     - Client documentation: client/docs.md
     - TypeScript:
@@ -87,7 +82,7 @@ pages:
     - Webpack: client/webpack.md
     - Less: client/less.md
   - API:
-    - API Documentation: api/docs.md
+    - API Docs: api/docs.md
   - Testing:
     - Unit tests: testing/unit.md
     - Integration tests: testing/integration.md
