@@ -75,8 +75,6 @@ Configuration spec:
 					MaxResponseTime: 2000 					# The time after which to consider service unavailable, milliseconds
 					MaxFailures: 3 							# Allowed number of consecutive failures before call server dead
 					GetMethodRequired: false 				# If true, HTTP GET method will be used to ping, HTTP HEAD otherwise
-		Assets: 											# Settings for some static assets used by the app
-			MainStyleSheet: "https://url.com/app.css.min"	# [Temporary] URL for the main css file
 		Logging: 											# This section (except "LogSeverityReported") refers to status site own internal logging as an application (not API logging)
 			MinLogLevel: "Information" 						# Minimal log level of status site itself to send to STDOUT
 			LogSeverityReported: "Error" 					# Minimal log entry severity to notify user about
@@ -156,9 +154,6 @@ Here is the *example configuration*:
 			"PingSettings": [{
 				"ServerUrl": "https://google.com"
 			}]
-		},
-		"Assets": {
-			"MainStyleSheet": "/css/app.min.css"
 		},
 		"Logging": {
 			"MinLogLevel": "Information",
