@@ -76,16 +76,10 @@ pages:
     - Home: server/index.md
     - C# Docs: server/docs.md
   - Client:
-    - Client documentation: client/docs.md
-    - TypeScript:
-      - Typings: client/typescript/typings.md
-    - Webpack: client/webpack.md
-    - Less: client/less.md
+    - Home: client/index.md
+    - TypeScript Docs: client/docs.md
   - API:
     - API Docs: api/docs.md
   - Testing:
-    - Unit tests: testing/unit.md
-    - Integration tests: testing/integration.md
-    - Controller tests: testing/controller.md
-    - Mocking: testing/mock.md
-    - BLC / Tidy: testing/blc-tidy.md
+    - Home: testing/index.md
+    
