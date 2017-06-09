@@ -1,47 +1,53 @@
-# Orbi nati subsunt mediae
+# Status site
 
-## Ulnis inprobe eurus tamen dicitur
+!!! quote
+	Status site is the application for monitoring the health of the servers and web services.
 
-Lorem markdownum Abantiades flexi nurusque pudore. Ramumque tangunt et credite
-carina reminiscor **minimum**, sua albente siccata incubuitque magnum et tamen
-faucibus pectus **Alpheos**, odit. Nunc longos, *cadunt*. Cum dixit purasque,
-quae anima quodcumque claudit!
+## Features
 
-Ad opertos omnia, Telamonius oculos. Pascitur heu; iamque pennas. Coniuge pro
-non sui, ab **rogant tulisse** moveres parilique Andros obstantes audet vana
-labra glaciali.
+* Agent reporting system stats
+	- CPU load
+	- RAM usage[^1]
+	- SWAP usage[^1]
+	- Disk space usage[^1]
+	- Number (and names) of processes[^1]
+* Collecting logs
+	- Capturing message, source, category and auxillary data
+	- Rich filtering tools
+	- Guard against log DoS
+* Web service monitor
+	- Periodically access websites or ports[^1]
+	- Record responses[^1]
+* Notifications
+	- Slack, email, telegram[^1], mattermost[^1] and other providers[^1]
+	- Different severities - with different frequencies
+* Discrepancies
+	- Detect discrepancies in data points (gaps, high values, ping failures)
+	- Detect the start and end of discrepancy - not reported twice[^1]
+* Rich API
+* Served as a docker composition - easy to install, configure and update
+* Different databases for old and recent data
+* Extensive documentation
 
-## Nisi qualis
+[^1]: To be implemented
 
-Sparsos dolor nymphen non tempora quibus reperitur donavi expersque in metuam
-[paternam](http://www.data.org/geratcymeli.html) pectoraque *haec*. Et dolet
-Itys enim primaque recessit ut ossa *ab adapertaque* adiit. Viridi iter obvius
-Tyria, turis puer, laetum ubi quod securi quod qui votique. Unda puerile nec
-gravi recusat!
+## How to deploy
 
-- Eadem divulsere
-- Trahitur ignis
-- Cadunt lupo
-- Procul supplicium
-- Tacui si tuas tectis
+!!! tip
+	Detailed instruction can be found [here](deployment).
 
-## Aperit tuaeque despectabat qui hoc vicimus armenti
+## How to develop
 
-Nubilibus invidet, se tibi. Demissior ipso aret Pyrrham agitantem temone undis
-Quis Enaesimus cum gloria quae Caeneus et. Obruta scripto sanguine pecudes et
-**et**, pruinosas novis cauda; et. Quid ibi; opemque pectus, miratur
-[nec](http://www.vocatat.com/laurus-os.php).
+!!! tip
+	Detailed instruction can be found [here](development).
 
-## Enim non me caesariem vestes sed sanguinis
+## How to configure
 
-Fovebam quoque quondam instare tollere iunxit dextrasque motus, habetis tecta,
-ministri haud imitante te. Totum inposuit in accipit est deos haruspex interea
-nitido, talis est centum tales illa animos. Pectus est tauro, cognita quod hoc
-haec repetemus, orbem rerum potitur: cum. Scitetur coniuge, nisi est, ad
-prohibet Scylla invidia ad sparsit induerat.
+!!! tip
+	Detailed instruction can be found [here](configuration).
 
-Donec duratur revincta crinem gener Nilus, arte est atque, ad numquam. Videt
-dixit origo colla illa finierat, modo postquam nescio, subiectaque digitis talia
-aprum? Dona piis *arboribus* ut amore quamvis paternos perdiderat tecta
-gratantur actaque libido? Nunc sola, plangorem care. Unda squamigeris Copia
-fructum vultus, cum *inquit* Phaeocomes posset.
+## A little story
+
+This project has started as a side project for the [RedwoodEDA](http://www.redwoodeda.com) - a helper tool to monitor [makerchip](http://makerchip.com) servers.
+It turned out to be much more sophisticated piece of software than was initially designed.
+It was decided to open source the project to give community a chance to develop it further.
