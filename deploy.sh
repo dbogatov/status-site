@@ -54,15 +54,16 @@ function usage {
 	exit 1
 }
 
+PROJECT="statussite"
 BRANCH="master"
 EXAMPLE=false
 
 # Process command line arguments
-while getopts "b:e" o; do
+while getopts "p:b:e" o; do
 	case "${o}" in
-		# t)
-		# 	TOKEN=$OPTARG
-		# 	;;
+		p)
+			PROJECT=$OPTARG
+			;;
 		b)
 			BRANCH=$OPTARG
 			;;
@@ -109,9 +110,9 @@ if ! grep -q "DOTNET_TAG=" ".env"; then
 fi
 
 echo_info "Running composition"
-docker-compose -p statussite pull && \
-docker-compose -p statussite stop && \
-docker-compose -p statussite up -d --remove-orphans || \
+docker-compose -p $PROJECT pull && \
+docker-compose -p $PROJECT stop && \
+docker-compose -p $PROJECT up -d --remove-orphans || \
 die "Could not running a composition"
 
 echo_success "All done!"
