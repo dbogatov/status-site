@@ -7,7 +7,7 @@ In brief, there is a number of configuration sources[^1], which are getting read
 
 A key in that dictionary is string built from configuration sections concatenated with semicolon `:`, for example `Secrets:Email:SMTP:Password`.
 A value is the string, which may represent a number (`"10"`), a boolean (`"true"`), or anything else (`"2009-06-01T13:45:30"`).
-Configuration is built in the `Startup` method and is available for [Dependency Injection](server/di/).
+Configuration is built in the `Startup` method and is available for [Dependency Injection](server/#dependency-injection).
 
 !!! tip
 	It is recommended to use configuration mechanism for static values (like label titles or constants).

@@ -81,6 +81,19 @@ blc:
   tags:
   - docker
 
+docs-blc:
+  stage: test
+  image: dbogatov/docker-containers:jekyll-latest
+  dependencies:
+  - build-docs
+  before_script:
+  - http-server documentation/out/ -p 8080 > /dev/null &
+  - sleep 5
+  script:
+  - blc --filter-level 3 --input http://localhost:8080 -rog --exclude "*linkedin.*"
+  tags:
+  - docker
+
 ## RELEASE
 
 release:
