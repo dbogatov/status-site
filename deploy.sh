@@ -78,10 +78,8 @@ while getopts "p:b:e" o; do
 done
 shift $((OPTIND-1))
 
-# [[ -n "$TOKEN" ]] || die "-t is required"
-
 PROJECT="status-site" # lookup in repo settings
-JOB="release" # change if necessary
+JOB="release-all" # change if necessary
 
 echo_info "Downloading artifacts into temporary directory"
 # for now, Gitlab does not allow downloading public artifacts through API without authentication
