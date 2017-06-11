@@ -47,8 +47,8 @@ unit-test-app:
   - dotnet restore
   - ./test-dotnet.sh | tee tests.out
   - "cat tests.out | grep 'Failed: 0.'"
-  skip_when:
-    test: /\[skip tests\]/
+  # skip_when:
+  #   test: /\[skip tests\]/
   tags:
   - docker
 
@@ -65,8 +65,8 @@ tidy-app:
   script:
   - curl -Ls http://localhost:5555/ | tidy -e
   - curl -Ls http://localhost:5555/home/metric/CpuLoad/the-source | tidy -e
-  skip_when:
-    test: /\[skip tests\]/
+  # skip_when:
+  #   test: /\[skip tests\]/
   tags:
   - docker
   
@@ -82,8 +82,8 @@ blc-app:
   - sleep 15
   script:
   - blc --filter-level 3 --input http://localhost:5555 -rog --exclude "*linkedin.*" --exclude "*authenticate*"
-  skip_when:
-    test: /\[skip tests\]/
+  # skip_when:
+  #   test: /\[skip tests\]/
   tags:
   - docker
 
@@ -97,8 +97,8 @@ blc-docs:
   - sleep 5
   script:
   - blc --filter-level 3 --input http://localhost:8080 -rog --exclude "*linkedin.*"
-  skip_when:
-    test: /\[skip tests\]/
+  # skip_when:
+  #   test: /\[skip tests\]/
   tags:
   - docker
 
