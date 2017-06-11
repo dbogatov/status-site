@@ -108,6 +108,10 @@ if ! grep -q "DOTNET_TAG=" ".env"; then
 	printf "\n\nDOTNET_TAG=$BRANCH" >> .env
 fi
 
+echo_info "Removing unnecessary files"
+rm -rf appsettings.json.example .env.example artifacts.zip \
+|| die "Could not removing unnecessary files"
+
 echo_info "Running composition"
 docker-compose -p $PROJECT pull && \
 docker-compose -p $PROJECT stop && \
