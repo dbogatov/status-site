@@ -38,7 +38,7 @@ build-app:
 
 ## TEST
 
-test-dotnet:
+unit-test-app:
   stage: test
   image: microsoft/dotnet:1.1.1-sdk
   script:
@@ -50,7 +50,7 @@ test-dotnet:
   tags:
   - docker
 
-tidy:
+tidy-app:
   stage: test
   image: dbogatov/docker-containers:dotnet-core-latest
   dependencies:
@@ -66,7 +66,7 @@ tidy:
   tags:
   - docker
   
-blc:
+blc-app:
   stage: test
   image: dbogatov/docker-containers:dotnet-core-latest
   dependencies:
@@ -81,7 +81,7 @@ blc:
   tags:
   - docker
 
-docs-blc:
+blc-docs:
   stage: test
   image: dbogatov/docker-containers:jekyll-latest
   dependencies:
@@ -96,7 +96,7 @@ docs-blc:
 
 ## RELEASE
 
-release:
+release-all:
   stage: release
   dependencies:
   - build-app
