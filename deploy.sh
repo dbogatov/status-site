@@ -42,12 +42,13 @@ function usage {
 	GREEN="\033[0;32m"
 	RED="\033[0;31m"
 
-	printf "Usage: ${RED}$0${NOCOLOR} [-b ${CYAN}<string | branch>${NOCOLOR}] [-e]\n"
+	printf "Usage: ${RED}$0${NOCOLOR} [-p ${CYAN}<string | project>${NOCOLOR}] [-b ${CYAN}<string | branch>${NOCOLOR}] [-e]\n"
 	
 	printf "Example: ${RED}$0${NOCOLOR} -b ${CYAN}19-separate-web-component-from-demons${NOCOLOR} -e\n"
 
 	printf "where:\n"
 
+	printf "\t-p ${CYAN}project${NOCOLOR} is a project name which is passed to docker-compose -p PROJECT. Usefull when 2+ instances are needed .\n"
 	printf "\t-b ${CYAN}branch${NOCOLOR} is a branch name from whcih to download artifacts.\n"
 	printf "\t-e is a flag that causes script to use example settings from artifacts archive.\n"
 	
