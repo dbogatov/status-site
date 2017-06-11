@@ -34,17 +34,17 @@
 ## How to deploy
 
 !!! tip
-	Detailed instruction can be found [here](deployment).
+	Detailed instruction can be found [here](deployment/).
 
 ## How to develop
 
 !!! tip
-	Detailed instruction can be found [here](development).
+	Detailed instruction can be found [here](development/).
 
 ## How to configure
 
 !!! tip
-	Detailed instruction can be found [here](configuration).
+	Detailed instruction can be found [here](configuration/).
 
 ## A little story
 

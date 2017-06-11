@@ -28,7 +28,7 @@ Run the following command in a directory where you want your configuration files
 
 There are 4 mandatory files that need to be in the directory alongside with `docker-compose.yml`, so that the app can start.
 NGINX files will be deprecated, see further note.
-`appsettings.json` is the main configuration file, see more in [Configuration](/configuration).
+`appsettings.json` is the main configuration file, see more in [Configuration](/configuration/).
 `.env` file is simply a collection of environmental variables for composition.
 Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to the branch you want to use (*master* by default).
 
@@ -58,7 +58,7 @@ Application is packaged as a collection of docker images with the `docker-compos
 	For now, it is required to have `nginx/` with 2 config files.
 	They are packaged in `artifacts.zip` served to the user.
 
-Manual deployemnt procedure is as follows:
+Manual deployment procedure is as follows:
 
 * Download artifacts archive from [GitLab](https://git.dbogatov.org/dbogatov/status-site).
 * Extract its contents.
