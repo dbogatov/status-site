@@ -204,6 +204,9 @@ build-docker-images () {
 	echo "Building docs-$DOTNET_TAG"
 	docker build -f documentation/Dockerfile -t dbogatov/status-site:docs-$DOTNET_TAG documentation/
 
+	echo "Building nginx-$DOTNET_TAG"
+	docker build -f nginx/Dockerfile -t dbogatov/status-site:nginx-$DOTNET_TAG nginx/
+
 	echo "Done!"
 }
 
@@ -221,6 +224,9 @@ push-docker-images () {
 
 	echo "Pushing docs-$DOTNET_TAG"
 	docker push dbogatov/status-site:docs-$DOTNET_TAG
+
+	echo "Pushing nginx-$DOTNET_TAG"
+	docker push dbogatov/status-site:nginx-$DOTNET_TAG
 
 	echo "Done!"
 }
