@@ -43,9 +43,10 @@
 		<PackageReference Include="Moq" Version="4.6.38-alpha" />
 		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="1.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Cors" Version="1.1.0" />
+		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="1.2.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<AppSettings Include="../appsettings*.json"/>
+		<AppSettings Include="../appsettings*.*"/>
 	</ItemGroup>
 	<Target Name="CopyAppsettings" AfterTargets="Build">
 		<Copy SourceFiles="@(AppSettings)" DestinationFolder="$(OutputPath)/publish" ContinueOnError="false" />

@@ -17,7 +17,7 @@ namespace StatusMonitor.Tests.UnitTests
 			// Generating configuration key-value store from file.
 			_config =
 				new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json", optional: false)
+				.AddYamlFile("appsettings.yml", optional: false)
 				.Build();
 		}
 

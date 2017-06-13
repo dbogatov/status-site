@@ -24,7 +24,7 @@ services:
     links:
       - "postgres:database"
     volumes:
-      - ./appsettings.json:/srv/appsettings.production.json
+      - ./appsettings.yml:/srv/appsettings.production.yml
     restart: on-failure
   daemons:
     image: dbogatov/status-site:daemons-${DOTNET_TAG}
@@ -35,7 +35,7 @@ services:
     links:
       - "postgres:database"
     volumes:
-      - ./appsettings.json:/srv/appsettings.production.json
+      - ./appsettings.yml:/srv/appsettings.production.yml
     restart: on-failure
   postgres:
     image: postgres:latest

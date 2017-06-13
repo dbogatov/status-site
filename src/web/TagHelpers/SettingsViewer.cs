@@ -178,7 +178,7 @@ namespace StatusMonitor.Web.TagHelpers
 				URL is {section["ServerUrl"]}
 				{(section["MaxResponseTime"] != null ? $", max response time is {section["MaxResponseTime"]}" : "")}
 				{(section["MaxFailures"] != null ? $", max number of failures is {section["MaxFailures"]}" : "")}
-				{(section["GetMethodRequired"] != null ? $", should be accessed by {(Convert.ToBoolean(section["GetMethodRequired"]) ? "GET" : "POST")} method" : "")}
+				{(section["GetMethodRequired"] != null ? $", should be accessed by {(Convert.ToBoolean(section["GetMethodRequired"]) ? "GET" : "HEAD")} method" : "")}
 				.
 			"
 			.Replace(Environment.NewLine, "")

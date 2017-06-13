@@ -38,11 +38,12 @@ namespace StatusMonitor.Daemons
 
 
 			var builder = new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json", optional: !env.IsProduction()) // read defaults first
-				.AddJsonFile(
-					$"appsettings.{env.EnvironmentName.ToLower()}.json",
-					optional: true
+				.AddYamlFile("appsettings.yml", optional: false) // read defaults first
+				.AddYamlFile(
+					$"appsettings.{env.EnvironmentName.ToLower()}.yml",
+					optional: env.IsStaging()
 				) // override with specific settings file
+				.AddJsonFile("version.json", optional: true)
 				.AddEnvironmentVariables();
 			var configuration = builder.Build();
 
