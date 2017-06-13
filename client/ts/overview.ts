@@ -19,22 +19,6 @@ $(() => {
 		// Should be MetricFactory when we render multiple types of metrics
 		let metric = new CpuLoadMetric(source);
 
-		// Handler for remove metric click
-		// Tells metric to remove itself and excludes it from the array of metrics
-		$(`[data-identifier="${metric.getMetricIdentifier()}"] .remove-metric`).click(
-			async (e) => {
-				// Do not follow the link
-				e.preventDefault();
-
-				if (confirm(`Are sure you want to remove this metric {${metric.source}, ${MetricType[metric.metricType]}}?`)) {
-					// Tell metric to destroy itself (gracefully)
-					await metric.destroy();
-					// Remove metric object form global array
-					metrics.splice(metrics.indexOf(metric), 1);	
-				}
-			}
-		);
-
 		metrics.push(metric);
 	});
 

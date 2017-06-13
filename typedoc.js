@@ -1,5 +1,5 @@
 module.exports = {
-	out: "src/web/wwwroot/docs/client",
+	out: "documentation/out/typedoc",
 	name: "Status Monitor",
 	externalPattern: "node_modules",
 	target: "ES6",

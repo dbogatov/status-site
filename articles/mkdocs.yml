@@ -1,0 +1,85 @@
+# Project information
+site_name: Status site
+site_description: Web app that monitors the health and status of your services
+site_author: Dmytro Bogatov
+
+strict: true
+
+# Copyright
+copyright: Copyright &copy; 2017 Dmytro Bogatov
+
+# Documentation and theme
+theme_dir: material
+
+# Options
+extra:
+  palette:
+    primary: blue
+    accent: deep purple
+  social:
+    - type: globe
+      link: https://dbogatov.org
+    - type: gitlab
+      link: https://git.dbogatov.org/dbogatov
+    - type: github
+      link: https://github.com/Dima4ka
+    - type: facebook
+      link: https://www.facebook.com/Dima4ka007
+    - type: twitter
+      link: https://twitter.com/Dima4ka007
+    - type: linkedin
+      link: https://www.linkedin.com/in/dmytrobogatov/
+  feature:
+      tabs: true
+
+# Google Analytics
+google_analytics:
+  - UA-65293382-8
+  - auto
+
+# Repository
+repo_name: Dima4ka/status-site
+repo_url: https://github.com/Dima4ka/status-site
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - codehilite(linenums=true)
+  - footnotes
+  - meta
+  - toc(permalink=true)
+  - pymdownx.arithmatex
+  - pymdownx.betterem(smart_enable=all)
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist(custom_checkbox=true)
+  - pymdownx.tilde
+
+extra_javascript:
+  - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
+
+# Page tree
+pages:
+  - Home: index.md
+  - Development: development.md
+  - Deployment: deployment.md
+  - Configuration: configuration.md
+  - Documentation: documentation.md
+  - Server:
+    - Home: server/index.md
+    - C# Docs: server/docs.md
+  - Client:
+    - Home: client/index.md
+    - TypeScript Docs: client/docs.md
+  - API:
+    - API Docs: api/docs.md
+  - Testing:
+    - Home: testing/index.md
+    

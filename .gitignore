@@ -45,3 +45,9 @@ client/typings/
 # Settings
 .env
 appsettings.json
+
+# Articles
+articles/site/
+
+# Documentation
+documentation/out/

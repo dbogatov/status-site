@@ -6,13 +6,20 @@ services:
       - 5555:5555
     links:
       - "web:web"
-      - "logging:logging"
+      # - "logging:logging"
+      - "docs:docs"
     volumes:
       - ./nginx/web.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - web
-      - logging
+      # - logging
+      - docs
+  docs:
+    image: dbogatov/status-site:docs-${DOTNET_TAG} # if DOTNET_TAG not set, use ""
+    ports:
+      - 5556:80
+    restart: on-failure
   web:
     image: dbogatov/status-site:web-${DOTNET_TAG} # if DOTNET_TAG not set, use ""
     environment:
@@ -24,17 +31,17 @@ services:
     volumes:
       - ./appsettings.json:/srv/appsettings.production.json
     restart: on-failure
-  logging:
-    image: dbogatov/status-site:web-${DOTNET_TAG}
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      - postgres
-    links:
-      - "postgres:database"
-    volumes:
-      - ./appsettings.json:/srv/appsettings.production.json
-    restart: on-failure
+  # logging:
+  #   image: dbogatov/status-site:web-${DOTNET_TAG}
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Production
+  #   depends_on:
+  #     - postgres
+  #   links:
+  #     - "postgres:database"
+  #   volumes:
+  #     - ./appsettings.json:/srv/appsettings.production.json
+  #   restart: on-failure
   daemons:
     image: dbogatov/status-site:daemons-${DOTNET_TAG}
     environment:

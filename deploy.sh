@@ -42,27 +42,28 @@ function usage {
 	GREEN="\033[0;32m"
 	RED="\033[0;31m"
 
-	printf "Usage: ${RED}$0${NOCOLOR} -t ${GREEN}<string | gitlab-access-token>${NOCOLOR} [-b ${CYAN}<string | branch>${NOCOLOR}] [-e]\n"
+	printf "Usage: ${RED}$0${NOCOLOR} [-p ${CYAN}<string | project>${NOCOLOR}] [-b ${CYAN}<string | branch>${NOCOLOR}] [-e]\n"
 	
-	printf "Example: ${RED}$0${NOCOLOR} -t ${GREEN}slfkSKDF-asdasas-879${NOCOLOR} -b ${CYAN}19-separate-web-component-from-demons${NOCOLOR} -e\n"
+	printf "Example: ${RED}$0${NOCOLOR} -b ${CYAN}19-separate-web-component-from-demons${NOCOLOR} -e\n"
 
 	printf "where:\n"
 
-	printf "\t-t ${GREEN}gitlab-access-token${NOCOLOR} is gitlab access token needed to access the project repo.\n"
+	printf "\t-p ${CYAN}project${NOCOLOR} is a project name which is passed to docker-compose -p PROJECT. Usefull when 2+ instances are needed .\n"
 	printf "\t-b ${CYAN}branch${NOCOLOR} is a branch name from whcih to download artifacts.\n"
 	printf "\t-e is a flag that causes script to use example settings from artifacts archive.\n"
 	
 	exit 1
 }
 
+PROJECT="statussite"
 BRANCH="master"
 EXAMPLE=false
 
 # Process command line arguments
-while getopts "t:b:e" o; do
+while getopts "p:b:e" o; do
 	case "${o}" in
-		t)
-			TOKEN=$OPTARG
+		p)
+			PROJECT=$OPTARG
 			;;
 		b)
 			BRANCH=$OPTARG
@@ -77,15 +78,15 @@ while getopts "t:b:e" o; do
 done
 shift $((OPTIND-1))
 
-[[ -n "$TOKEN" ]] || die "-t is required"
-
-PROJECT_ID="2252178" # lookup in repo settings
-JOB="release" # change if necessary
+PROJECT="status-site" # lookup in repo settings
+JOB="release-all" # change if necessary
 
 echo_info "Downloading artifacts into temporary directory"
+# for now, Gitlab does not allow downloading public artifacts through API without authentication
 curl \
-	--header "PRIVATE-TOKEN: $TOKEN" \
-	"https://gitlab.com/api/v4/projects/$PROJECT_ID/jobs/artifacts/$BRANCH/download?job=$JOB" \
+	-L \
+	-s \
+	"https://git.dbogatov.org/dbogatov/$PROJECT/builds/artifacts/$BRANCH/download?job=$JOB" \
 > artifacts.zip \
 || die "Could not download artifacts"
 
@@ -107,10 +108,14 @@ if ! grep -q "DOTNET_TAG=" ".env"; then
 	printf "\n\nDOTNET_TAG=$BRANCH" >> .env
 fi
 
+echo_info "Removing unnecessary files"
+rm -rf appsettings.json.example .env.example artifacts.zip \
+|| die "Could not removing unnecessary files"
+
 echo_info "Running composition"
-docker-compose -p statussite pull && \
-docker-compose -p statussite stop && \
-docker-compose -p statussite up -d || \
+docker-compose -p $PROJECT pull && \
+docker-compose -p $PROJECT stop && \
+docker-compose -p $PROJECT up -d --remove-orphans || \
 die "Could not running a composition"
 
 echo_success "All done!"

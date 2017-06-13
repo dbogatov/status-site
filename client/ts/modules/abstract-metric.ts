@@ -427,7 +427,7 @@ export abstract class Metric<T extends DataPoint> {
 		let task = async () => {
 			await this.loadData();
 			this.render();
-			UIHelper.notify(`Metric ${MetricType[this.metricType]} of ${this.source} has been updated!`, "inverse");
+			// UIHelper.notify(`Metric ${MetricType[this.metricType]} of ${this.source} has been updated!`, "inverse");
 		};
 
 		if (!this.isRunning) {
