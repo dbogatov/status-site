@@ -67,7 +67,7 @@ namespace StatusMonitor.Web.TagHelpers
 						"Exclusions",
 						_config
 							.StringsFromArray("Logging:Exclude")
-							.Aggregate((self, next) => $"{next}, {self}")
+							.Aggregate((self, next) => $"\"{next}\", \"{self}\"")
 					}
 				})}
 
