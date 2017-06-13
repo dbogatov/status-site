@@ -6,7 +6,7 @@ echo "Changing environment to testing..."
 export ASPNETCORE_ENVIRONMENT="Testing"
 
 echo "Copying the application settings..."
-cp ../src/appsettings*.json .
+cp ../src/appsettings*.* .
 
 if [ -n "$1" ]
 then
@@ -18,7 +18,7 @@ else
 fi
 
 echo "Removing application settings..."
-rm appsettings*.json
+rm appsettings*.*
 
 echo "Reverting environment..."
 export ASPNETCORE_ENVIRONMENT=$PREV_ENV

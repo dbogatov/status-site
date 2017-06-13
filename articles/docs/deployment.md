@@ -22,12 +22,12 @@ Run the following command in a directory where you want your configuration files
 !!! note
 	The `e` parameter in `bash -s -- -e` specifies that you want to use example configuration.
 	Example configuration is conservative - most of the features are disabled, but is still enough for a basic operation of the app.
-	If you want to change configuration, modify `appsettings.json` and re-run the command without `-e` argument, otherwise it will override your changes to default example configuration.
+	If you want to change configuration, modify `appsettings.yml` and re-run the command without `-e` argument, otherwise it will override your changes to default example configuration.
 
-## appsettings.json and .env
+## appsettings.yml and .env
 
 There are 4 mandatory files that need to be in the directory alongside with `docker-compose.yml`, so that the app can start.
-`appsettings.json` is the main configuration file, see more in [Configuration](/configuration/).
+`appsettings.yml` is the main configuration file, see more in [Configuration](/configuration/).
 `.env` file is simply a collection of environmental variables for composition.
 Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to the branch you want to use (*master* by default).
 
@@ -38,15 +38,12 @@ Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to
 	DOTNET_TAG=master
 
 !!! warning
-    Environmental variables define database connection settings which you will use in `appsettings.json`.
+    Environmental variables define database connection settings which you will use in `appsettings.yml`.
 	For example, for the above env variables, this would be an appropriate database connection string.
 
-		#!json hl_lines="3"
-		{
-			"Secrets": {
-				"ConnectionString": "User ID=statususer;Password=SomethingWeird15;Host=database;Port=5432;Database=statussite;Pooling=false;CommandTimeout=300;"
-			}
-		}
+		#!yml hl_lines="2"
+		Secrets:
+			ConnectionString: "User ID=statususer;Password=SomethingWeird15;Host=database;Port=5432;Database=statussite;Pooling=false;CommandTimeout=300;"
 
 ## Manual deployment
 
@@ -56,7 +53,7 @@ Manual deployment procedure is as follows:
 
 * Download artifacts archive from [GitLab](https://git.dbogatov.org/dbogatov/status-site).
 * Extract its contents.
-* Create `appsettings.json` and `.env`, or use example files (renaming $1.example to $1).
+* Create `appsettings.yml` and `.env`, or use example files (renaming $1.example to $1).
 * Stop app if it is running - `docker-compose -p statussite stop`.
 * Pull app images - `docker-compose -p statussite pull`.
 * Start app - `docker-compose -p statussite up -d --remove-orphans`.

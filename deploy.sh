@@ -97,11 +97,11 @@ unzip -o artifacts.zip \
 [ -f ./docker-compose.yml ] || die "docker-compose.yml file is not found in artifacts archive"
 
 [[ "$EXAMPLE" = false ]] || {
-	echo_info "-e was specified, so overriding .env and appsetting.json"
+	echo_info "-e was specified, so overriding .env and appsetting.yml"
 	find . -name '*.example' -type f | while read NAME ; do mv "${NAME}" "${NAME%.example}" ; done
 }
 
-[ -f ./appsettings.json ] || die "appsettings.json file is required (use -e option to use example files)"
+[ -f ./appsettings.yml ] || die "appsettings.json file is required (use -e option to use example files)"
 [ -f ./.env ] || die ".env file is required (use -e option to use example files)"
 
 # if ! grep -q "DOTNET_TAG=" ".env"; then
@@ -109,7 +109,7 @@ unzip -o artifacts.zip \
 # fi
 
 echo_info "Removing unnecessary files"
-rm -rf appsettings.json.example .env.example artifacts.zip \
+rm -rf appsettings.yml.example .env.example artifacts.zip \
 || die "Could not removing unnecessary files"
 
 echo_info "Running composition"

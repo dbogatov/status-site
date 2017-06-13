@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>netcoreapp1.1</TargetFramework>
 		<OutputType>Library</OutputType>
+		<PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="1.1.0" />
@@ -36,6 +37,7 @@
 		<PackageReference Include="Moq" Version="4.6.38-alpha" />
 		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="1.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Cors" Version="1.1.0" />
-		<PackageReference Include="MailKit" Version="1.16.0" />		
+		<PackageReference Include="MailKit" Version="1.16.0" />
+		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="1.2.0" />
 	</ItemGroup>
 </Project>

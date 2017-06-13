@@ -1,0 +1,9 @@
+﻿Secrets:
+  ApiKey: "SDJFSLDKJFS"
+  AdminPassword: "password"
+Data:
+  PingSettings:
+    - ServerUrl: "https://google.com"
+      MaxResponseTime: 2000
+      MaxFailures: 3
+      GetMethodRequired: false

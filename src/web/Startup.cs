@@ -36,9 +36,9 @@ namespace StatusMonitor.Web
 		public Startup(IHostingEnvironment env)
 		{
 			var builder = new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json", optional: false) // read defaults first
-				.AddJsonFile(
-					$"appsettings.{env.EnvironmentName.ToLower()}.json",
+				.AddYamlFile("appsettings.yml", optional: false) // read defaults first
+				.AddYamlFile(
+					$"appsettings.{env.EnvironmentName.ToLower()}.yml",
 					optional: env.IsStaging()
 				) // override with specific settings file
 				.AddJsonFile("version.json", optional: true)
@@ -93,11 +93,8 @@ namespace StatusMonitor.Web
 					},
 					OnRedirectToLogin = context =>
 					{
-						// if (context.Request.Path.StartsWithSegments("/api"))
-// Console.WriteLine($"Path: {context.Request.Path.Value}"); // TODO: remove
 						if (context.Request.Path.Value.Contains("/api"))
 						{
-// Console.WriteLine($"Trapped path: {context.Request.Path.Value}"); // TODO: remove
 							context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 							return Task.CompletedTask;
 						}
