@@ -104,9 +104,9 @@ unzip -o artifacts.zip \
 [ -f ./appsettings.json ] || die "appsettings.json file is required (use -e option to use example files)"
 [ -f ./.env ] || die ".env file is required (use -e option to use example files)"
 
-if ! grep -q "DOTNET_TAG=" ".env"; then
+# if ! grep -q "DOTNET_TAG=" ".env"; then
 	printf "\n\nDOTNET_TAG=$BRANCH" >> .env
-fi
+# fi
 
 echo_info "Removing unnecessary files"
 rm -rf appsettings.json.example .env.example artifacts.zip \

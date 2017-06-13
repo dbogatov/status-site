@@ -27,7 +27,6 @@ Run the following command in a directory where you want your configuration files
 ## appsettings.json and .env
 
 There are 4 mandatory files that need to be in the directory alongside with `docker-compose.yml`, so that the app can start.
-NGINX files will be deprecated, see further note.
 `appsettings.json` is the main configuration file, see more in [Configuration](/configuration/).
 `.env` file is simply a collection of environmental variables for composition.
 Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to the branch you want to use (*master* by default).
@@ -53,24 +52,16 @@ Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to
 
 Application is packaged as a collection of docker images with the `docker-compose.yml` file, which knows how to orchestrate those images, and a couple of config files.
 
-!!! bug
-    It is planned to put NGINX configuration right into NGINX image instead asking user to provide their config.
-	For now, it is required to have `nginx/` with 2 config files.
-	They are packaged in `artifacts.zip` served to the user.
-
 Manual deployment procedure is as follows:
 
 * Download artifacts archive from [GitLab](https://git.dbogatov.org/dbogatov/status-site).
 * Extract its contents.
 * Create `appsettings.json` and `.env`, or use example files (renaming $1.example to $1).
-* Make sure you have `nginx/` with 2 files in it[^1]. 
 * Stop app if it is running - `docker-compose -p statussite stop`.
 * Pull app images - `docker-compose -p statussite pull`.
 * Start app - `docker-compose -p statussite up -d --remove-orphans`.
 
 Now, the app is served on `http://localhost:5555`.
-
-[^1]: Will be deprecated soon.
 
 !!! summary
     Here are the helpful links:
