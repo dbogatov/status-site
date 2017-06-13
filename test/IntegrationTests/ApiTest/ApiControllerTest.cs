@@ -23,7 +23,7 @@ namespace StatusMonitor.Tests.IntegrationTests
 
 			_apiKey =
 				new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json", optional: false)
+				.AddYamlFile("appsettings.yml", optional: false)
 				.Build()
 				["Secrets:ApiKey"];
 		}
