@@ -42,7 +42,7 @@ Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to
 	For example, for the above env variables, this would be an appropriate database connection string.
 
 		#!yml hl_lines="2"
-		Secrets
+		Secrets:
 			ConnectionString: "User ID=statususer;Password=SomethingWeird15;Host=database;Port=5432;Database=statussite;Pooling=false;CommandTimeout=300;"
 
 ## Manual deployment
