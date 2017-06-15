@@ -1,7 +1,7 @@
 // Entry point for overview page
 
 import $ = require('jquery');
-import { CpuLoadMetric } from "./modules/concrete-metrics";
+import { CpuLoadMetric, PingMetric } from "./modules/concrete-metrics";
 import { Metric, DataPoint, MetricType } from "./modules/abstract-metric";
 import "bootstrap"
 
@@ -15,9 +15,24 @@ $(() => {
 			.data("identifier")
 			.substring("0-".length);
 
+		let type = parseInt(
+			$(element)
+				.data("identifier")
+				.substring(0, "0".length)
+		);
+
 		// Because we render only CPU metric for now
 		// Should be MetricFactory when we render multiple types of metrics
-		let metric = new CpuLoadMetric(source);
+
+		// TODO: use factory
+
+		let metric : Metric<DataPoint>;
+
+		if (type == MetricType.CpuLoad) {
+			metric = new CpuLoadMetric(source);
+		} else if (type == MetricType.Ping) {
+			metric = new PingMetric(source);
+		}
 
 		metrics.push(metric);
 	});

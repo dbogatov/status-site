@@ -69,7 +69,7 @@ namespace StatusMonitor.Daemons.Services
 				new Tuple<Metrics, string>(Metrics.CpuLoad, "source-1"),
 				new Tuple<Metrics, string>(Metrics.CpuLoad, "source-2"),
 				new Tuple<Metrics, string>(Metrics.CpuLoad, "source-3"),
-				// no Ping because it does not require demo data points
+				new Tuple<Metrics, string>(Metrics.Ping, "some.web.site")
 			};
 
 		public ServiceManagerService(
@@ -305,6 +305,7 @@ namespace StatusMonitor.Daemons.Services
 						var pingDataPoints = await Task.WhenAll(tasks.ToArray());
 
 						await context.PingDataPoints.AddRangeAsync(pingDataPoints);
+						await context.SaveChangesAsync();
 
 						// Wait
 						Thread.Sleep(_intervals[ServiceManagerServices.Ping]);

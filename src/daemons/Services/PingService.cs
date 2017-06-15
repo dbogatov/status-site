@@ -88,7 +88,7 @@ namespace StatusMonitor.Daemons.Services
 
 				_logger.LogDebug(LoggingEvents.Ping.AsInt(), $"Ping completed for {setting.ServerUrl}");
 
-				var metric = await _metrics.GetOrCreateMetricAsync(Metrics.Ping, setting.ServerUrl);
+				var metric = await _metrics.GetOrCreateMetricAsync(Metrics.Ping, new Uri(setting.ServerUrl).Host);
 
 				return new PingDataPoint
 				{

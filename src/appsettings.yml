@@ -23,9 +23,6 @@ Secrets:
 Data:
   PingSettings:
     - ServerUrl: "https://google.com"
-      MaxResponseTime: 2000
-      MaxFailures: 3
-      GetMethodRequired: false
   AutoLabels:
     Normal: "Normal operation"
     Warning: "Minor degradation"

@@ -42,7 +42,12 @@ namespace StatusMonitor.Web.Controllers.View
 
 		public async Task<IActionResult> Index()
 		{
-			var model = await _metricService.GetMetricsAsync(Metrics.CpuLoad);
+			var model = (await _metricService.GetMetricsAsync())
+				.Where(mt =>
+					mt.Type == Metrics.CpuLoad.AsInt() ||
+					mt.Type == Metrics.Ping.AsInt()
+				)
+				.ToList();
 
 			if (!_auth.IsAuthenticated())
 			{

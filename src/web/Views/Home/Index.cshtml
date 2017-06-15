@@ -1,6 +1,8 @@
 ﻿@{ 
 	ViewData["Title"] = "Overview"; 
 }
+@using StatusMonitor.Shared.Models.Entities
+@using StatusMonitor.Shared.Extensions
 @model System.Collections.Generic.List<StatusMonitor.Shared.Models.Entities.Metric>
 
 <div class="container">
@@ -10,7 +12,23 @@
 
 	<div class="row">
 		
-		@foreach (var metric in Model)
+		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.CpuLoad.AsInt()))
+		{
+			<div class="col-md-3">
+				<metric-card metric="@metric">
+					<metric-values metric="@metric"></metric-values>
+				</metric-card>
+			</div>
+		}
+	</div>
+
+	<div class="block-header">
+		<h2>Ping</h2>
+	</div>
+
+	<div class="row">
+		
+		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.Ping.AsInt()))
 		{
 			<div class="col-md-3">
 				<metric-card metric="@metric">
