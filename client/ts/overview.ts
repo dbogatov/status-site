@@ -6,10 +6,17 @@ import { CpuLoadMetric } from "./modules/metrics/cpu-load";
 import { Metric, DataPoint, MetricType } from "./modules/metrics/abstract";
 import { MetricFactory } from "./modules/metrics/factory"
 import "bootstrap"
+import { SharedDataProvider, IDataProvider } from "./modules/metrics/data-provider";
+import { Utility } from "./modules/utility";
 
 let metrics = new Array<Metric<DataPoint>>();
+let dataProvider : IDataProvider = new SharedDataProvider();
 
-$(() => {
+$(async () => {
+
+	while (!dataProvider.isLoaded()) {
+		await Utility.sleep(50);
+	}
 
 	$(".metric").each((index, element) => {
 
@@ -24,6 +31,7 @@ $(() => {
 		);
 
 		let metric = new MetricFactory(source).getMetric(type);
+		metric.setDataProvider(dataProvider);
 
 		metrics.push(metric);
 	});

@@ -1,6 +1,7 @@
 import { Constants } from "./../constants";
 import { Utility, UIHelper } from "./../utility";
 import { AutoLabel, ManualLabel } from "./metric-label";
+import { IDataProvider } from "./data-provider";
 
 
 /**
@@ -79,7 +80,7 @@ export class LabelValue {
 	 * 
 	 * @memberOf LabelValue
 	 */
-	constructor(json : jsonLabelValue) {
+	constructor(json: jsonLabelValue) {
 		this.title = json.Title;
 		this.severity = json.Severity;
 	}
@@ -118,7 +119,7 @@ export class MetricValues {
 	 * @type {number}
 	 * @memberOf MetricValues
 	 */
-	
+
 	/**
 	 * 
 	 * 
@@ -312,6 +313,11 @@ export abstract class Metric<T extends DataPoint> {
 			.data("max-value");
 	}
 
+	protected dataProvider: IDataProvider;
+	public setDataProvider(provider: IDataProvider) {
+		this.dataProvider = provider;
+	}
+
 	/**
 	 * Identifier of the load and render task repetition
 	 * 
@@ -368,7 +374,7 @@ export abstract class Metric<T extends DataPoint> {
 	 * 
 	 * @memberof Metric
 	 */
-	public abstract generatePlotData() : any;
+	public abstract generatePlotData(): any;
 
 	/**
 	 * Renders labels in the UI (does not load data)
@@ -417,36 +423,48 @@ export abstract class Metric<T extends DataPoint> {
 	 */
 	public async loadData(interval?: number): Promise<void> {
 
-		this._data =
-			(<Array<any>>(await Utility.get(
-				Utility.generateQuery(
-					Constants.GET_DATA_ENDPOINT,
-					["Type", MetricType[this.metricType]],
-					["Source", this.source],
-					["TimePeriod", `${interval ? interval : 30 * Constants.UPDATE_INTERVAL}`]
-				)
-			))).map((element) => {
-				return this.getDataPointFromJson(element);
-			});
+		if (!this.dataProvider) {
+			this._data =
+				(<Array<any>>(await Utility.get(
+					Utility.generateQuery(
+						Constants.GET_DATA_ENDPOINT,
+						["Type", MetricType[this.metricType]],
+						["Source", this.source],
+						["TimePeriod", `${interval ? interval : 30 * Constants.UPDATE_INTERVAL}`]
+					)
+				))[0].Data).map((element) => {
+					return this.getDataPointFromJson(element);
+				});
 
-		this._values = new MetricValues(
-			(await Utility.get(
-				Utility.generateQuery(
-					Constants.GET_METRICS_ENDPOINT,
-					["Type", MetricType[this.metricType]],
-					["Source", this.source]
-				)
-			))[0] // array of one element is expected
-		);
+			this._values = new MetricValues(
+				(await Utility.get(
+					Utility.generateQuery(
+						Constants.GET_METRICS_ENDPOINT,
+						["Type", MetricType[this.metricType]],
+						["Source", this.source]
+					)
+				))[0] // array of one element is expected
+			);
+		} else {
+			this._data = this
+				.dataProvider
+				.getData(this._metricType, this._source)
+				.map((element) => {
+					return this.getDataPointFromJson(element);
+				});
+			
+			this._values = this.dataProvider.getValues(this._metricType, this._source);
+		}
+
 
 		this._autoLabel = new AutoLabel(
-			this.values.autoLabel.title, 
-			this.values.autoLabel.severity, 
+			this.values.autoLabel.title,
+			this.values.autoLabel.severity,
 			this.getMetricIdentifier()
 		);
 		this._manualLabel = new ManualLabel(
-			this.values.manualLabel.title, 
-			this.values.manualLabel.severity, 
+			this.values.manualLabel.title,
+			this.values.manualLabel.severity,
 			this.getMetricIdentifier()
 		);
 	}
@@ -463,12 +481,11 @@ export abstract class Metric<T extends DataPoint> {
 		let task = async () => {
 			await this.loadData();
 			this.render();
-			// UIHelper.notify(`Metric ${MetricType[this.metricType]} of ${this.source} has been updated!`, "inverse");
 		};
 
 		if (!this.isRunning) {
 			this.repetitionId = window.setInterval(
-				task, Constants.UPDATE_INTERVAL * 1000
+				task, (this.dataProvider ? Constants.UPDATE_INTERVAL_PROVIDER : Constants.UPDATE_INTERVAL) * 1000
 			);
 
 			window.setTimeout(task, 0);
@@ -515,11 +532,11 @@ export abstract class Metric<T extends DataPoint> {
 	 * 
 	 * @memberOf Metric
 	 */
-	public async destroy() : Promise<void> {
+	public async destroy(): Promise<void> {
 		this.turnOff();
 		$(`[data-identifier="${this.getMetricIdentifier()}"]`)
 			.parent()
-			.fadeOut(200, function() {
+			.fadeOut(200, function () {
 				$(this).remove();
 			});
 

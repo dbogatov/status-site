@@ -38,5 +38,7 @@ export class Constants {
 	 */
 	static UPDATE_INTERVAL : number = 20;
 
+	static UPDATE_INTERVAL_PROVIDER : number = 2;
+
 	static REMOVE_METRIC_ENDPOINT : string = `${Constants.API_URL}/removeMetric`;
 }
