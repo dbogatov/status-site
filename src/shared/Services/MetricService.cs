@@ -97,7 +97,7 @@ namespace StatusMonitor.Shared.Services
 				.Where(dp => dp.Metric == metric)
 				.OrderByDescending(dp => dp.Timestamp)
 				.FirstAsync())
-				.NormalizedValue();
+				.NormalizedValue() ?? 0;
 		}
 
 		public async Task<Metric> GetOrCreateMetricAsync(Metrics type, string source)

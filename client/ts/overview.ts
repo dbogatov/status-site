@@ -1,8 +1,9 @@
 // Entry point for overview page
 
 import $ = require('jquery');
-import { CpuLoadMetric, PingMetric } from "./modules/concrete-metrics";
-import { Metric, DataPoint, MetricType } from "./modules/abstract-metric";
+import { PingMetric } from "./modules/metrics/ping";
+import { CpuLoadMetric } from "./modules/metrics/cpu-load";
+import { Metric, DataPoint, MetricType } from "./modules/metrics/abstract";
 import "bootstrap"
 
 let metrics = new Array<Metric<DataPoint>>();

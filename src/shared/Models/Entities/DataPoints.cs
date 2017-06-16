@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using StatusMonitor.Shared.Extensions;
 
 namespace StatusMonitor.Shared.Models.Entities
 {
@@ -25,7 +26,7 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// <returns>
 		/// Integer value that represents the CurrentValue of the metric associated with the data point.
 		/// </returns>
-		public abstract int NormalizedValue();
+		public abstract int? NormalizedValue();
 	}
 
 	/// <summary>
@@ -35,7 +36,7 @@ namespace StatusMonitor.Shared.Models.Entities
 	{
 		public int Value { get; set; }
 
-		public override int NormalizedValue()
+		public override int? NormalizedValue()
 		{
 			return Value;
 		}
@@ -61,7 +62,7 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// </summary>
 		public int Count { get; set; }
 
-		public override int NormalizedValue()
+		public override int? NormalizedValue()
 		{
 			return Count;
 		}
@@ -89,7 +90,7 @@ namespace StatusMonitor.Shared.Models.Entities
 		public TimeSpan CompileTime { get; set; }
 		public CompilationStage Stage { get; set; }
 
-		public override int NormalizedValue()
+		public override int? NormalizedValue()
 		{
 			return Convert.ToInt32(CompileTime.TotalMilliseconds);
 		}
@@ -118,9 +119,13 @@ namespace StatusMonitor.Shared.Models.Entities
 		public TimeSpan ResponseTime { get; set; }
 		public int HttpStatusCode { get; set; }
 
-		public override int NormalizedValue()
+		public override int? NormalizedValue()
 		{
-			return Convert.ToInt32(ResponseTime.TotalMilliseconds);
+			return 
+				HttpStatusCode == System.Net.HttpStatusCode.OK.AsInt() ? 
+				Convert.ToInt32(ResponseTime.TotalMilliseconds) : 
+				(int?)null
+			;
 		}
 
 		public override object PublicFields()
@@ -142,7 +147,7 @@ namespace StatusMonitor.Shared.Models.Entities
 		public int Count { get; set; }
 		public UserAction Action { get; set; }
 
-		public override int NormalizedValue()
+		public override int? NormalizedValue()
 		{
 			return Count;
 		}

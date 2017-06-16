@@ -1,5 +1,5 @@
-import { Constants } from "./constants";
-import { Utility, UIHelper } from "./utility";
+import { Constants } from "./../constants";
+import { Utility, UIHelper } from "./../utility";
 import { AutoLabel, ManualLabel } from "./metric-label";
 
 
@@ -286,6 +286,16 @@ export abstract class Metric<T extends DataPoint> {
 		return this._values;
 	}
 
+	protected get min(): number {
+		return $(`[data-identifier="${this.getMetricIdentifier()}"]`)
+			.data("min-value");
+	}
+
+	protected get max(): number {
+		return $(`[data-identifier="${this.getMetricIdentifier()}"]`)
+			.data("max-value");
+	}
+
 	/**
 	 * Identifier of the load and render task repetition
 	 * 
@@ -333,6 +343,8 @@ export abstract class Metric<T extends DataPoint> {
 	 * @memberOf Metric
 	 */
 	protected abstract getDataPointFromJson(json: any): T;
+
+	public abstract generatePlotData() : any;
 
 	/**
 	 * Renders labels in the UI (does not load data)

@@ -75,7 +75,7 @@ namespace StatusMonitor.Daemons.Services
 
 			// Update metric
 			ComputeNumericValues(values, metric);
-			metric.AutoLabel = await _context.AutoLabels.FindAsync(GetLabel(metric).AsInt());
+			metric.AutoLabel = await _context.AutoLabels.FindAsync((await GetLabelAsync(metric)).AsInt());
 
 			_logger.LogDebug(
 				LoggingEvents.Cache.AsInt(),
@@ -98,9 +98,10 @@ namespace StatusMonitor.Daemons.Services
 		{
 			return
 				(await FilterData(metric, dataPoints))
+				.Where(dp => dp.NormalizedValue() != null)
 				.Select(dp => new TimeValuePair
 				{
-					Value = dp.NormalizedValue(),
+					Value = dp.NormalizedValue().Value,
 					Timestamp = dp.Timestamp
 				})
 				.ToList();
@@ -162,7 +163,7 @@ namespace StatusMonitor.Daemons.Services
 		/// Set metric labels' value
 		/// </summary>
 		/// <returns>This object with metric labels set</returns>
-		private AutoLabels GetLabel(Metric metric)
+		private async Task<AutoLabels> GetLabelAsync(Metric metric)
 		{
 			// TODO: read from config
 
@@ -171,15 +172,79 @@ namespace StatusMonitor.Daemons.Services
 			switch ((Metrics)metric.Type)
 			{
 				case Metrics.CpuLoad:
-					if (metric.CurrentValue >= 90)
+
+					if (
+						await _context
+							.NumericDataPoints
+							.Where(dp => dp.Metric == metric)
+							.CountAsync() < 10
+						)
+					{
+						break;
+					}
+
+					var cpuValues =
+						(await _context
+							.NumericDataPoints
+							.Where(dp => dp.Metric == metric)
+							.OrderByDescending(dp => dp.Timestamp)
+							.Select(dp => dp.Value)
+							.ToListAsync())
+							.Take(5);
+
+					if (cpuValues.Average() >= 90)
 					{
 						label = AutoLabels.Critical;
 					}
-					else if (metric.CurrentValue >= 50)
+					else if (cpuValues.Average() >= 50)
 					{
 						label = AutoLabels.Warning;
 					}
 					break;
+				case Metrics.Ping:
+
+					if (
+						await _context
+							.PingDataPoints
+							.Where(dp => dp.Metric == metric)
+							.CountAsync() < 10
+						)
+					{
+						break;
+					}
+
+					var pingValues =
+						(await _context
+							.PingDataPoints
+							.Where(dp => dp.Metric == metric)
+							.OrderByDescending(dp => dp.Timestamp)
+							.Select(dp => new
+							{
+								dp.HttpStatusCode,
+								dp.ResponseTime
+							})
+							.ToListAsync())
+							.Take(10);
+
+					var pingSetting =
+						await _context
+							.PingSettings
+							.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == metric.Source);
+
+
+					if (pingValues.Count(dp => dp.HttpStatusCode != System.Net.HttpStatusCode.OK.AsInt()) >= 3)
+					{
+						label = AutoLabels.Critical;
+					}
+					else if (
+						pingValues.Average(dp => dp.ResponseTime.TotalMilliseconds) >=
+						0.8 * pingSetting.MaxResponseTime.TotalMilliseconds
+					)
+					{
+						label = AutoLabels.Warning;
+					}
+					break;
+
 			}
 
 			return label;

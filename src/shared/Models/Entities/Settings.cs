@@ -13,7 +13,7 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// <summary>
 		/// Time period after which the server needs to be considered unresponsive
 		/// </summary>
-		public TimeSpan MaxResponseTime { get; set; } = new TimeSpan(0, 0, 0, 0, 2000);
+		public TimeSpan MaxResponseTime { get; set; } = new TimeSpan(0, 0, 0, 0, 1000);
 		/// <summary>
 		/// Number of times to try to ping the server before calling it dead.
 		/// </summary>

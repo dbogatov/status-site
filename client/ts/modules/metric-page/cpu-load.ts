@@ -1,14 +1,15 @@
-import { CpuLoadMetric } from "./concrete-metrics";
-import { Metric, DataPoint, MetricType } from "./abstract-metric";
-import { Utility } from "./utility";
-import "./extensions";
+import { CpuLoadMetric, CpuLoadDataPoint } from "../metrics/cpu-load";
+import { MetricPage } from "./abstract";
+import { Metric, DataPoint, MetricType } from "../metrics/abstract";
+import { Utility } from "../utility";
+import "../extensions";
 
 import "flot";
 import "datatables.net"
-import "../vendor/jquery.flot.time.js";
-import "../vendor/jquery.flot.selection.js";
-import "../vendor/jquery.flot.threshold.js";
-import "../vendor/jquery.flot.tooltip.js";
+import "../../vendor/jquery.flot.time.js";
+import "../../vendor/jquery.flot.selection.js";
+import "../../vendor/jquery.flot.threshold.js";
+import "../../vendor/jquery.flot.tooltip.js";
 
 
 /**
@@ -17,87 +18,29 @@ import "../vendor/jquery.flot.tooltip.js";
  * @export
  * @class MetricPage
  */
-export class MetricPage {
+export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 
-	/**
-	 * Source of the metric
-	 * 
-	 * @private
-	 * @type {string}
-	 * @memberOf MetricPage
-	 */
-	private source: string;
-	/**
-	 * Type of the metric
-	 * 
-	 * @private
-	 * @type {MetricType}
-	 * @memberOf MetricPage
-	 */
-	private type: MetricType;
-
-	/**
-	 * Data points of the metric
-	 * 
-	 * @private
-	 * @type {Metric<DataPoint>}
-	 * @memberOf MetricPage
-	 */
-	private metric: Metric<DataPoint>;
-
-	/**
-	 * Flag representing if data tables have been already rendered.
-	 * We cannot easily re-render data tables.
-	 * 
-	 * @private
-	 * @type {boolean}
-	 * @memberOf MetricPage
-	 */
-	private dataTablesRendered: boolean = false;
-
-	/**
-	 * Creates an instance of MetricPage.
-	 * @param {string} source - source of the metric
-	 * @param {MetricType} type - type of the metric
-	 * 
-	 * @memberOf MetricPage
-	 */
-	constructor(source: string, type: MetricType) {
-		this.source = source;
-		this.type = type;
+	constructor(source: string, min: number, max: number) {
+		super(min, max);
 
 		this.metric = new CpuLoadMetric(source);
-
-		window.setTimeout(async () => {
-
-			await this.metric.loadData(60 * 60 * 24 * 7); // week
-
-			this.render();
-
-		}, 0);
 	}
 
-	/**
-	 * Renders plot in the UI.
-	 * Does not load the data.
-	 * 
-	 * @private
-	 * 
-	 * @memberOf MetricPage
-	 */
-	private renderPlot(): void {
+	protected renderPlot(): void {
 
 		var data = [];
-		(<CpuLoadMetric>this.metric)
+		this
+			.metric
 			.data
 			.sortByProperty(dp => dp.timestamp.getTime())
 			.reverse()
 			.forEach((value, index, array) => data.push([value.timestamp.getTime(), value.value]));
 
+
 		let detailedPlotOptions: any = {
 			yaxis: {
-				max: 100,
-				min: 0
+				max: this.max,
+				min: this.min
 			},
 			xaxis: {
 				mode: "time",
@@ -194,21 +137,24 @@ export class MetricPage {
 		}));
 	};
 
-	/**
-	 * Renders data tables in the UI.
-	 * Does not load the data.
-	 * 
-	 * @private
-	 * 
-	 * @memberOf MetricPage
-	 */
-	private renderTable(): void {
+	protected renderTable(): void {
 
 		if (!this.dataTablesRendered) {
 
+			let header = `
+				<tr>
+					<th>Timestamp</th>
+					<th>Value</th>
+				</tr>
+			`;
+
+			$("#metric-data thead").html(header);
+			$("#metric-data tfoot").html(header);
+
 			$("#metric-data tbody").html(
-				(<CpuLoadMetric>this.metric)
+				this.metric
 					.data
+					.map(dp => <CpuLoadDataPoint>dp)
 					.map(
 					dp => `
 						<tr>
@@ -230,31 +176,4 @@ export class MetricPage {
 
 		this.dataTablesRendered = true;
 	};
-
-	/**
-	 * Renders numeric values in the UI.
-	 * Does not load the data.
-	 * 
-	 * @private
-	 * 
-	 * @memberOf MetricPage
-	 */
-	private renderValues(): void {
-		this.metric.autoLabel.render();
-		this.metric.manualLabel.render();
-	}
-
-	/**
-	 * Renders all components in the UI.
-	 * Does not load the data.
-	 * 
-	 * @private
-	 * 
-	 * @memberOf MetricPage
-	 */
-	public render(): void {
-		this.renderPlot();
-		this.renderValues();
-		this.renderTable();
-	}
 }

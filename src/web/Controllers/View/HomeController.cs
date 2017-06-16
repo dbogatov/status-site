@@ -91,6 +91,25 @@ namespace StatusMonitor.Web.Controllers.View
 
 			ViewBag.ManualLabels = await _context.ManualLabels.ToListAsync();
 
+			ViewBag.Max = 100;
+			ViewBag.Min = 0;
+
+			if (metricType == Metrics.Ping)
+			{
+				var pingSetting = await _context
+					.PingSettings
+					.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == source);
+				
+				if (pingSetting != null)
+				{
+					ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;
+				}
+				else
+				{
+					ViewBag.Max = 2000;
+				}		
+			}
+
 			return View(model.First());
 		}
 

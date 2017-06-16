@@ -41,16 +41,10 @@
                     <div class="table-responsive">
                         <table id="metric-data" class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>Timestamp</th>
-                                    <th>Value</th>
-                                </tr>
+								<!-- -->
                             </thead>
                             <tfoot>
-                                <tr>
-                                    <th>Timestamp</th>
-                                    <th>Value</th>
-                                </tr>
+                                <!-- -->
                             </tfoot>
                             <tbody>
 								<!-- -->
@@ -185,6 +179,8 @@
     <script>
         var source = "@Model.Source";
         var type = @Model.Type;
+		var min = @ViewData["Min"];
+		var max = @ViewData["Max"];
     </script>
 
     <environment names="Development">

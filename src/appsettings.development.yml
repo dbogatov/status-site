@@ -4,9 +4,24 @@
 Data:
   PingSettings:
     - ServerUrl: "https://google.com"
-      MaxResponseTime: 2000
       MaxFailures: 3
       GetMethodRequired: false
+    - ServerUrl: "https://dbogatov.org"
+    - ServerUrl: "https://blog.dbogatov.org"
+    - ServerUrl: "https://personal.dbogatov.org"
+    - ServerUrl: "https://shevastream.com"
+    - ServerUrl: "https://darinagulley.com"
+    - ServerUrl: "https://socialimps.dbogatov.org"
+    - ServerUrl: "https://git.dbogatov.org"
+      MaxResponseTime: 2000
+    - ServerUrl: "https://visajapan.com.ua"
+    - ServerUrl: "https://visasupport.com.ua"
+    - ServerUrl: "https://visasupport.kiev.ua"
+    - ServerUrl: "https://lp.visasupport.kiev.ua"
+    - ServerUrl: "https://eu.visasupport.kiev.ua"
+    - ServerUrl: "https://travelus.com.ua"
+    - ServerUrl: "https://zima.visasupport.com.ua"
+    - ServerUrl: "https://moon-travel.com.ua"
 ServiceManager:
   PingService:
     Enabled: true

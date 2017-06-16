@@ -69,7 +69,7 @@ namespace StatusMonitor.Daemons.Services
 				new Tuple<Metrics, string>(Metrics.CpuLoad, "source-1"),
 				new Tuple<Metrics, string>(Metrics.CpuLoad, "source-2"),
 				new Tuple<Metrics, string>(Metrics.CpuLoad, "source-3"),
-				new Tuple<Metrics, string>(Metrics.Ping, "some.web.site")
+				// new Tuple<Metrics, string>(Metrics.Ping, "some.web.site")
 			};
 
 		public ServiceManagerService(
