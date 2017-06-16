@@ -27,8 +27,8 @@
 			{
 				maxValue = Context
 					.PingSettings
-					.FirstOrDefault(setting => new Uri(setting.ServerUrl).Host == metric.Source)
-					?.MaxResponseTime
+					.First(setting => new Uri(setting.ServerUrl).Host == metric.Source)
+					.MaxResponseTime
 					.TotalMilliseconds;
 			}
 

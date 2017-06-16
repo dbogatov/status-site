@@ -42,7 +42,7 @@ export class CpuLoadDataPoint extends DataPoint {
 }
 
 /**
- * Class responsible for manipulating and rendering CPU Load metric
+ * 
  * 
  * @export
  * @class CpuLoadMetric
@@ -50,13 +50,6 @@ export class CpuLoadDataPoint extends DataPoint {
  */
 export class CpuLoadMetric extends Metric<CpuLoadDataPoint> {
 
-
-	/**
-	 * Creates an instance of CpuLoadMetric.
-	 * @param {string} source - source of the metric
-	 * 
-	 * @memberOf CpuLoadMetric
-	 */
 	constructor(source: string) {
 		super(source);
 
@@ -121,15 +114,6 @@ export class CpuLoadMetric extends Metric<CpuLoadDataPoint> {
 		);
 	}
 
-	/**
-	 * 
-	 * 
-	 * @protected
-	 * @param {*} json 
-	 * @returns {CpuLoadDataPoint} 
-	 * 
-	 * @memberOf CpuLoadMetric
-	 */
 	protected getDataPointFromJson(json: any): CpuLoadDataPoint {
 		return new CpuLoadDataPoint(json);
 	}

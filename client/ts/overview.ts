@@ -4,6 +4,7 @@ import $ = require('jquery');
 import { PingMetric } from "./modules/metrics/ping";
 import { CpuLoadMetric } from "./modules/metrics/cpu-load";
 import { Metric, DataPoint, MetricType } from "./modules/metrics/abstract";
+import { MetricFactory } from "./modules/metrics/factory"
 import "bootstrap"
 
 let metrics = new Array<Metric<DataPoint>>();
@@ -22,18 +23,7 @@ $(() => {
 				.substring(0, "0".length)
 		);
 
-		// Because we render only CPU metric for now
-		// Should be MetricFactory when we render multiple types of metrics
-
-		// TODO: use factory
-
-		let metric : Metric<DataPoint>;
-
-		if (type == MetricType.CpuLoad) {
-			metric = new CpuLoadMetric(source);
-		} else if (type == MetricType.Ping) {
-			metric = new PingMetric(source);
-		}
+		let metric = new MetricFactory(source).getMetric(type);
 
 		metrics.push(metric);
 	});

@@ -3,6 +3,7 @@
 import { CpuLoadMetricPage } from "./modules/metric-page/cpu-load";
 import { PingMetricPage } from "./modules/metric-page/ping";
 import { MetricPage } from "./modules/metric-page/abstract";
+import { MetricPageFactory } from "./modules/metric-page/factory";
 import { MetricType, Metric, DataPoint } from "./modules/metrics/abstract";
 import { Utility } from "./modules/utility";
 
@@ -25,15 +26,7 @@ $(async () => {
 
 	$('.selectpicker').selectpicker();
 
-
-	// TODO: Factory
-	let metricPage : MetricPage<Metric<DataPoint>>;
-
-	if (type == MetricType.CpuLoad) {
-		metricPage = new CpuLoadMetricPage(source, min, max);
-	} else if (type == MetricType.Ping) {
-		metricPage = new PingMetricPage(source, min, max);
-	}
+	let metricPage = new MetricPageFactory(source, min, max).getMetricPage(type);
 
 	$(window).resize(() => {
 		metricPage.render();

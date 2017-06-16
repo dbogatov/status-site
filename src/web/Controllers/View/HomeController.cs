@@ -100,14 +100,7 @@ namespace StatusMonitor.Web.Controllers.View
 					.PingSettings
 					.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == source);
 				
-				if (pingSetting != null)
-				{
-					ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;
-				}
-				else
-				{
-					ViewBag.Max = 2000;
-				}		
+				ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;		
 			}
 
 			return View(model.First());

@@ -10,6 +10,13 @@ type JsonPingDataPoint = {
 	HttpStatusCode: number;
 }
 
+/**
+ * 
+ * 
+ * @export
+ * @class PingDataPoint
+ * @extends {DataPoint}
+ */
 export class PingDataPoint extends DataPoint {
 
 	public responseTime: number;
@@ -24,6 +31,13 @@ export class PingDataPoint extends DataPoint {
 	}
 }
 
+/**
+ * 
+ * 
+ * @export
+ * @class PingMetric
+ * @extends {Metric<PingDataPoint>}
+ */
 export class PingMetric extends Metric<PingDataPoint> {
 
 	constructor(source: string) {

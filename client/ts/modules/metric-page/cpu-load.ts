@@ -13,10 +13,11 @@ import "../../vendor/jquery.flot.tooltip.js";
 
 
 /**
- * Represents set of procedures for rendering metric page.
+ * 
  * 
  * @export
- * @class MetricPage
+ * @class CpuLoadMetricPage
+ * @extends {MetricPage<Metric<CpuLoadDataPoint>>}
  */
 export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 

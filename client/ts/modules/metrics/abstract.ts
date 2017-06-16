@@ -286,11 +286,27 @@ export abstract class Metric<T extends DataPoint> {
 		return this._values;
 	}
 
+	/**
+	 * Returns the minimum acceptable value of the metric
+	 * 
+	 * @readonly
+	 * @protected
+	 * @type {number}
+	 * @memberof Metric
+	 */
 	protected get min(): number {
 		return $(`[data-identifier="${this.getMetricIdentifier()}"]`)
 			.data("min-value");
 	}
 
+	/**
+	 * Returns the maximum acceptable value of the metric
+	 * 
+	 * @readonly
+	 * @protected
+	 * @type {number}
+	 * @memberof Metric
+	 */
 	protected get max(): number {
 		return $(`[data-identifier="${this.getMetricIdentifier()}"]`)
 			.data("max-value");
@@ -344,6 +360,14 @@ export abstract class Metric<T extends DataPoint> {
 	 */
 	protected abstract getDataPointFromJson(json: any): T;
 
+	/**
+	 * Returns an array or a tuple of arrays of data points, ready to be put on the plot
+	 * 
+	 * @abstract
+	 * @returns {*} 
+	 * 
+	 * @memberof Metric
+	 */
 	public abstract generatePlotData() : any;
 
 	/**

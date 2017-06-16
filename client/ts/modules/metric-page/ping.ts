@@ -11,12 +11,12 @@ import "../../vendor/jquery.flot.selection.js";
 import "../../vendor/jquery.flot.threshold.js";
 import "../../vendor/jquery.flot.tooltip.js";
 
-
 /**
- * Represents set of procedures for rendering metric page.
+ * 
  * 
  * @export
- * @class MetricPage
+ * @class PingMetricPage
+ * @extends {MetricPage<Metric<PingDataPoint>>}
  */
 export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 
