@@ -1,4 +1,0 @@
-﻿Guard:
-  Logging:
-    Requests: 5
-    PerSeconds: 5

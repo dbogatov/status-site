@@ -15,8 +15,8 @@
 	- Rich filtering tools
 	- Guard against log DoS
 * Web service monitor
-	- Periodically access websites or ports*
-	- Record responses*
+	- Periodically access websites or ports
+	- Record responses
 * Notifications
 	- Slack, email, telegram*, mattermost* and other providers*
 	- Different severities - with different frequencies
