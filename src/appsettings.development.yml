@@ -13,7 +13,7 @@ Data:
     - ServerUrl: "https://darinagulley.com"
     - ServerUrl: "https://socialimps.dbogatov.org"
     - ServerUrl: "https://git.dbogatov.org"
-      MaxResponseTime: 2000
+      MaxResponseTime: 3000
     - ServerUrl: "https://visajapan.com.ua"
     - ServerUrl: "https://visasupport.com.ua"
     - ServerUrl: "https://visasupport.kiev.ua"
