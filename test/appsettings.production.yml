@@ -1,0 +1,19 @@
+CompanyName: "Your company"
+Secrets:
+  ApiKey: "needs-to-be-set"
+  AdminPassword: "password"
+  ReCaptcha:
+    Enabled: false
+    SiteKey: "needs-to-be-set"
+    SecretKey: "needs-to-be-set"
+  ConnectionString: "User ID=statususer;Password=SomethingWeird15;Host=database;Port=5432;Database=statussite;Pooling=false;CommandTimeout=300;"
+  Email:
+    Enabled: false
+  Slack:
+    Enabled: false
+    WebHook: "needs-to-be-set"
+ServiceManager:
+  DemoService:
+    Enabled: true
+  CleanService:
+    MaxAge: 259200

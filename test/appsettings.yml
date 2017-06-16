@@ -1,0 +1,99 @@
+﻿CompanyName: "Your company"
+Secrets:
+  ApiKey: "needs-to-be-set"
+  AdminPassword: "needs-to-be-set"
+  ReCaptcha:
+    Enabled: false
+    SiteKey: "needs-to-be-set"
+    SecretKey: "needs-to-be-set"
+  ConnectionString: "needs-to-be-set"
+  Email:
+    Enabled: false
+    ToEmail: "needs-to-be-set"
+    FromTitle: "Status Notificator"
+    FromEmail: "needs-to-be-set"
+    Password: "needs-to-be-set"
+    Host: "sneeds-to-be-set"
+    SMTP:
+      Port: -1
+      Security: "needs-to-be-set"
+  Slack:
+    Enabled: false
+    WebHook: "needs-to-be-set"
+Data:
+  PingSettings:
+    - ServerUrl: "https://google.com"
+  AutoLabels:
+    Normal: "Normal operation"
+    Warning: "Minor degradation"
+    Critical: "Critical Problem"
+  ManualLabels:
+    None: ""
+    Investigating: "Investigating the issue"
+  CompilationStages:
+    M4: "M4 Stage"
+    SandPiper: "SandPiper"
+    Simulation: "Simulation"
+  UserActions:
+    Login: "Login"
+    Logout: "Logout"
+    Register: "Register"
+    ProjectCreated: "Created a project"
+    ProjectEdited: "Edited a project"
+    Visit: "Visit"
+  LogEntrySeverities: 
+    Debug: "Debug"
+    Detail: "Detail"
+    User: "User"
+    Info: "Info"
+    Warn: "Warning"
+    Error: "Error"
+    Fatal: "Fatal"
+  Metrics: 
+    CpuLoad: "CPU Load"
+    UserAction: "User Actions"
+    Compilation: "Compilations"
+    Log: "Log Messages"
+    Ping: "Response time"
+Logging:
+  MinLogLevel: "Information"
+  LogSeverityReported: "Error"
+  Exclude:
+  - "Microsoft."
+Guard:
+  Logging:
+    Requests: 10
+    PerSeconds: 10
+ServiceManager:
+  CacheService:
+    Enabled: true
+    Interval: 30
+  CleanService:
+    Enabled: true
+    Interval: 900
+    MaxAge: 18000
+  PingService:
+    Enabled: true
+    Interval: 60
+  DemoService:
+    Enabled: true
+    Interval: 30
+    Gaps:
+      Enabled: true
+      Frequency: 10
+  DiscrepancyService:
+    Enabled: true
+    Interval: 60
+    DataTimeframe: 1800
+    Gaps:
+      MaxDifference: 60
+    Load:
+      Threshold: 90
+      MaxFailures: 5
+  NotificationService:
+    Enabled: true
+    Interval: 30
+    Frequencies:
+      Low: 86400
+      Medium: 360
+      High: 60

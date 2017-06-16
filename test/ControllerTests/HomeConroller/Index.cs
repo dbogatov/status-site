@@ -28,8 +28,8 @@ namespace StatusMonitor.Tests.ControllerTests
 		{
 			// Arrange
 			_mockMetricService
-				.Setup(mock => mock.GetMetricsAsync(It.IsAny<Metrics>(), It.IsAny<string>()))
-				.ReturnsAsync(new List<Metric> { new Metric { Public = true } });
+				.Setup(mock => mock.GetMetricsAsync(It.IsAny<Metrics?>(), It.IsAny<string>()))
+				.ReturnsAsync(new List<Metric> { new Metric { Type = Metrics.CpuLoad.AsInt(), Public = true } });
 
 			// Act
 			var result = await _controller.Index();
@@ -70,10 +70,10 @@ namespace StatusMonitor.Tests.ControllerTests
 		{
 			// Arrange
 			_mockMetricService
-				.Setup(mock => mock.GetMetricsAsync(It.IsAny<Metrics>(), It.IsAny<string>()))
+				.Setup(mock => mock.GetMetricsAsync(It.IsAny<Metrics?>(), It.IsAny<string>()))
 				.ReturnsAsync(new List<Metric> {
-					new Metric { Public = true },
-					new Metric { Public = false }
+					new Metric { Type = Metrics.CpuLoad.AsInt(), Public = true },
+					new Metric { Type = Metrics.CpuLoad.AsInt(), Public = false }
 				});
 
 			_mockAuth

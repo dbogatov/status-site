@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -177,7 +178,7 @@ namespace StatusMonitor.Daemons.Services
 						await _context
 							.NumericDataPoints
 							.Where(dp => dp.Metric == metric)
-							.CountAsync() < 10
+							.CountAsync() < 5
 						)
 					{
 						break;
@@ -223,8 +224,7 @@ namespace StatusMonitor.Daemons.Services
 								dp.HttpStatusCode,
 								dp.ResponseTime
 							})
-							.ToListAsync())
-							.Take(10);
+							.ToListAsync());
 
 					var pingSetting =
 						await _context
@@ -232,17 +232,22 @@ namespace StatusMonitor.Daemons.Services
 							.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == metric.Source);
 
 
-					if (pingValues.Count(dp => dp.HttpStatusCode != System.Net.HttpStatusCode.OK.AsInt()) >= 3)
+					if (pingValues.Take(10).Count(dp => dp.HttpStatusCode != System.Net.HttpStatusCode.OK.AsInt()) >= 3)
 					{
 						label = AutoLabels.Critical;
 					}
 					else if (
-						pingValues.Average(dp => dp.ResponseTime.TotalMilliseconds) >=
-						0.8 * pingSetting.MaxResponseTime.TotalMilliseconds
-					)
+					  pingValues
+					  .Where(dp => dp.HttpStatusCode != System.Net.HttpStatusCode.OK.AsInt())
+					  .Take(10)
+					  .Average(dp => dp.ResponseTime.TotalMilliseconds)
+					  >=
+					  0.8 * pingSetting.MaxResponseTime.TotalMilliseconds
+				  )
 					{
 						label = AutoLabels.Warning;
 					}
+
 					break;
 
 			}

@@ -64,6 +64,7 @@ namespace StatusMonitor.Tests.IntegrationTests
 								assemblies.Add(MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("System.IO")).Location));
 								assemblies.Add(MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("Microsoft.CSharp")).Location));
 								assemblies.Add(MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("Microsoft.AspNetCore.Http.Extensions")).Location));
+								assemblies.Add(MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("System.Private.Uri")).Location));
 
 								context.Compilation = context.Compilation.AddReferences(assemblies);
 							};

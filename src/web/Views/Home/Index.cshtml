@@ -19,7 +19,7 @@
 	<div class="row">
 		
 		@{
-			double? maxValue = null;
+			double maxValue = 0;
 		}
 
 		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.Ping.AsInt()))
@@ -33,7 +33,7 @@
 			}
 
 			<div class="col-md-3">
-				<metric-card metric="@metric" max-value="@(Convert.ToInt32(maxValue ?? 2000))" min-value="0">
+				<metric-card metric="@metric" max-value="@(Convert.ToInt32(maxValue))" min-value="0">
 					<metric-values metric="@metric"></metric-values>
 				</metric-card>
 			</div>

@@ -1,0 +1,16 @@
+﻿Secrets:
+  ApiKey: "SDJFSLDKJFS"
+  AdminPassword: "password"
+Data:
+  PingSettings:
+    - ServerUrl: "https://google.com"
+      MaxFailures: 3
+      GetMethodRequired: false
+ServiceManager:
+  PingService:
+    Enabled: true
+    Interval: 10
+  DemoService:
+    Interval: 10
+Logging:
+  MinLogLevel: "Debug"
