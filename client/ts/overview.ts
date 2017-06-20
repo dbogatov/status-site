@@ -42,4 +42,5 @@ $(async () => {
 		metrics.forEach((metric) => metric.render());
 	});
 
+	document.dispatchEvent(new Event("page-ready"));
 });

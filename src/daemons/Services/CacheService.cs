@@ -238,7 +238,7 @@ namespace StatusMonitor.Daemons.Services
 					}
 					else if (
 					  pingValues
-					  .Where(dp => dp.HttpStatusCode != System.Net.HttpStatusCode.OK.AsInt())
+					  .Where(dp => dp.HttpStatusCode == System.Net.HttpStatusCode.OK.AsInt())
 					  .Take(10)
 					  .Average(dp => dp.ResponseTime.TotalMilliseconds)
 					  >=

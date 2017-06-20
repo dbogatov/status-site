@@ -44,6 +44,8 @@ export class PingMetric extends Metric<PingDataPoint> {
 		super(source);
 
 		this._metricType = MetricType.Ping;
+
+		this.startLoadUI();
 	}
 
 	public generatePlotData(): any {

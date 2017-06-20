@@ -54,6 +54,8 @@ export class CpuLoadMetric extends Metric<CpuLoadDataPoint> {
 		super(source);
 
 		this._metricType = MetricType.CpuLoad;
+
+		this.startLoadUI();
 	}
 
 	public generatePlotData() : any {

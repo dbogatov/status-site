@@ -452,7 +452,7 @@ export abstract class Metric<T extends DataPoint> {
 				.map((element) => {
 					return this.getDataPointFromJson(element);
 				});
-			
+
 			this._values = this.dataProvider.getValues(this._metricType, this._source);
 		}
 
@@ -517,6 +517,8 @@ export abstract class Metric<T extends DataPoint> {
 	 * @memberOf Metric
 	 */
 	public render(): void {
+		this.stopLoadUI();
+
 		this.renderValues();
 		this.renderPlot();
 		this.renderLabels();
@@ -561,5 +563,15 @@ export abstract class Metric<T extends DataPoint> {
 	 */
 	public getMetricIdentifier(): string {
 		return `${this.metricType}-${this.source}`;
+	}
+
+	protected startLoadUI(): void {
+		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-chart`).hide();
+		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-labels`).hide();
+	}
+
+	protected stopLoadUI(): void {
+		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-chart`).show();
+		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-labels`).show();
 	}
 }

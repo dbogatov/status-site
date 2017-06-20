@@ -16,8 +16,6 @@ declare var type: number;
 declare var min: number;
 declare var max: number;
 
-// let metricPage : MetricPage<Metric>;
-
 $(async () => {
 
 	Utility.fixUtcTime();
@@ -32,4 +30,5 @@ $(async () => {
 		metricPage.render();
 	});
 
+	document.dispatchEvent(new Event("page-ready"));
 });

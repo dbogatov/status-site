@@ -18,7 +18,7 @@
 		<environment names="Staging,Production">
 			<link href="/css/app.min.css" rel="stylesheet">
 		</environment>
-		
+
 		@RenderSection("styles", required: false)
 
 	</head>
@@ -145,8 +145,6 @@
 			</div>
 		</div>
 
-		@RenderSection("scripts", required: false)
-
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				
@@ -177,11 +175,17 @@
 					}
 				};
 
+				document.addEventListener('page-ready', function (e) {
+					fadeOut(document.getElementById("page-loader"), 400);
+				 }, false);
+
 				setTimeout(function () {
 					fadeOut(document.getElementById("page-loader"), 400);
-				}, 500);
+				}, 5000);
 			});
 		</script>
+
+		@RenderSection("scripts", required: false)
 
 	</body>
 
