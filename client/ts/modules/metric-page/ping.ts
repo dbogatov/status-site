@@ -32,7 +32,7 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 		this
 			.metric
 			.data
-			.sort(dp => dp.timestamp.getMilliseconds())
+			.sortByProperty(dp => dp.timestamp.getTime())
 			.reverse()
 			.forEach(
 			(value, index, array) => {
@@ -47,8 +47,8 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 		let barWidth =
 			this.metric.data.length > 1
 				?
-				this.metric.data.sort(dp => dp.timestamp.getMilliseconds())[1].timestamp.getTime() -
-				this.metric.data.sort(dp => dp.timestamp.getMilliseconds())[0].timestamp.getTime()
+				this.metric.data.sortByProperty(dp => dp.timestamp.getTime())[1].timestamp.getTime() -
+				this.metric.data.sortByProperty(dp => dp.timestamp.getTime())[0].timestamp.getTime()
 				:
 				60 * 1000; // default
 

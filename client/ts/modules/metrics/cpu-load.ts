@@ -1,5 +1,6 @@
 import { Metric, MetricType, DataPoint } from "./abstract";
 import { Utility } from "../utility";
+import "../extensions";
 import "flot";
 import "../../vendor/jquery.flot.threshold.js";
 import "../../vendor/jquery.flot.tooltip.js";
@@ -62,7 +63,7 @@ export class CpuLoadMetric extends Metric<CpuLoadDataPoint> {
 		var data = [];
 		this
 			.data
-			.sort(dp => dp.timestamp.getMilliseconds())
+			.sortByProperty(dp => dp.timestamp.getTime())
 			.reverse()
 			.forEach((value, index, array) => data.push([index, value.value]));
 		

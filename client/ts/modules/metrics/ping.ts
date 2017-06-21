@@ -1,5 +1,6 @@
 import { Metric, MetricType, DataPoint } from "./abstract";
 import { Utility } from "../utility";
+import "../extensions";
 import "flot";
 import "../../vendor/jquery.flot.threshold.js";
 import "../../vendor/jquery.flot.tooltip.js";
@@ -52,7 +53,7 @@ export class PingMetric extends Metric<PingDataPoint> {
 		var data = [], errors = [];
 		this
 			.data
-			.sort(dp => dp.timestamp.getMilliseconds())
+			.sortByProperty(dp => dp.timestamp.getTime())
 			.reverse()
 			.forEach(
 			(value, index, array) => {
