@@ -178,6 +178,13 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 		$("#metric-overview-plot").bind("plotselected", <any>((event, ranges) => {
 			plot.setSelection(ranges);
 		}));
+
+		// if latest data point is more than 2 hours ago
+		// select recent 2 hours in plot
+		if (new Date().getTime() - data[data.length - 1][0] > 2 * 60 * 60 * 1000) {
+			let from = new Date().getTime() - 2 * 60 * 60 * 1000;
+			plot.setSelection({ xaxis: { from: from, to: data[0][0] }, yaxis: { from: 0, to: 0 } });
+		}
 	};
 
 	protected renderTable(): void {
