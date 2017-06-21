@@ -54,7 +54,6 @@ export class PingMetric extends Metric<PingDataPoint> {
 		this
 			.data
 			.sortByProperty(dp => dp.timestamp.getTime())
-			.reverse()
 			.forEach(
 			(value, index, array) => {
 				if (value.httpStatusCode == 200) {

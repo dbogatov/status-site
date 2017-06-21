@@ -31,9 +31,9 @@ namespace StatusMonitor.Web.Views.ViewComponents
 		{
 			await Task.CompletedTask;
 
-			var hash = _env.IsProduction() ? _configuration["Version:GitHash"] ?? "not-set" : "dev";
+			var hash = _env.IsProduction() ? _configuration["Version:GitHash"].Substring(0,8) ?? "not-set" : "dev";
 
-			return View((object)hash.Truncate(8));
+			return View((object)hash);
 		}
 	}
 }

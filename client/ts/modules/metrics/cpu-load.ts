@@ -64,7 +64,6 @@ export class CpuLoadMetric extends Metric<CpuLoadDataPoint> {
 		this
 			.data
 			.sortByProperty(dp => dp.timestamp.getTime())
-			.reverse()
 			.forEach((value, index, array) => data.push([index, value.value]));
 		
 		return data;

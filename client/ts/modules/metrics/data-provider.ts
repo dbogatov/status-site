@@ -71,7 +71,7 @@ export class SharedDataProvider implements IDataProvider {
 		let raw = await Utility.get(
 			Utility.generateQuery(
 				Constants.GET_DATA_ENDPOINT,
-				["TimePeriod", `${30 * Constants.UPDATE_INTERVAL}`]
+				["TimePeriod", `${3 * 30 * Constants.UPDATE_INTERVAL}`]
 			)
 		);
 
