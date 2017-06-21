@@ -68,9 +68,10 @@ namespace StatusMonitor.Daemons.Services
 					_logger.LogCritical(LoggingEvents.Metrics.AsInt(), ex, "Unknown metric in CacheMetric");
 					throw ex;
 			}
-
-			if (values.Count() == 0)
+			
+			if (values.Count() < 5)
 			{
+				metric.AutoLabel = await _context.AutoLabels.FindAsync(AutoLabels.Normal.AsInt());
 				return metric;
 			}
 
@@ -166,8 +167,6 @@ namespace StatusMonitor.Daemons.Services
 		/// <returns>This object with metric labels set</returns>
 		private async Task<AutoLabels> GetLabelAsync(Metric metric)
 		{
-			// TODO: read from config
-
 			var label = AutoLabels.Normal;
 
 			switch ((Metrics)metric.Type)
@@ -203,12 +202,16 @@ namespace StatusMonitor.Daemons.Services
 					}
 					break;
 				case Metrics.Ping:
+					var pingSetting =
+						await _context
+							.PingSettings
+							.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == metric.Source);
 
 					if (
 						await _context
 							.PingDataPoints
 							.Where(dp => dp.Metric == metric)
-							.CountAsync() < 10
+							.CountAsync() < Math.Max(10, pingSetting.MaxFailures)
 						)
 					{
 						break;
@@ -219,31 +222,18 @@ namespace StatusMonitor.Daemons.Services
 							.PingDataPoints
 							.Where(dp => dp.Metric == metric)
 							.OrderByDescending(dp => dp.Timestamp)
-							.Select(dp => new
-							{
-								dp.HttpStatusCode,
-								dp.ResponseTime
-							})
+							.Select(dp => dp.HttpStatusCode)
 							.ToListAsync());
 
-					var pingSetting =
-						await _context
-							.PingSettings
-							.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == metric.Source);
-
-
-					if (pingValues.Take(10).Count(dp => dp.HttpStatusCode != System.Net.HttpStatusCode.OK.AsInt()) >= 3)
+					if (
+						pingValues.Take(10).Count(code => code != System.Net.HttpStatusCode.OK.AsInt())
+						>=
+						pingSetting.MaxFailures
+					)
 					{
 						label = AutoLabels.Critical;
 					}
-					else if (
-					  pingValues
-					  .Where(dp => dp.HttpStatusCode == System.Net.HttpStatusCode.OK.AsInt())
-					  .Take(10)
-					  .Average(dp => dp.ResponseTime.TotalMilliseconds)
-					  >=
-					  0.8 * pingSetting.MaxResponseTime.TotalMilliseconds
-				  )
+					else if (pingValues.First() != System.Net.HttpStatusCode.OK.AsInt())
 					{
 						label = AutoLabels.Warning;
 					}

@@ -13,6 +13,22 @@
 <div class="container">
 
 	<div class="block-header">
+		<h2>CPU Load</h2>
+	</div>
+
+	<div class="row">
+		
+		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.CpuLoad.AsInt()))
+		{
+			<div class="col-md-3">
+				<metric-card metric="@metric" max-value="100" min-value="0">
+					<metric-values metric="@metric"></metric-values>
+				</metric-card>
+			</div>
+		}
+	</div>
+
+	<div class="block-header">
 		<h2>Ping</h2>
 	</div>
 
@@ -39,24 +55,6 @@
 			</div>
 		}
 	</div>
-
-	<div class="block-header">
-		<h2>CPU Load</h2>
-	</div>
-
-	<div class="row">
-		
-		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.CpuLoad.AsInt()))
-		{
-			<div class="col-md-3">
-				<metric-card metric="@metric" max-value="100" min-value="0">
-					<metric-values metric="@metric"></metric-values>
-				</metric-card>
-			</div>
-		}
-	</div>
-
-	
 
 </div>
 
