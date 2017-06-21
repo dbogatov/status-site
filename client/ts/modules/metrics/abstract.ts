@@ -430,7 +430,7 @@ export abstract class Metric<T extends DataPoint> {
 						Constants.GET_DATA_ENDPOINT,
 						["Type", MetricType[this.metricType]],
 						["Source", this.source],
-						["TimePeriod", `${interval ? interval : 30 * Constants.UPDATE_INTERVAL}`]
+						["TimePeriod", `${interval ? interval : 3 * 30 * Constants.UPDATE_INTERVAL}`]
 					)
 				))[0].Data).map((element) => {
 					return this.getDataPointFromJson(element);
