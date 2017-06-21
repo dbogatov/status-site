@@ -27,6 +27,13 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 	protected min: number;
 	protected max: number;
 
+	protected formattedData: any;
+	protected detailedPlotOptions: any;
+	protected overviewPlotOptions: any;
+
+	protected minData: number;
+	protected maxData: number;
+
 	constructor(min: number, max: number) {
 		this.max = max;
 		this.min = min;
@@ -41,6 +48,18 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 	}
 
 	/**
+	 * Configures plot options.
+	 * Sets following values:
+	 * formattedData, detailedPlotOptions, overviewPlotOptions
+	 * minData, maxData
+	 * 
+	 * @protected
+	 * @abstract
+	 * @memberof MetricPage
+	 */
+	protected abstract configurePlot(): void;
+
+	/**
 	 * Renders plot in the UI.
 	 * Does not load the data.
 	 * 
@@ -48,7 +67,49 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 	 * 
 	 * @memberOf MetricPage
 	 */
-	protected abstract renderPlot(): void;
+	private renderPlot(): void {
+		
+		var plot: any = $.plot(
+			$("#metric-detailed-plot"),
+			this.formattedData,
+			this.detailedPlotOptions
+		);
+
+		var overview: any = $.plot(
+			$("#metric-overview-plot"),
+			this.formattedData,
+			this.overviewPlotOptions
+		);
+
+		// now connect the two
+
+		$("#metric-detailed-plot").bind("plotselected", <any>((event, ranges) => {
+
+			// do the zooming
+			$.each(plot.getXAxes(), function (_, axis) {
+				var opts = axis.options;
+				opts.min = ranges.xaxis.from;
+				opts.max = ranges.xaxis.to;
+			});
+			plot.setupGrid();
+			plot.draw();
+			plot.clearSelection();
+
+			// don't fire event on the overview to prevent eternal loop
+			overview.setSelection(ranges, true);
+		}));
+
+		$("#metric-overview-plot").bind("plotselected", <any>((event, ranges) => {
+			plot.setSelection(ranges);
+		}));
+
+		// if latest data point is more than 2 hours ago
+		// select recent 2 hours in plot
+		if (new Date().getTime() - this.minData > 2 * 60 * 60 * 1000) {
+			let from = new Date().getTime() - 2 * 60 * 60 * 1000;
+			plot.setSelection({ xaxis: { from: from, to: this.maxData }, yaxis: { from: 0, to: 0 } });
+		}
+	}
 
 	/**
 	 * Renders data tables in the UI.
@@ -82,7 +143,10 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 	 * @memberOf MetricPage
 	 */
 	public render(): void {
+
+		this.configurePlot()		
 		this.renderPlot();
+		
 		this.renderValues();
 		this.renderTable();
 	}

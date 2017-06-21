@@ -27,7 +27,7 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 		this.metric = new CpuLoadMetric(source);
 	}
 
-	protected renderPlot(): void {
+	protected configurePlot(): void {
 
 		var data = [];
 		this
@@ -37,8 +37,10 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 			.reverse()
 			.forEach((value, index, array) => data.push([value.timestamp.getTime(), value.value]));
 
+		this.minData = data[data.length - 1][0];
+		this.maxData = data[0][0];
 
-		let detailedPlotOptions: any = {
+		this.detailedPlotOptions = {
 			yaxis: {
 				max: this.max,
 				min: this.min
@@ -66,7 +68,7 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 			}
 		};
 
-		var formattedData = [
+		this.formattedData = [
 			{
 				data: data,
 				lines: {
@@ -81,7 +83,7 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 			}
 		];
 
-		var overviewPlotOptions = {
+		this.overviewPlotOptions = {
 			series: {
 				lines: {
 					show: true,
@@ -102,47 +104,6 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 				mode: "x"
 			}
 		};
-
-		var plot: any = $.plot(
-			$("#metric-detailed-plot"),
-			formattedData,
-			detailedPlotOptions
-		);
-
-		var overview: any = $.plot(
-			$("#metric-overview-plot"),
-			formattedData,
-			overviewPlotOptions
-		);
-
-		// now connect the two
-
-		$("#metric-detailed-plot").bind("plotselected", <any>((event, ranges) => {
-
-			// do the zooming
-			$.each(plot.getXAxes(), function (_, axis) {
-				var opts = axis.options;
-				opts.min = ranges.xaxis.from;
-				opts.max = ranges.xaxis.to;
-			});
-			plot.setupGrid();
-			plot.draw();
-			plot.clearSelection();
-
-			// don't fire event on the overview to prevent eternal loop
-			overview.setSelection(ranges, true);
-		}));
-
-		$("#metric-overview-plot").bind("plotselected", <any>((event, ranges) => {
-			plot.setSelection(ranges);
-		}));
-
-		// if latest data point is more than 2 hours ago
-		// select recent 2 hours in plot
-		if (new Date().getTime() - data[data.length - 1][0] > 2 * 60 * 60 * 1000) {
-			let from = new Date().getTime() - 2 * 60 * 60 * 1000;
-			plot.setSelection({ xaxis: { from: from, to: data[0][0] }, yaxis: { from: 0, to: 0 } });
-		}
 	};
 
 	protected renderTable(): void {
@@ -167,7 +128,7 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 					dp => `
 						<tr>
 							<td>${dp.timestamp}</td>
-							<td>${dp.value}</td>
+							<td>${dp.value}%</td>
 						</tr>
 					`
 					)
