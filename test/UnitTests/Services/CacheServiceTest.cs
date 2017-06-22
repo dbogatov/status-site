@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using StatusMonitor.Shared.Extensions;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Net;
 
 namespace StatusMonitor.Tests.UnitTests.Services
 {
@@ -142,6 +143,390 @@ namespace StatusMonitor.Tests.UnitTests.Services
 
 			// Assert
 			Assert.Equal(expectedMetric, cachedMetric, new MetricComparer());
+		}
+
+		[Theory]
+		[InlineData(Metrics.CpuLoad)]
+		[InlineData(Metrics.Ping)]
+		public async Task LabelForTooFewPoints(Metrics type)
+		{
+			// Arrange
+			var context = _serviceProvider.GetRequiredService<IDataContext>();
+
+			var metric = (await context.Metrics.AddAsync(new Metric
+			{
+				Type = type.AsInt(),
+				Source = "smth.com"
+			})).Entity;
+
+			await context.AutoLabels.AddRangeAsync(new List<AutoLabel> {
+				new AutoLabel { Id = AutoLabels.Normal.AsInt() },
+				new AutoLabel { Id = AutoLabels.Critical.AsInt() },
+				new AutoLabel { Id = AutoLabels.Warning.AsInt() },
+			});
+
+			switch (type)
+			{
+				case Metrics.CpuLoad:
+					await context.NumericDataPoints.AddRangeAsync(
+						new NumericDataPoint { Value = 23, Metric = metric },
+						new NumericDataPoint { Value = 65, Metric = metric },
+						new NumericDataPoint { Value = 43, Metric = metric }
+					);
+					break;
+				case Metrics.Ping:
+					await context.PingSettings.AddAsync(
+						new PingSetting
+						{
+							ServerUrl = "https://smth.com",
+							MaxResponseTime = new TimeSpan(0, 0, 0, 0, 1000),
+							MaxFailures = 5
+						}
+					);
+					await context.PingDataPoints.AddRangeAsync(
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 432),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 750),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 750),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 70),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 70),
+							Metric = metric
+						}
+					);
+					break;
+			}
+
+			await context.SaveChangesAsync();
+
+			var expectedLabel = AutoLabels.Normal;
+
+			// Act
+			var cachedMetric = await new CacheService(context, new Mock<ILogger<CacheService>>().Object)
+				.CacheMetricAsync(metric);
+
+			// Assert
+			Assert.Equal(expectedLabel.AsInt(), cachedMetric.AutoLabel.Id);
+		}
+
+		[Theory]
+		[InlineData(Metrics.CpuLoad)]
+		[InlineData(Metrics.Ping)]
+		public async Task LabelNormal(Metrics type)
+		{
+			// Arrange
+			var context = _serviceProvider.GetRequiredService<IDataContext>();
+
+			var metric = (await context.Metrics.AddAsync(new Metric
+			{
+				Type = type.AsInt(),
+				Source = "smth.com"
+			})).Entity;
+
+			await context.AutoLabels.AddRangeAsync(new List<AutoLabel> {
+				new AutoLabel { Id = AutoLabels.Normal.AsInt() },
+				new AutoLabel { Id = AutoLabels.Critical.AsInt() },
+				new AutoLabel { Id = AutoLabels.Warning.AsInt() },
+			});
+
+			switch (type)
+			{
+				case Metrics.CpuLoad:
+					await context.NumericDataPoints.AddRangeAsync(
+						new NumericDataPoint { Value = 23, Metric = metric },
+						new NumericDataPoint { Value = 65, Metric = metric },
+						new NumericDataPoint { Value = 43, Metric = metric },
+						new NumericDataPoint { Value = 45, Metric = metric },
+						new NumericDataPoint { Value = 34, Metric = metric }
+					);
+					break;
+				case Metrics.Ping:
+					await context.PingSettings.AddAsync(
+						new PingSetting
+						{
+							ServerUrl = "https://smth.com",
+							MaxResponseTime = new TimeSpan(0, 0, 0, 0, 1000),
+							MaxFailures = 5
+						}
+					);
+					await context.PingDataPoints.AddRangeAsync(
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 432),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 750),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 70),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 876),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 345),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 750),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 850),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 50),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 740),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							ResponseTime = new TimeSpan(0, 0, 0, 0, 234),
+							Metric = metric
+						}
+					);
+					break;
+			}
+
+			await context.SaveChangesAsync();
+
+			var expectedLabel = AutoLabels.Normal;
+
+			// Act
+			var cachedMetric = await new CacheService(context, new Mock<ILogger<CacheService>>().Object)
+				.CacheMetricAsync(metric);
+
+			// Assert
+			Assert.Equal(expectedLabel.AsInt(), cachedMetric.AutoLabel.Id);
+		}
+
+		[Theory]
+		[InlineData(Metrics.CpuLoad)]
+		[InlineData(Metrics.Ping)]
+		public async Task LabelWarning(Metrics type)
+		{
+			// Arrange
+			var context = _serviceProvider.GetRequiredService<IDataContext>();
+
+			var metric = (await context.Metrics.AddAsync(new Metric
+			{
+				Type = type.AsInt(),
+				Source = "smth.com"
+			})).Entity;
+
+			await context.AutoLabels.AddRangeAsync(new List<AutoLabel> {
+				new AutoLabel { Id = AutoLabels.Normal.AsInt() },
+				new AutoLabel { Id = AutoLabels.Critical.AsInt() },
+				new AutoLabel { Id = AutoLabels.Warning.AsInt() },
+			});
+
+			switch (type)
+			{
+				case Metrics.CpuLoad:
+					await context.NumericDataPoints.AddRangeAsync(
+						new NumericDataPoint { Value = 56, Metric = metric },
+						new NumericDataPoint { Value = 65, Metric = metric },
+						new NumericDataPoint { Value = 43, Metric = metric },
+						new NumericDataPoint { Value = 45, Metric = metric },
+						new NumericDataPoint { Value = 90, Metric = metric }
+					);
+					break;
+				case Metrics.Ping:
+					await context.PingSettings.AddAsync(
+						new PingSetting
+						{
+							ServerUrl = "https://smth.com",
+							MaxFailures = 5
+						}
+					);
+					await context.PingDataPoints.AddRangeAsync(
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(0),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(1),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(2),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(1),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(1),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(1),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(2),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(1),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(1),
+							Metric = metric
+						},
+						new PingDataPoint
+						{
+							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Timestamp = DateTime.UtcNow.AddSeconds(2),
+							Metric = metric
+						}
+					);
+					break;
+			}
+
+			await context.SaveChangesAsync();
+
+			var expectedLabel = AutoLabels.Warning;
+
+			// Act
+			var cachedMetric = await new CacheService(context, new Mock<ILogger<CacheService>>().Object)
+				.CacheMetricAsync(metric);
+
+			// Assert
+			Assert.Equal(expectedLabel.AsInt(), cachedMetric.AutoLabel.Id);
+		}
+
+		[Theory]
+		[InlineData(Metrics.CpuLoad)]
+		[InlineData(Metrics.Ping)]
+		public async Task LabelCritical(Metrics type)
+		{
+			// Arrange
+			var context = _serviceProvider.GetRequiredService<IDataContext>();
+
+			var metric = (await context.Metrics.AddAsync(new Metric
+			{
+				Type = type.AsInt(),
+				Source = "smth.com"
+			})).Entity;
+
+			await context.AutoLabels.AddRangeAsync(new List<AutoLabel> {
+				new AutoLabel { Id = AutoLabels.Normal.AsInt() },
+				new AutoLabel { Id = AutoLabels.Critical.AsInt() },
+				new AutoLabel { Id = AutoLabels.Warning.AsInt() },
+			});
+
+			switch (type)
+			{
+				case Metrics.CpuLoad:
+					await context.NumericDataPoints.AddRangeAsync(
+						new NumericDataPoint { Value = 90, Metric = metric },
+						new NumericDataPoint { Value = 92, Metric = metric },
+						new NumericDataPoint { Value = 88, Metric = metric },
+						new NumericDataPoint { Value = 89, Metric = metric },
+						new NumericDataPoint { Value = 100, Metric = metric }
+					);
+					break;
+				case Metrics.Ping:
+					await context.PingSettings.AddAsync(
+						new PingSetting
+						{
+							ServerUrl = "https://smth.com",
+							MaxFailures = 5
+						}
+					);
+					await context.PingDataPoints.AddRangeAsync(
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
+						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric }
+					);
+					break;
+			}
+
+			await context.SaveChangesAsync();
+
+			var expectedLabel = AutoLabels.Critical;
+
+			// Act
+			var cachedMetric = await new CacheService(context, new Mock<ILogger<CacheService>>().Object)
+				.CacheMetricAsync(metric);
+
+			// Assert
+			Assert.Equal(expectedLabel.AsInt(), cachedMetric.AutoLabel.Id);
 		}
 	}
 }

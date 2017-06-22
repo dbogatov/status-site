@@ -3,6 +3,8 @@
 !!! quote
 	Status site is the application for monitoring the health of the servers and web services.
 
+[![build status](https://git.dbogatov.org/dbogatov/status-site/badges/master/build.svg)](https://git.dbogatov.org/dbogatov/status-site/commits/master)
+
 ## Features
 
 * Agent reporting system stats
@@ -16,8 +18,8 @@
 	- Rich filtering tools
 	- Guard against log DoS
 * Web service monitor
-	- Periodically access websites or ports[^1]
-	- Record responses[^1]
+	- Periodically access websites or ports
+	- Record responses
 * Notifications
 	- Slack, email, telegram[^1], mattermost[^1] and other providers[^1]
 	- Different severities - with different frequencies

@@ -1,19 +1,55 @@
 ﻿@{ 
 	ViewData["Title"] = "Overview"; 
 }
+
 @model System.Collections.Generic.List<StatusMonitor.Shared.Models.Entities.Metric>
 
+@using StatusMonitor.Shared.Models.Entities
+@using StatusMonitor.Shared.Extensions
+@using StatusMonitor.Shared.Models
+
+@inject IDataContext Context
+
 <div class="container">
+
 	<div class="block-header">
 		<h2>CPU Load</h2>
 	</div>
 
 	<div class="row">
 		
-		@foreach (var metric in Model)
+		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.CpuLoad.AsInt()).OrderBy(mt => mt.Source))
 		{
 			<div class="col-md-3">
-				<metric-card metric="@metric">
+				<metric-card metric="@metric" max-value="100" min-value="0">
+					<metric-values metric="@metric"></metric-values>
+				</metric-card>
+			</div>
+		}
+	</div>
+
+	<div class="block-header">
+		<h2>Ping</h2>
+	</div>
+
+	<div class="row">
+		
+		@{
+			double maxValue = 0;
+		}
+
+		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.Ping.AsInt()).OrderBy(mt => mt.Source))
+		{
+			{
+				maxValue = Context
+					.PingSettings
+					.First(setting => new Uri(setting.ServerUrl).Host == metric.Source)
+					.MaxResponseTime
+					.TotalMilliseconds;
+			}
+
+			<div class="col-md-3">
+				<metric-card metric="@metric" max-value="@(Convert.ToInt32(maxValue))" min-value="0">
 					<metric-values metric="@metric"></metric-values>
 				</metric-card>
 			</div>

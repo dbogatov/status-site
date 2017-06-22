@@ -19,4 +19,5 @@ $(async () => {
 
 	Utility.fixUtcTime();
 
+	document.dispatchEvent(new Event("page-ready"));
 });

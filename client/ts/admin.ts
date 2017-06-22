@@ -16,8 +16,7 @@ $(async () => {
 
 	$('.selectpicker').selectpicker();
 
-	
-
 	Utility.fixUtcTime();
 
+	document.dispatchEvent(new Event("page-ready"));
 });

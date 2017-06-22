@@ -11,11 +11,10 @@ namespace StatusMonitor.Web.ViewModels
 	public class DataRequestViewModel
 	{
 		/// <summary>
-		/// Required. A type of the metric for which data is requested.
+		/// A type of the metric for which data is requested.
 		/// </summary>
-		public Metrics MetricType { get; set; }
+		public Metrics? MetricType { get; set; } = null;
 
-		[Required]
 		/// <summary>
 		/// Alias for MetricType.
 		/// </summary>
@@ -38,11 +37,10 @@ namespace StatusMonitor.Web.ViewModels
 			}
 		}
 
-		[Required]
 		[StringLength(32)]
 		[RegularExpression("[a-z0-9\\.\\-]+")]
 		/// <summary>
-		/// Required. Source identifier. May be server id or website URL.
+		/// Source identifier. May be server id or website URL.
 		/// </summary>
 		public string Source { get; set; }
 

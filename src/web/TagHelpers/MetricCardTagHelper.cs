@@ -6,13 +6,15 @@ using StatusMonitor.Shared.Models.Entities;
 
 namespace StatusMonitor.Web.TagHelpers
 {
-	[HtmlTargetElement("metric-card", Attributes = "metric")]
+	[HtmlTargetElement("metric-card", Attributes = "metric, max-value, min-value")]
 	/// <summary>
 	/// Underlying class for <metric-card> tag.
 	/// </summary>
 	public class MetricCardTagHelper : TagHelper
 	{
 		public Metric Metric { get; set; }
+		public int MaxValue { get; set; }
+		public int MinValue { get; set; }
 
 		[ViewContext]
 		public ViewContext ViewContext { get; set; }
@@ -28,6 +30,8 @@ namespace StatusMonitor.Web.TagHelpers
 			output.Attributes.Clear();
 			output.Attributes.Add("class", $"card metric");
 			output.Attributes.Add("data-identifier", $"{Metric.Type}-{Metric.Source}");
+			output.Attributes.Add("data-max-value", $"{MaxValue}");
+			output.Attributes.Add("data-min-value", $"{MinValue}");
 
 			var visibilityIcon = $@"
 				<li>

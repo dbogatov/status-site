@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -67,15 +68,16 @@ namespace StatusMonitor.Daemons.Services
 					_logger.LogCritical(LoggingEvents.Metrics.AsInt(), ex, "Unknown metric in CacheMetric");
 					throw ex;
 			}
-
-			if (values.Count() == 0)
+			
+			if (values.Count() < 5)
 			{
+				metric.AutoLabel = await _context.AutoLabels.FindAsync(AutoLabels.Normal.AsInt());
 				return metric;
 			}
 
 			// Update metric
 			ComputeNumericValues(values, metric);
-			metric.AutoLabel = await _context.AutoLabels.FindAsync(GetLabel(metric).AsInt());
+			metric.AutoLabel = await _context.AutoLabels.FindAsync((await GetLabelAsync(metric)).AsInt());
 
 			_logger.LogDebug(
 				LoggingEvents.Cache.AsInt(),
@@ -98,9 +100,10 @@ namespace StatusMonitor.Daemons.Services
 		{
 			return
 				(await FilterData(metric, dataPoints))
+				.Where(dp => dp.NormalizedValue() != null)
 				.Select(dp => new TimeValuePair
 				{
-					Value = dp.NormalizedValue(),
+					Value = dp.NormalizedValue().Value,
 					Timestamp = dp.Timestamp
 				})
 				.ToList();
@@ -162,24 +165,81 @@ namespace StatusMonitor.Daemons.Services
 		/// Set metric labels' value
 		/// </summary>
 		/// <returns>This object with metric labels set</returns>
-		private AutoLabels GetLabel(Metric metric)
+		private async Task<AutoLabels> GetLabelAsync(Metric metric)
 		{
-			// TODO: read from config
-
 			var label = AutoLabels.Normal;
 
 			switch ((Metrics)metric.Type)
 			{
 				case Metrics.CpuLoad:
-					if (metric.CurrentValue >= 90)
+
+					if (
+						await _context
+							.NumericDataPoints
+							.Where(dp => dp.Metric == metric)
+							.CountAsync() < 5
+						)
+					{
+						break;
+					}
+
+					var cpuValues =
+						(await _context
+							.NumericDataPoints
+							.Where(dp => dp.Metric == metric)
+							.OrderByDescending(dp => dp.Timestamp)
+							.Select(dp => dp.Value)
+							.ToListAsync())
+							.Take(5);
+
+					if (cpuValues.Average() >= 90)
 					{
 						label = AutoLabels.Critical;
 					}
-					else if (metric.CurrentValue >= 50)
+					else if (cpuValues.Average() >= 50)
 					{
 						label = AutoLabels.Warning;
 					}
 					break;
+				case Metrics.Ping:
+					var pingSetting =
+						await _context
+							.PingSettings
+							.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == metric.Source);
+
+					if (
+						await _context
+							.PingDataPoints
+							.Where(dp => dp.Metric == metric)
+							.CountAsync() < Math.Max(10, pingSetting.MaxFailures)
+						)
+					{
+						break;
+					}
+
+					var pingValues =
+						(await _context
+							.PingDataPoints
+							.Where(dp => dp.Metric == metric)
+							.OrderByDescending(dp => dp.Timestamp)
+							.Select(dp => dp.HttpStatusCode)
+							.ToListAsync());
+
+					if (
+						pingValues.Take(10).Count(code => code != System.Net.HttpStatusCode.OK.AsInt())
+						>=
+						pingSetting.MaxFailures
+					)
+					{
+						label = AutoLabels.Critical;
+					}
+					else if (pingValues.First() != System.Net.HttpStatusCode.OK.AsInt())
+					{
+						label = AutoLabels.Warning;
+					}
+
+					break;
+
 			}
 
 			return label;

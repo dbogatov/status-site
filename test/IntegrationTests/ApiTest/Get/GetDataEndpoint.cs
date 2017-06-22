@@ -152,49 +152,5 @@ namespace StatusMonitor.Tests.IntegrationTests
 			// Assert
 			Assert.Equal(HttpStatusCode.NoContent, noContent.StatusCode);
 		}
-
-		[Fact]
-		public async Task GetDataEndpointUnauthorized()
-		{
-			// Arrange
-			_client.DefaultRequestHeaders.Add("apikey", _apiKey);
-
-			await _client.PostAsync(
-				"/api/cpuload",
-				new FormUrlEncodedContent(
-					new Dictionary<string, string> {
-						{"value", 20.ToString() },
-						{"source", "the-source"}
-					 }
-				)
-			);
-
-			await _client.PatchAsync(
-				"/api/metricupdate",
-				new FormUrlEncodedContent(
-					new Dictionary<string, string> {
-						{ "ManualLabelId", ((int)ManualLabels.Investigating).ToString() },
-						{ "Public", false.ToString() },
-						{ "source", "the-source" },
-						{ "type", Metrics.CpuLoad.ToString() }
-					}
-				)
-			);
-
-			_client.DefaultRequestHeaders.Remove("apikey");
-
-			var _url = "/api/getdata";
-
-			var parameters = new Dictionary<string, string> {
-				{ "metrictype", Metrics.CpuLoad.ToString() },
-				{ "source", "the-source" }
-			 };
-
-			// Act
-			var unauthorized = await _client.GetAsync(QueryHelpers.AddQueryString(_url, parameters));
-
-			// Assert
-			Assert.Equal(HttpStatusCode.Unauthorized, unauthorized.StatusCode);
-		}
 	}
 }

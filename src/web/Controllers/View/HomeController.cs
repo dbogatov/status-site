@@ -42,7 +42,12 @@ namespace StatusMonitor.Web.Controllers.View
 
 		public async Task<IActionResult> Index()
 		{
-			var model = await _metricService.GetMetricsAsync(Metrics.CpuLoad);
+			var model = (await _metricService.GetMetricsAsync())
+				.Where(mt =>
+					mt.Type == Metrics.CpuLoad.AsInt() ||
+					mt.Type == Metrics.Ping.AsInt()
+				)
+				.ToList();
 
 			if (!_auth.IsAuthenticated())
 			{
@@ -85,6 +90,18 @@ namespace StatusMonitor.Web.Controllers.View
 			}
 
 			ViewBag.ManualLabels = await _context.ManualLabels.ToListAsync();
+
+			ViewBag.Max = 100;
+			ViewBag.Min = 0;
+
+			if (metricType == Metrics.Ping)
+			{
+				var pingSetting = await _context
+					.PingSettings
+					.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == source);
+				
+				ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;		
+			}
 
 			return View(model.First());
 		}

@@ -10,7 +10,6 @@ namespace StatusMonitor.Tests.IntegrationTests
 	public partial class ApiControllerTest
 	{
 		[Theory]
-		[InlineData("getdata", HttpMethods.GET)]
 		[InlineData("cpuload", HttpMethods.POST)]
 		[InlineData("useraction", HttpMethods.POST)]
 		[InlineData("compilation", HttpMethods.POST)]

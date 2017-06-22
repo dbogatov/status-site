@@ -1,13 +1,22 @@
 // Entry point for overview page
 
 import $ = require('jquery');
-import { CpuLoadMetric } from "./modules/concrete-metrics";
-import { Metric, DataPoint, MetricType } from "./modules/abstract-metric";
+import { PingMetric } from "./modules/metrics/ping";
+import { CpuLoadMetric } from "./modules/metrics/cpu-load";
+import { Metric, DataPoint, MetricType } from "./modules/metrics/abstract";
+import { MetricFactory } from "./modules/metrics/factory"
 import "bootstrap"
+import { SharedDataProvider, IDataProvider } from "./modules/metrics/data-provider";
+import { Utility } from "./modules/utility";
 
 let metrics = new Array<Metric<DataPoint>>();
+let dataProvider : IDataProvider = new SharedDataProvider();
 
-$(() => {
+$(async () => {
+
+	while (!dataProvider.isLoaded()) {
+		await Utility.sleep(50);
+	}
 
 	$(".metric").each((index, element) => {
 
@@ -15,9 +24,14 @@ $(() => {
 			.data("identifier")
 			.substring("0-".length);
 
-		// Because we render only CPU metric for now
-		// Should be MetricFactory when we render multiple types of metrics
-		let metric = new CpuLoadMetric(source);
+		let type = parseInt(
+			$(element)
+				.data("identifier")
+				.substring(0, "0".length)
+		);
+
+		let metric = new MetricFactory(source).getMetric(type);
+		metric.setDataProvider(dataProvider);
 
 		metrics.push(metric);
 	});
@@ -28,4 +42,5 @@ $(() => {
 		metrics.forEach((metric) => metric.render());
 	});
 
+	document.dispatchEvent(new Event("page-ready"));
 });

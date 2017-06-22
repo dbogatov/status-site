@@ -48,7 +48,7 @@ namespace StatusMonitor.Daemons.Services
 			using (var httpClient = _factory.BuildClient())
 			{
 				TimeSpan responseTime;
-				HttpStatusCode statusCode = HttpStatusCode.OK;
+				HttpStatusCode statusCode = HttpStatusCode.ServiceUnavailable;
 
 				// Generate a request
 				var httpContent = new HttpRequestMessage(
@@ -76,19 +76,23 @@ namespace StatusMonitor.Daemons.Services
 					responseTime = timer.Elapsed;
 					statusCode = response.StatusCode;
 				}
-				else
+				
+				if (
+					statusCode == HttpStatusCode.ServiceUnavailable ||
+					responseTime > setting.MaxResponseTime
+				)
 				{
 					// Timeout/cancellation logic
 					// If problem occurred then set service unavailable.
 					responseTime = new TimeSpan(0);
 					statusCode = HttpStatusCode.ServiceUnavailable;
 
-					_logger.LogWarning(LoggingEvents.Ping.AsInt(), $"Resource {setting.ServerUrl} is unavailable. See stack trace.");
+					// _logger.LogWarning(LoggingEvents.Ping.AsInt(), $"Resource {setting.ServerUrl} is unavailable. See stack trace.");
 				}
 
 				_logger.LogDebug(LoggingEvents.Ping.AsInt(), $"Ping completed for {setting.ServerUrl}");
 
-				var metric = await _metrics.GetOrCreateMetricAsync(Metrics.Ping, setting.ServerUrl);
+				var metric = await _metrics.GetOrCreateMetricAsync(Metrics.Ping, new Uri(setting.ServerUrl).Host);
 
 				return new PingDataPoint
 				{

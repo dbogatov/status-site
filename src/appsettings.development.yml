@@ -4,6 +4,13 @@
 Data:
   PingSettings:
     - ServerUrl: "https://google.com"
-      MaxResponseTime: 2000
       MaxFailures: 3
       GetMethodRequired: false
+ServiceManager:
+  PingService:
+    Enabled: true
+    Interval: 10
+  DemoService:
+    Interval: 10
+Logging:
+  MinLogLevel: "Debug"

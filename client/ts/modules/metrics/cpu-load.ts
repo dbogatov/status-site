@@ -1,14 +1,14 @@
-import { Metric, MetricType, DataPoint } from "./abstract-metric";
-import { Utility } from "./utility";
+import { Metric, MetricType, DataPoint } from "./abstract";
+import { Utility } from "../utility";
+import "../extensions";
 import "flot";
-import "../vendor/jquery.flot.threshold.js";
-import "../vendor/jquery.flot.tooltip.js";
+import "../../vendor/jquery.flot.threshold.js";
+import "../../vendor/jquery.flot.tooltip.js";
 
 type JsonCpuLoadDataPoint = {
 	Timestamp: string;
 	Value: number;
 }
-
 
 /**
  * Data type representing CPU Load data point
@@ -42,9 +42,8 @@ export class CpuLoadDataPoint extends DataPoint {
 	}
 }
 
-
 /**
- * Class responsible for manipulating and rendering CPU Load metric
+ * 
  * 
  * @export
  * @class CpuLoadMetric
@@ -52,39 +51,31 @@ export class CpuLoadDataPoint extends DataPoint {
  */
 export class CpuLoadMetric extends Metric<CpuLoadDataPoint> {
 
-
-	/**
-	 * Creates an instance of CpuLoadMetric.
-	 * @param {string} source - source of the metric
-	 * 
-	 * @memberOf CpuLoadMetric
-	 */
 	constructor(source: string) {
 		super(source);
-		
+
 		this._metricType = MetricType.CpuLoad;
+
+		this.startLoadUI();
 	}
 
-
-	/**
-	 * 
-	 * 
-	 * @protected
-	 * 
-	 * @memberOf CpuLoadMetric
-	 */
-	protected renderPlot(): void {
+	public generatePlotData() : any {
 		var data = [];
 		this
 			.data
-			.sort(dp => dp.timestamp.getMilliseconds())
-			.reverse()
+			.sortByProperty(dp => dp.timestamp.getTime())
 			.forEach((value, index, array) => data.push([index, value.value]));
+		
+		return data;
+	}
+
+	protected renderPlot(): void {
+		var data = this.generatePlotData();
 
 		let plotOptions: any = {
 			yaxis: {
-				max: 100,
-				min: 0
+				max: this.max,
+				min: this.min
 			},
 			xaxis: {
 				tickDecimals: 0,
@@ -125,15 +116,6 @@ export class CpuLoadMetric extends Metric<CpuLoadDataPoint> {
 		);
 	}
 
-	/**
-	 * 
-	 * 
-	 * @protected
-	 * @param {*} json 
-	 * @returns {CpuLoadDataPoint} 
-	 * 
-	 * @memberOf CpuLoadMetric
-	 */
 	protected getDataPointFromJson(json: any): CpuLoadDataPoint {
 		return new CpuLoadDataPoint(json);
 	}

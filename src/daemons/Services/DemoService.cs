@@ -76,7 +76,7 @@ namespace StatusMonitor.Daemons.Services
 					await _context.NumericDataPoints.AddAsync((NumericDataPoint)result);
 					break;
 				case Metrics.Ping:
-					var success = random.Next(100) % 10 != 0;
+					var success = random.Next(100) % 5 != 0;
 					result = new PingDataPoint
 					{
 						Timestamp = timestamp ?? DateTime.UtcNow,

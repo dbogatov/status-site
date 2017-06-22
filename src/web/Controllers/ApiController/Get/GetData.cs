@@ -23,67 +23,82 @@ namespace StatusMonitor.Web.Controllers.Api
 			// Retrieve requested metric
 			var metrics = await _metricService.GetMetricsAsync(model.MetricType, model.Source);
 
-			// Return appropriate status code if metric does not exist
+			if (!_auth.IsAuthenticated())
+			{
+				metrics = metrics.Where(mt => mt.Public);
+			}
+
+			// Return appropriate status code if metrics do not exist
 			if (metrics.Count() == 0)
 			{
 				return NotFound();
 			}
 
-			var metric = metrics.First();
-
-			if (!_auth.IsAuthenticated() && !metric.Public)
-			{
-				return Unauthorized();
-			}
-
 			// Compute the timestamp from which data is requested
 			var fromTimestamp = DateTime.UtcNow - new TimeSpan(0, 0, model.TimePeriod);
-			var data = new List<object>();
+			
+			var result = new List<dynamic>();
 
-			switch ((Metrics)metric.Type)
+			foreach (var metric in metrics)
 			{
-				case Metrics.CpuLoad:
-					data = await GrabDataAsync<NumericDataPoint, Object>(
-						_context.NumericDataPoints,
-						metric,
-						fromTimestamp
-					);
-					break;
-				case Metrics.Compilation:
-					data = await GrabDataAsync<CompilationDataPoint, Object>(
-						_context.CompilationDataPoints,
-						metric,
-						fromTimestamp
-					);
-					break;
-				case Metrics.Ping:
-					data = await GrabDataAsync<PingDataPoint, Object>(
-						_context.PingDataPoints,
-						metric,
-						fromTimestamp
-					);
-					break;
-				case Metrics.Log:
-					data = await GrabDataAsync<LogDataPoint, Object>(
-						_context.LogDataPoints,
-						metric,
-						fromTimestamp
-					);
-					break;
-				case Metrics.UserAction:
-					data = await GrabDataAsync<UserActionDataPoint, Object>(
-						_context.UserActionDataPoints,
-						metric,
-						fromTimestamp
-					);
-					break;
-				default:
-					var ex = new ArgumentOutOfRangeException($"Unknown metric type: {metric.Type}");
-					_logger.LogCritical(LoggingEvents.Metrics.AsInt(), ex, "Unknown metric in GetData");
-					throw ex;
+				var data = new List<object>();
+
+				switch ((Metrics)metric.Type)
+				{
+					case Metrics.CpuLoad:
+						data = await GrabDataAsync<NumericDataPoint, Object>(
+							_context.NumericDataPoints,
+							metric,
+							fromTimestamp
+						);
+						break;
+					case Metrics.Compilation:
+						data = await GrabDataAsync<CompilationDataPoint, Object>(
+							_context.CompilationDataPoints,
+							metric,
+							fromTimestamp
+						);
+						break;
+					case Metrics.Ping:
+						data = await GrabDataAsync<PingDataPoint, Object>(
+							_context.PingDataPoints,
+							metric,
+							fromTimestamp
+						);
+						break;
+					case Metrics.Log:
+						data = await GrabDataAsync<LogDataPoint, Object>(
+							_context.LogDataPoints,
+							metric,
+							fromTimestamp
+						);
+						break;
+					case Metrics.UserAction:
+						data = await GrabDataAsync<UserActionDataPoint, Object>(
+							_context.UserActionDataPoints,
+							metric,
+							fromTimestamp
+						);
+						break;
+					default:
+						var ex = new ArgumentOutOfRangeException($"Unknown metric type: {metric.Type}");
+						_logger.LogCritical(LoggingEvents.Metrics.AsInt(), ex, "Unknown metric in GetData");
+						throw ex;
+				}
+
+				result.Add(new {
+					Type = metric.Type,
+					Source = metric.Source,
+					Data = data
+				});
 			}
 
-			return data != null ? (IActionResult)Json(data) : NoContent();
+			if (result.All(obj => ((List<object>)obj.Data).Count == 0))
+			{
+				return NoContent();
+			}
+
+			return Json(result);
 		}
 
 		[NonAction]
@@ -121,7 +136,7 @@ namespace StatusMonitor.Web.Controllers.Api
 						.ToListAsync();
 			}
 
-			return null;
+			return new List<object>();
 		}
 	}
 }

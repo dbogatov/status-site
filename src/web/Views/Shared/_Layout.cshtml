@@ -18,7 +18,7 @@
 		<environment names="Staging,Production">
 			<link href="/css/app.min.css" rel="stylesheet">
 		</environment>
-		
+
 		@RenderSection("styles", required: false)
 
 	</head>
@@ -27,11 +27,13 @@
 		<header id="header" class="clearfix" data-ma-theme="blue">
 			<ul class="h-inner">
 				<li class="hi-trigger ma-trigger" data-ma-action="sidebar-open" data-ma-target="#sidebar">
-					<div class="line-wrap">
-						<div class="line top"></div>
-						<div class="line center"></div>
-						<div class="line bottom"></div>
-					</div>
+					<a asp-controller="Home" asp-action="Index">
+						<div class="line-wrap">
+							<div class="line top"></div>
+							<div class="line center"></div>
+							<div class="line bottom"></div>
+						</div>
+					</a>
 				</li>
 
 				<li class="hi-logo hidden-xs">
@@ -145,8 +147,6 @@
 			</div>
 		</div>
 
-		@RenderSection("scripts", required: false)
-
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				
@@ -177,11 +177,17 @@
 					}
 				};
 
+				document.addEventListener('page-ready', function (e) {
+					fadeOut(document.getElementById("page-loader"), 400);
+				 }, false);
+
 				setTimeout(function () {
 					fadeOut(document.getElementById("page-loader"), 400);
-				}, 500);
+				}, 5000);
 			});
 		</script>
+
+		@RenderSection("scripts", required: false)
 
 	</body>
 
