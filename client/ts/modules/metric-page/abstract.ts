@@ -24,7 +24,23 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 
 	protected dataTablesRendered: boolean = false;
 
+	/**
+	 * Minimal theoretical value for data series.
+	 * Used to define min and max for plot render.
+	 * 
+	 * @protected
+	 * @type {number}
+	 * @memberof MetricPage
+	 */
 	protected min: number;
+	/**
+	 * Maximal theoretical value for data series.
+	 * Used to define min and max for plot render.
+	 * 
+	 * @protected
+	 * @type {number}
+	 * @memberof MetricPage
+	 */
 	protected max: number;
 
 	protected formattedData: any;

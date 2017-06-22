@@ -18,7 +18,7 @@
 
 	<div class="row">
 		
-		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.CpuLoad.AsInt()))
+		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.CpuLoad.AsInt()).OrderBy(mt => mt.Source))
 		{
 			<div class="col-md-3">
 				<metric-card metric="@metric" max-value="100" min-value="0">
@@ -38,7 +38,7 @@
 			double maxValue = 0;
 		}
 
-		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.Ping.AsInt()))
+		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.Ping.AsInt()).OrderBy(mt => mt.Source))
 		{
 			{
 				maxValue = Context

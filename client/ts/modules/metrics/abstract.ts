@@ -565,11 +565,23 @@ export abstract class Metric<T extends DataPoint> {
 		return `${this.metricType}-${this.source}`;
 	}
 
+	/**
+	 * Starts a UI task (eq. animation) for loading of the metric.
+	 * 
+	 * @protected
+	 * @memberof Metric
+	 */
 	protected startLoadUI(): void {
 		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-chart`).hide();
 		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-labels`).hide();
 	}
 
+	/**
+	 * Stops a UI task (eq. animation) for loading of the metric.
+	 * 
+	 * @protected
+	 * @memberof Metric
+	 */
 	protected stopLoadUI(): void {
 		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-chart`).show();
 		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-labels`).show();
