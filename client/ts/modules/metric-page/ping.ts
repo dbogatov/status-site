@@ -90,7 +90,7 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 					show: true,
 					fill: 0.50
 				},
-				color: "#FFC107"
+				color: "rgb(113, 185, 226)"
 			},
 			{
 				data: errors,

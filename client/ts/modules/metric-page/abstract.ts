@@ -40,7 +40,7 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 
 		window.setTimeout(async () => {
 
-			await this.metric.loadData(60 * 60 * 24 * 7); // week
+			await this.metric.loadData(60 * 60 * 24 * 3); // 3 days
 
 			this.render();
 
