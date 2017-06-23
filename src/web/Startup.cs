@@ -75,7 +75,7 @@ namespace StatusMonitor.Web
 				options.Cookies.ApplicationCookie.AutomaticAuthenticate = true;
 				options.Cookies.ApplicationCookie.AutomaticChallenge = true;
 				options.Cookies.ApplicationCookie.CookieName = "AUTHCOOKIE";
-				options.Cookies.ApplicationCookie.ExpireTimeSpan = new TimeSpan(1, 0, 0);
+				options.Cookies.ApplicationCookie.ExpireTimeSpan = new TimeSpan(1, 0, 0, 0);
 				options.Cookies.ApplicationCookie.CookieHttpOnly = true;
 
 				var cookie = options.Cookies.ApplicationCookie;
