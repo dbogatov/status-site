@@ -29,6 +29,22 @@
 	</div>
 
 	<div class="block-header">
+		<h2>User Actions</h2>
+	</div>
+
+	<div class="row">
+		
+		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.UserAction.AsInt()).OrderBy(mt => mt.Source))
+		{
+			<div class="col-md-3">
+				<metric-card metric="@metric" max-value="0" min-value="0">
+					<metric-values metric="@metric"></metric-values>
+				</metric-card>
+			</div>
+		}
+	</div>
+
+	<div class="block-header">
 		<h2>Ping</h2>
 	</div>
 
