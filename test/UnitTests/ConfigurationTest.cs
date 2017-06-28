@@ -32,6 +32,8 @@ namespace StatusMonitor.Tests.UnitTests
 			TestStringKey("Secrets:ReCaptcha:SiteKey");
 			TestStringKey("Secrets:ReCaptcha:SecretKey");
 
+			TestStringKey("Secrets:GoogleAnalytics:TrackingId");
+
 			TestStringKey("Secrets:ConnectionString");
 
 			TestBoolKey("Secrets:Email:Enabled");

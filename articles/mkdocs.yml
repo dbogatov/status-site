@@ -33,9 +33,9 @@ extra:
       tabs: true
 
 # Google Analytics
-google_analytics:
-  - UA-65293382-8
-  - auto
+# google_analytics:
+#   - UA-65293382-8
+#   - auto
 
 # Repository
 repo_name: Dima4ka/status-site

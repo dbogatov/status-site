@@ -6,6 +6,8 @@ Secrets:
     Enabled: false
     SiteKey: "needs-to-be-set"
     SecretKey: "needs-to-be-set"
+  GoogleAnalytics:
+    TrackingId: "none"
   ConnectionString: "needs-to-be-set"
   Email:
     Enabled: false

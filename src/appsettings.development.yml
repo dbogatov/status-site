@@ -1,6 +1,8 @@
 ﻿Secrets:
   ApiKey: "SDJFSLDKJFS"
   AdminPassword: "password"
+  GoogleAnalytics:
+    TrackingId: "UA-XXXXXXX-X"
 Data:
   PingSettings:
     - ServerUrl: "https://google.com"
