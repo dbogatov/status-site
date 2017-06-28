@@ -41,4 +41,11 @@ export class Constants {
 	static UPDATE_INTERVAL_PROVIDER : number = 2;
 
 	static REMOVE_METRIC_ENDPOINT : string = `${Constants.API_URL}/removeMetric`;
+
+	/**
+	 * The interval in minutes used to aggregate the data points for user actions.
+	 * For example, if the interval is 5, then data series will be split into intervals
+	 * of 5 minutes and sums of user actions will be displayed per interval.
+	 */
+	static USER_ACTIONS_AGGREGATION_INTERVAL : number = 5;
 }

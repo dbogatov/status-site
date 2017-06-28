@@ -9,7 +9,7 @@ Data:
 ServiceManager:
   PingService:
     Enabled: true
-    Interval: 10
+    Interval: 30
   DemoService:
     Interval: 30
 Logging:

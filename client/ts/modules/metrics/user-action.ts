@@ -89,7 +89,7 @@ export class UserActionMetric extends Metric<UserActionDataPoint> {
 			},
 			tooltip: {
 				show: true,
-				content: (label, x, y, item) => item.series.data[0][2],
+				content: (label, x, y, item) => `${y} actions "${item.series.data[0][2]}"`,
 				defaultTheme: false,
 				cssClass: "flot-tooltip"
 			}

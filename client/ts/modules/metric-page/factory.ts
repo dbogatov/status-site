@@ -2,6 +2,7 @@ import { MetricType, Metric, DataPoint } from "../metrics/abstract";
 import { MetricPage } from "./abstract";
 import { PingMetricPage } from "./ping";
 import { CpuLoadMetricPage } from "./cpu-load";
+import { UserActionMetricPage } from "./user-action";
 
 /**
  * 
@@ -35,6 +36,8 @@ export class MetricPageFactory {
 				return new CpuLoadMetricPage(this.source, this.min, this.max);
 			case MetricType.Ping:
 				return new PingMetricPage(this.source, this.min, this.max);
+			case MetricType.UserAction:
+				return new UserActionMetricPage(this.source, this.min, this.max);
 			default:
 				throw `MetricPage type not supported. Type: ${type}`;
 		}

@@ -1,7 +1,7 @@
 import { Metric, MetricType, DataPoint } from "./abstract";
 import { PingMetric } from "../metrics/ping";
 import { CpuLoadMetric } from "../metrics/cpu-load";
-import { UserActionMetric } from "./user-actions";
+import { UserActionMetric } from "./user-action";
 
 /**
  * 
