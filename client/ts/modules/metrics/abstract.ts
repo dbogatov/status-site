@@ -413,6 +413,18 @@ export abstract class Metric<T extends DataPoint> {
 	};
 
 	/**
+	 * Render label saying that there is no recent data on metric
+	 * 
+	 * @private
+	 * @memberof Metric
+	 */
+	private renderNoData(): void {
+		$(`[data-identifier="${this.getMetricIdentifier()}"] .metric-chart`).html(
+			`<h2 class="no-data">No recent data</h2>`
+		);
+	}
+
+	/**
 	 * Loads data from the API and stores it in properties.
 	 * Does not render anything.
 	 * 
@@ -520,37 +532,14 @@ export abstract class Metric<T extends DataPoint> {
 		this.stopLoadUI();
 
 		this.renderValues();
-		this.renderPlot();
+
+		if (this._data.length > 1) {
+			this.renderPlot();
+		} else {
+			this.renderNoData();
+		}
+
 		this.renderLabels();
-	}
-
-
-	/**
-	 * Stops load and render task.
-	 * Send delete request to remove metric from the system.
-	 * Nullifies (helps GC) its members.
-	 * 
-	 * @returns {Promise<void>} 
-	 * 
-	 * @memberOf Metric
-	 */
-	public async destroy(): Promise<void> {
-		this.turnOff();
-		$(`[data-identifier="${this.getMetricIdentifier()}"]`)
-			.parent()
-			.fadeOut(200, function () {
-				$(this).remove();
-			});
-
-		await Utility.delete(Constants.REMOVE_METRIC_ENDPOINT, {
-			source: this.source,
-			type: MetricType[this.metricType]
-		});
-
-		this._data = null;
-		this._values = null;
-		this._autoLabel = null;
-		this._manualLabel = null;
 	}
 
 	/**
