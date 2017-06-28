@@ -76,8 +76,7 @@ export class UserActionMetricPage extends MetricPage<Metric<UserActionDataPoint>
 						[
 							1000 * 60 * (groupKey * Constants.USER_ACTIONS_AGGREGATION_INTERVAL + barShift), // timestamp (x value)
 							groupValue, // count
-							key, // action
-							groupKey * Constants.USER_ACTIONS_AGGREGATION_INTERVAL * 1000 * 60 // timestamp of aggregation start
+							key // action
 						]
 					)
 			);
@@ -121,7 +120,7 @@ export class UserActionMetricPage extends MetricPage<Metric<UserActionDataPoint>
 			},
 			tooltip: {
 				show: true,
-				content: (label, x, y, item) => `${y} actions "${item.series.data[0][2]}" in a ${Constants.USER_ACTIONS_AGGREGATION_INTERVAL} minutes period since ${new Date(item.series.data[0][3]).getHours()}:${new Date(item.series.data[0][3]).getMinutes()}`,
+				content: (label, x, y, item) => `${y} actions "${item.series.data[0][2]}" in a ${Constants.USER_ACTIONS_AGGREGATION_INTERVAL} minutes period`,
 				defaultTheme: false,
 				cssClass: "flot-tooltip"
 			},
