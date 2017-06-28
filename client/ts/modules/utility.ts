@@ -83,7 +83,8 @@ export class Utility {
 	}
 
 	/**
-	 * Converts .NET timestamp string to TS Date
+	 * Converts .NET timestamp (ISO8601) string to TS Date
+	 * Thanks to https://stackoverflow.com/a/20223090/1644554
 	 * 
 	 * @static
 	 * @param {string} dotNetDate - .NET formatted timestamp
@@ -92,7 +93,11 @@ export class Utility {
 	 * @memberOf Utility
 	 */
 	public static toDate(dotNetDate: string): Date {
-		return new Date(Date.parse(dotNetDate));
+		var parts = dotNetDate.match(/\d+/g).map(el => parseInt(el));
+		var isoTime = Date.UTC(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
+		var isoDate = new Date(isoTime);
+
+		return isoDate;
 	}
 
 	/**

@@ -25,7 +25,6 @@ namespace StatusMonitor.Shared.Models
 		DbSet<LogEntry> LogEntries { get; set; }
 		DbSet<LogEntrySeverity> LogEntrySeverities { get; set; }
 		DbSet<CompilationStage> CompilationStages { get; set; }
-		DbSet<UserAction> UserActions { get; set; }
 		DbSet<PingSetting> PingSettings { get; set; }
 		DbSet<Notification> Notifications { get; set; }
 		DbSet<Discrepancy> Discrepancies { get; set; }
@@ -60,7 +59,6 @@ namespace StatusMonitor.Shared.Models
 		public DbSet<LogEntry> LogEntries { get; set; }
 		public DbSet<LogEntrySeverity> LogEntrySeverities { get; set; }
 		public DbSet<CompilationStage> CompilationStages { get; set; }
-		public DbSet<UserAction> UserActions { get; set; }
 		public DbSet<PingSetting> PingSettings { get; set; }
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<Discrepancy> Discrepancies { get; set; }

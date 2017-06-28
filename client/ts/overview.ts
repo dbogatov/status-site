@@ -10,7 +10,7 @@ import { SharedDataProvider, IDataProvider } from "./modules/metrics/data-provid
 import { Utility } from "./modules/utility";
 
 let metrics = new Array<Metric<DataPoint>>();
-let dataProvider : IDataProvider = new SharedDataProvider();
+let dataProvider: IDataProvider = new SharedDataProvider();
 
 $(async () => {
 
@@ -40,6 +40,18 @@ $(async () => {
 
 	$(window).resize(() => {
 		metrics.forEach((metric) => metric.render());
+	});
+
+	$(".metric-group").on("show.bs.collapse", function() {
+		$(`#${ $(this).data("metric-type")}-header-icon`)
+			.removeClass("zmdi-chevron-up")
+			.addClass("zmdi-chevron-down");
+	});
+
+	$(".metric-group").on("hide.bs.collapse", function() {
+		$(`#${ $(this).data("metric-type")}-header-icon`)
+			.removeClass("zmdi-chevron-down")
+			.addClass("zmdi-chevron-up");
 	});
 
 	document.dispatchEvent(new Event("page-ready"));

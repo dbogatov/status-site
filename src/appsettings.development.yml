@@ -1,6 +1,8 @@
 ﻿Secrets:
   ApiKey: "SDJFSLDKJFS"
   AdminPassword: "password"
+  GoogleAnalytics:
+    TrackingId: "UA-XXXXXXX-X"
 Data:
   PingSettings:
     - ServerUrl: "https://google.com"
@@ -9,8 +11,8 @@ Data:
 ServiceManager:
   PingService:
     Enabled: true
-    Interval: 10
+    Interval: 30
   DemoService:
-    Interval: 10
+    Interval: 5
 Logging:
   MinLogLevel: "Debug"

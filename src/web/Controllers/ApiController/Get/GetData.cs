@@ -36,7 +36,7 @@ namespace StatusMonitor.Web.Controllers.Api
 
 			// Compute the timestamp from which data is requested
 			var fromTimestamp = DateTime.UtcNow - new TimeSpan(0, 0, model.TimePeriod);
-			
+
 			var result = new List<dynamic>();
 
 			foreach (var metric in metrics)
@@ -86,7 +86,8 @@ namespace StatusMonitor.Web.Controllers.Api
 						throw ex;
 				}
 
-				result.Add(new {
+				result.Add(new
+				{
 					Type = metric.Type,
 					Source = metric.Source,
 					Data = data

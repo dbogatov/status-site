@@ -10,27 +10,8 @@ namespace StatusMonitor.Web.ViewModels
 	/// </summary>
 	public class UserActionViewModel
 	{
-		public UserActions UserAction { get; set; }
-
 		[Required]
-		public string Action
-		{
-			get
-			{
-				return UserAction.ToString();
-			}
-			set
-			{
-				try
-				{
-					UserAction = value.ToEnum<UserActions>();
-				}
-				catch (System.Exception)
-				{
-					throw new ArgumentException("Invalid Action parameter.");
-				}
-			}
-		}
+		public string Action { get; set; }
 
 		[Required]
 		[StringLength(32)]

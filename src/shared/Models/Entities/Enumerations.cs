@@ -51,20 +51,6 @@ namespace StatusMonitor.Shared.Models.Entities
 	}
 
 	/// <summary>
-	/// Represents a user action which we record in log.
-	/// </summary>
-	public class UserAction
-	{
-		[Key]
-		public int Id { get; set; }
-		public string Name { get; set; }
-	}
-	public enum UserActions
-	{
-		Login = 1, Logout, Register, Visit, ProjectCreated, ProjectEdited
-	}
-
-	/// <summary>
 	/// Represents a severity for generic log entries.
 	/// </summary>
 	public class LogEntrySeverity

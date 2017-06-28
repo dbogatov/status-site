@@ -47,6 +47,8 @@ Configuration spec:
 			Enabled: true 									# If false, ReCaptcha will not be displayed and checked
 			SiteKey: "sdahjdjhd_678ajsdvbja" 				# Site key provided by Google
 			SecretKey: "asgfdk_876ajhsvdjh" 				# Secret key provided by Google
+		GoogleAnalytics:
+			TrackingId: "UA-XXXXXXX-X"						# Google Analytics tracking number (https://analytics.google.com)
 		ConnectionString: "connection-strings"				# Connection string to PostgreSQL database
 		Email: 												# Email settings
 			Enabled: true 									# If false, all messages sent to email service will be logged to STDOUT instead

@@ -90,7 +90,7 @@ blc-docs:
   - http-server documentation/out/ -p 8080 > /dev/null &
   - sleep 5
   script:
-  - blc --filter-level 3 --input http://localhost:8080 -rog --exclude "*linkedin.*"
+  - blc --filter-level 3 --input http://localhost:8080 -rog --exclude "*linkedin.*" --exclude "*doxygen.*"
   tags:
   - docker
 

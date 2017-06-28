@@ -18,9 +18,6 @@ namespace StatusMonitor.Web.Controllers.Api
 			// Retrieve requested metric
 			var metric = await _metricService.GetOrCreateMetricAsync(Metrics.UserAction, model.Source);
 
-			// Retrieve requested user action
-			var userAction = await _context.UserActions.FirstAsync(act => act.Id == model.UserAction.AsInt());
-
 			// Record data
 			await _context
 				.UserActionDataPoints
@@ -28,7 +25,7 @@ namespace StatusMonitor.Web.Controllers.Api
 					new UserActionDataPoint
 					{
 						Count = model.Count,
-						Action = userAction,
+						Action = model.Action,
 						Metric = metric
 					}
 				);

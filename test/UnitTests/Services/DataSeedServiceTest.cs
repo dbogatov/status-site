@@ -55,7 +55,6 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			Assert.Empty(_dataContext.AutoLabels);
 			Assert.Empty(_dataContext.ManualLabels);
 			Assert.Empty(_dataContext.CompilationStages);
-			Assert.Empty(_dataContext.UserActions);
 			Assert.Empty(_dataContext.LogEntrySeverities);
 			Assert.Empty(_dataContext.Metrics);
 			Assert.Empty(_dataContext.AbstractMetrics);
@@ -78,7 +77,6 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			Assert.NotEmpty(_dataContext.AutoLabels);
 			Assert.NotEmpty(_dataContext.ManualLabels);
 			Assert.NotEmpty(_dataContext.CompilationStages);
-			Assert.NotEmpty(_dataContext.UserActions);
 			Assert.NotEmpty(_dataContext.LogEntrySeverities);
 			Assert.NotEmpty(_dataContext.AbstractMetrics);
 		}

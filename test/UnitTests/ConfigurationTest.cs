@@ -32,6 +32,8 @@ namespace StatusMonitor.Tests.UnitTests
 			TestStringKey("Secrets:ReCaptcha:SiteKey");
 			TestStringKey("Secrets:ReCaptcha:SecretKey");
 
+			TestStringKey("Secrets:GoogleAnalytics:TrackingId");
+
 			TestStringKey("Secrets:ConnectionString");
 
 			TestBoolKey("Secrets:Email:Enabled");
@@ -51,7 +53,6 @@ namespace StatusMonitor.Tests.UnitTests
 		[InlineData("AutoLabels")]
 		[InlineData("ManualLabels")]
 		[InlineData("CompilationStages")]
-		[InlineData("UserActions")]
 		[InlineData("LogEntrySeverities")]
 		[InlineData("Metrics")]
 		public void TestEnumerations(string enumType)

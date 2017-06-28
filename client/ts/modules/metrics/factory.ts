@@ -1,6 +1,7 @@
 import { Metric, MetricType, DataPoint } from "./abstract";
 import { PingMetric } from "../metrics/ping";
 import { CpuLoadMetric } from "../metrics/cpu-load";
+import { UserActionMetric } from "./user-action";
 
 /**
  * 
@@ -30,6 +31,8 @@ export class MetricFactory {
 				return new CpuLoadMetric(this.source);
 			case MetricType.Ping:
 				return new PingMetric(this.source);
+			case MetricType.UserAction:
+				return new UserActionMetric(this.source);
 			default:
 				throw `Metric type not supported. Type: ${type}`;
 		}
