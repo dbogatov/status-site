@@ -12,6 +12,13 @@ type JsonUserActionDataPoint = {
 	Action: string;
 }
 
+/**
+ * 
+ * 
+ * @export
+ * @class UserActionDataPoint
+ * @extends {DataPoint}
+ */
 export class UserActionDataPoint extends DataPoint {
 
 	public count: number;
@@ -27,6 +34,13 @@ export class UserActionDataPoint extends DataPoint {
 	}
 }
 
+/**
+ *
+ * 
+ * @export
+ * @class UserActionMetric
+ * @extends {Metric<UserActionDataPoint>}
+ */
 export class UserActionMetric extends Metric<UserActionDataPoint> {
 
 	constructor(source: string) {

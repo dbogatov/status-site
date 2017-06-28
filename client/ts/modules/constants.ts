@@ -31,6 +31,7 @@ export class Constants {
 	static GET_METRICS_ENDPOINT : string = `${Constants.API_URL}/getMetrics`;
 	/**
 	 * How often metrics need to be reloaded and re-rendered (in seconds)
+	 * if no data provider specified
 	 * 
 	 * @static
 	 * @type {number}
@@ -38,9 +39,15 @@ export class Constants {
 	 */
 	static UPDATE_INTERVAL : number = 20;
 
+	/**
+	 * How often metrics need to be reloaded and re-rendered (in seconds)
+	 * if if data is loaded through provider
+	 * 
+	 * @static
+	 * @type {number}
+	 * @memberof Constants
+	 */
 	static UPDATE_INTERVAL_PROVIDER : number = 2;
-
-	static REMOVE_METRIC_ENDPOINT : string = `${Constants.API_URL}/removeMetric`;
 
 	/**
 	 * The interval in minutes used to aggregate the data points for user actions.

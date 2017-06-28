@@ -235,7 +235,7 @@ paths:
       summary: User action report
       description: |
         User action enpoint collects data regarding user actions performed on different 
-        sources. Particularly, user action and count are expected.
+        sources. Particularly, user action and count are recorded.
       consumes:
         - application/x-www-form-urlencoded
       produces:
@@ -243,21 +243,16 @@ paths:
       parameters:
         - name: action
           in: formData
-          description: User Action
+          description: |
+            User Action as a string.
+            <b>Note:</b> be consistent, "user-login" and "user login" will be considered different actions.
           required: true
           type: string
           format: string
-          enum:
-            - "login"
-            - "logout"
-            - "register"
-            - "visit"
-            - "projectcreated"
-            - "projectedited"
           example: "login"
         - name: count
           in: formData
-          description: Nuimber of times given action was performed
+          description: Number of times given action was performed
           required: false
           default: 1
           type: number

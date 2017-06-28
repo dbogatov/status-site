@@ -13,7 +13,13 @@ import "../../vendor/jquery.flot.threshold.js";
 import "../../vendor/jquery.flot.tooltip.js";
 import { Constants } from "../constants";
 
-
+/**
+ * 
+ * 
+ * @export
+ * @class UserActionMetricPage
+ * @extends {MetricPage<Metric<UserActionDataPoint>>}
+ */
 export class UserActionMetricPage extends MetricPage<Metric<UserActionDataPoint>> {
 
 	constructor(source: string, min: number, max: number) {
@@ -27,6 +33,7 @@ export class UserActionMetricPage extends MetricPage<Metric<UserActionDataPoint>
 		let min = 0, max = Number.MIN_SAFE_INTEGER, series = [];
 		let keysNumber = 0, barWidth = 0, index = 0;
 
+		// Split data into categories defined by action
 		this
 			.metric
 			.data
@@ -49,6 +56,7 @@ export class UserActionMetricPage extends MetricPage<Metric<UserActionDataPoint>
 			let groupedByInterval = new Collections.Dictionary<number, any[]>();
 			let seriesData = [];
 
+			// Group and aggregate (sum) data per interval
 			value.forEach(
 				(val, i, array) => {
 					let interval = Math.floor(val.timestamp.getTime() / (1000 * 60 * Constants.USER_ACTIONS_AGGREGATION_INTERVAL));
@@ -66,10 +74,10 @@ export class UserActionMetricPage extends MetricPage<Metric<UserActionDataPoint>
 				(groupKey, groupValue) =>
 					seriesData.push(
 						[
-							1000 * 60 * (groupKey * Constants.USER_ACTIONS_AGGREGATION_INTERVAL + barShift),
-							groupValue,
-							key,
-							groupKey * Constants.USER_ACTIONS_AGGREGATION_INTERVAL * 1000 * 60
+							1000 * 60 * (groupKey * Constants.USER_ACTIONS_AGGREGATION_INTERVAL + barShift), // timestamp (x value)
+							groupValue, // count
+							key, // action
+							groupKey * Constants.USER_ACTIONS_AGGREGATION_INTERVAL * 1000 * 60 // timestamp of aggregation start
 						]
 					)
 			);

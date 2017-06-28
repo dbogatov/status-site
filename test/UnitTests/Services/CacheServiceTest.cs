@@ -329,7 +329,8 @@ namespace StatusMonitor.Tests.UnitTests.Services
 						{
 							HttpStatusCode = HttpStatusCode.OK.AsInt(),
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 234),
-							Metric = metric
+							Metric = metric,
+							Timestamp = DateTime.UtcNow.AddSeconds(5), // make sure it is the most recent data point
 						}
 					);
 					break;
