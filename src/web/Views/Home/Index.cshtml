@@ -12,65 +12,132 @@
 
 <div class="container">
 
-	<div class="block-header">
-		<h2>CPU Load</h2>
-	</div>
+	@if (Model.Any(mt => mt.Type == Metrics.CpuLoad.AsInt()))
+	{
+		<div class="block-header">
+			<h2>
+				<span 
+					data-toggle="collapse" 
+					data-target="#@(Metrics.CpuLoad.AsInt())-metric-group" 
+					aria-expanded="true" 
+					class="metric-group-header"
+				>
+					CPU Load 
+					<i 
+						class="zmdi zmdi-chevron-down" 
+						id="@(Metrics.CpuLoad.AsInt())-header-icon"
+					>
+						<!-- -->
+					</i>
+				</span>
+			</h2>
+		</div>
 
-	<div class="row">
-		
-		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.CpuLoad.AsInt()).OrderBy(mt => mt.Source))
-		{
-			<div class="col-md-3">
-				<metric-card metric="@metric" max-value="100" min-value="0">
-					<metric-values metric="@metric"></metric-values>
-				</metric-card>
-			</div>
-		}
-	</div>
-
-	<div class="block-header">
-		<h2>User Actions</h2>
-	</div>
-
-	<div class="row">
-		
-		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.UserAction.AsInt()).OrderBy(mt => mt.Source))
-		{
-			<div class="col-md-3">
-				<metric-card metric="@metric" max-value="0" min-value="0">
-					<metric-values metric="@metric"></metric-values>
-				</metric-card>
-			</div>
-		}
-	</div>
-
-	<div class="block-header">
-		<h2>Ping</h2>
-	</div>
-
-	<div class="row">
-		
-		@{
-			double maxValue = 0;
-		}
-
-		@foreach (var metric in Model.Where(mt => mt.Type == Metrics.Ping.AsInt()).OrderBy(mt => mt.Source))
-		{
+		<div 
+			id="@(Metrics.CpuLoad.AsInt())-metric-group" 
+			data-metric-type="@(Metrics.CpuLoad.AsInt())" 
+			class="row metric-group in"
+		>
+			
+			@foreach (var metric in Model.Where(mt => mt.Type == Metrics.CpuLoad.AsInt()).OrderBy(mt => mt.Source))
 			{
-				maxValue = Context
-					.PingSettings
-					.First(setting => new Uri(setting.ServerUrl).Host == metric.Source)
-					.MaxResponseTime
-					.TotalMilliseconds;
+				<div class="col-md-3">
+					<metric-card metric="@metric" max-value="100" min-value="0">
+						<metric-values metric="@metric"></metric-values>
+					</metric-card>
+				</div>
 			}
 
-			<div class="col-md-3">
-				<metric-card metric="@metric" max-value="@(Convert.ToInt32(maxValue))" min-value="0">
-					<metric-values metric="@metric"></metric-values>
-				</metric-card>
-			</div>
-		}
-	</div>
+		</div>
+	}
+
+	@if (Model.Any(mt => mt.Type == Metrics.UserAction.AsInt()))
+	{
+		<div class="block-header">
+			<h2>
+				<span 
+					data-toggle="collapse" 
+					data-target="#@(Metrics.UserAction.AsInt())-metric-group" 
+					aria-expanded="true" 
+					class="metric-group-header"
+				>
+					User Actions
+					<i 
+						class="zmdi zmdi-chevron-down" 
+						id="@(Metrics.UserAction.AsInt())-header-icon"
+					>
+						<!-- -->
+					</i>
+				</span>
+			</h2>
+		</div>
+
+		<div 
+			id="@(Metrics.UserAction.AsInt())-metric-group" 
+			data-metric-type="@(Metrics.UserAction.AsInt())" 
+			class="row metric-group in"
+		>
+			
+			@foreach (var metric in Model.Where(mt => mt.Type == Metrics.UserAction.AsInt()).OrderBy(mt => mt.Source))
+			{
+				<div class="col-md-3">
+					<metric-card metric="@metric" max-value="0" min-value="0">
+						<metric-values metric="@metric"></metric-values>
+					</metric-card>
+				</div>
+			}
+		</div>
+	}
+
+	@if (Model.Any(mt => mt.Type == Metrics.Ping.AsInt()))
+	{
+		<div class="block-header">
+			<h2>
+				<span 
+					data-toggle="collapse" 
+					data-target="#@(Metrics.Ping.AsInt())-metric-group" 
+					aria-expanded="true" 
+					class="metric-group-header"
+				>
+					Ping
+					<i 
+						class="zmdi zmdi-chevron-down" 
+						id="@(Metrics.Ping.AsInt())-header-icon"
+					>
+						<!-- -->
+					</i>
+				</span>
+			</h2>
+		</div>
+
+		<div 
+			id="@(Metrics.Ping.AsInt())-metric-group" 
+			data-metric-type="@(Metrics.Ping.AsInt())" 
+			class="row metric-group in"
+		>
+			
+			@{
+				double maxValue = 0;
+			}
+
+			@foreach (var metric in Model.Where(mt => mt.Type == Metrics.Ping.AsInt()).OrderBy(mt => mt.Source))
+			{
+				{
+					maxValue = Context
+						.PingSettings
+						.First(setting => new Uri(setting.ServerUrl).Host == metric.Source)
+						.MaxResponseTime
+						.TotalMilliseconds;
+				}
+
+				<div class="col-md-3">
+					<metric-card metric="@metric" max-value="@(Convert.ToInt32(maxValue))" min-value="0">
+						<metric-values metric="@metric"></metric-values>
+					</metric-card>
+				</div>
+			}
+		</div>
+	}
 
 </div>
 
