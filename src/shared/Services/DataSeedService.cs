@@ -38,7 +38,6 @@ namespace StatusMonitor.Shared.Services
 		private List<AutoLabel> _autoLabels = new List<AutoLabel>();
 		private List<ManualLabel> _manualLabels = new List<ManualLabel>();
 		private List<CompilationStage> _compilationStages = new List<CompilationStage>();
-		private List<UserAction> _userActions = new List<UserAction>();
 		private List<LogEntrySeverity> _logEntrySeverities = new List<LogEntrySeverity>();
 		private List<AbstractMetric> _abstractMetrics = new List<AbstractMetric>();
 
@@ -64,7 +63,6 @@ namespace StatusMonitor.Shared.Services
 			SeedSpecificEntity(_autoLabels, _context.AutoLabels);
 			SeedSpecificEntity(_manualLabels, _context.ManualLabels);
 			SeedSpecificEntity(_compilationStages, _context.CompilationStages);
-			SeedSpecificEntity(_userActions, _context.UserActions);
 			SeedSpecificEntity(_logEntrySeverities, _context.LogEntrySeverities);
 			SeedSpecificEntity(_abstractMetrics, _context.AbstractMetrics);
 
@@ -81,7 +79,6 @@ namespace StatusMonitor.Shared.Services
 			await SeedSpecificEntityAsync(_autoLabels, _context.AutoLabels);
 			await SeedSpecificEntityAsync(_manualLabels, _context.ManualLabels);
 			await SeedSpecificEntityAsync(_compilationStages, _context.CompilationStages);
-			await SeedSpecificEntityAsync(_userActions, _context.UserActions);
 			await SeedSpecificEntityAsync(_logEntrySeverities, _context.LogEntrySeverities);
 			await SeedSpecificEntityAsync(_abstractMetrics, _context.AbstractMetrics);
 
@@ -116,14 +113,6 @@ namespace StatusMonitor.Shared.Services
 				{
 					Id = label.AsInt(),
 					Name = _configuration[$"Data:CompilationStages:{label.ToString()}"]
-				}
-			);
-
-			_userActions = ReadStaticValueFromConfiguration<UserAction, UserActions>(
-				(label) => new UserAction
-				{
-					Id = label.AsInt(),
-					Name = _configuration[$"Data:UserActions:{label.ToString()}"]
 				}
 			);
 

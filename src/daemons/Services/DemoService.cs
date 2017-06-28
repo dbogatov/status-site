@@ -87,9 +87,10 @@ namespace StatusMonitor.Daemons.Services
 					await _context.PingDataPoints.AddAsync((PingDataPoint)result);
 					break;
 				case Metrics.UserAction:
-					var action = _context
-						.UserActions
-						.Skip(random.Next(0, _context.UserActions.Count()))
+					var userActions = new string[] { "Page load", "Project Edit", "Project Create", "User login", "User Logout", "User Register" };
+
+					var action = userActions
+						.Skip(random.Next(0, userActions.Count()))
 						.Take(1)
 						.First();
 

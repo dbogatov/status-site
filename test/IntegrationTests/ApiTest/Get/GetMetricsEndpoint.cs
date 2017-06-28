@@ -117,7 +117,7 @@ namespace StatusMonitor.Tests.IntegrationTests
 				"/api/useraction",
 				new FormUrlEncodedContent(
 					new Dictionary<string, string> {
-						{ "action", UserActions.Login.ToString() },
+						{ "action", "Login" },
 						{ "count", 20.ToString() },
 						{ "source", "the-source" }
 					 }

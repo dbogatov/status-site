@@ -11,6 +11,6 @@ ServiceManager:
     Enabled: true
     Interval: 30
   DemoService:
-    Interval: 30
+    Interval: 5
 Logging:
   MinLogLevel: "Debug"

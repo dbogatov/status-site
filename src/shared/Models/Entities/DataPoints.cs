@@ -145,7 +145,7 @@ namespace StatusMonitor.Shared.Models.Entities
 	public class UserActionDataPoint : DataPoint
 	{
 		public int Count { get; set; }
-		public UserAction Action { get; set; }
+		public string Action { get; set; }
 
 		public override int? NormalizedValue()
 		{
@@ -158,7 +158,7 @@ namespace StatusMonitor.Shared.Models.Entities
 			{
 				Timestamp,
 				Count,
-				Action = Action.Name
+				Action
 			};
 		}
 	}

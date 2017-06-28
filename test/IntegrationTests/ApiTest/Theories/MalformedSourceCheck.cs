@@ -26,7 +26,7 @@ namespace StatusMonitor.Tests.IntegrationTests
 				{ "stage", CompilationStages.M4.ToString() },
 				{ "sourcesize", 15.ToString() },
 				{ "compiletime", 78.ToString() },
-				{ "action", UserActions.Login.ToString() },
+				{ "action", "Login" },
 				{ "count", 10.ToString() },
 				{ "severity", LogEntrySeverities.Error.ToString() },
 				{ "message", "Hello" },

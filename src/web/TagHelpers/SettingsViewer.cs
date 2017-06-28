@@ -82,7 +82,6 @@ namespace StatusMonitor.Web.TagHelpers
 					{ "Auto labels", GenerateEnumConfigValues(typeof(AutoLabels)) },
 					{ "Manual labels", GenerateEnumConfigValues(typeof(ManualLabels)) },
 					{ "Compilation stages", GenerateEnumConfigValues(typeof(CompilationStages)) },
-					{ "User actions", GenerateEnumConfigValues(typeof(UserActions)) },
 					{ "Log entry severities", GenerateEnumConfigValues(typeof(LogEntrySeverities)) },
 					{ "Metrics", GenerateEnumConfigValues(typeof(Metrics)) }
 				})}

@@ -18,7 +18,7 @@ namespace StatusMonitor.Tests.IntegrationTests
 			var _url = "/api/useraction";
 
 			var parameters = new Dictionary<string, string> {
-				{ "action", UserActions.Login.ToString() },
+				{ "action", "Login" },
 				{ "count", 10.ToString() },
 				{ "source", "existing-source" }
 			};

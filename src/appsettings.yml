@@ -34,13 +34,6 @@ Data:
     M4: "M4 Stage"
     SandPiper: "SandPiper"
     Simulation: "Simulation"
-  UserActions:
-    Login: "Login"
-    Logout: "Logout"
-    Register: "Register"
-    ProjectCreated: "Created a project"
-    ProjectEdited: "Edited a project"
-    Visit: "Visit"
   LogEntrySeverities: 
     Debug: "Debug"
     Detail: "Detail"

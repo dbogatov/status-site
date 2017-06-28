@@ -77,8 +77,7 @@ namespace StatusMonitor.Web.Controllers.Api
 						data = await GrabDataAsync<UserActionDataPoint, Object>(
 							_context.UserActionDataPoints,
 							metric,
-							fromTimestamp,
-							dp => dp.Action
+							fromTimestamp
 						);
 						break;
 					default:

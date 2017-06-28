@@ -93,16 +93,6 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			var metric = await context.Metrics.AddAsync(
 				new Metric { Type = Metrics.CpuLoad.AsInt(), Source = "the-source" }
 			);
-			await context.UserActions.AddRangeAsync(
-				Enum
-					.GetValues(typeof(UserActions))
-					.Cast<UserActions>()
-					.Select(e => new UserAction
-					{
-						Id = e.AsInt(),
-						Name = e.ToString()
-					})
-			);
 			await context.LogEntrySeverities.AddRangeAsync(
 				Enum
 					.GetValues(typeof(LogEntrySeverities))

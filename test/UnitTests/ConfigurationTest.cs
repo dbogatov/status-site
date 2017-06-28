@@ -51,7 +51,6 @@ namespace StatusMonitor.Tests.UnitTests
 		[InlineData("AutoLabels")]
 		[InlineData("ManualLabels")]
 		[InlineData("CompilationStages")]
-		[InlineData("UserActions")]
 		[InlineData("LogEntrySeverities")]
 		[InlineData("Metrics")]
 		public void TestEnumerations(string enumType)
