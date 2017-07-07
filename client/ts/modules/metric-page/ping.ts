@@ -44,8 +44,8 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 			}
 			);
 		
-		this.minData = data[data.length - 1][0];
-		this.maxData = data[0][0];
+		this.minData = this.metric.data.sortByProperty(dp => dp.timestamp.getTime())[0].timestamp.getTime();
+		this.maxData = this.metric.data.sortByProperty(dp => dp.timestamp.getTime()).reverse()[0].timestamp.getTime();
 
 		let barWidth =
 			this.metric.data.length > 1
