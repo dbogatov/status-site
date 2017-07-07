@@ -159,7 +159,7 @@ namespace StatusMonitor.Daemons.Services
 					.ToListAsync(),
 				await _context
 					.PingSettings
-					.FirstAsync(s => s.ServerUrl == metric.Source),
+					.FirstAsync(s => new Uri(s.ServerUrl).Host == metric.Source),
 				metric
 			);
 		}
