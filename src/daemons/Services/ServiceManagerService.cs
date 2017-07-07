@@ -448,6 +448,22 @@ namespace StatusMonitor.Daemons.Services
 								.RecordDiscrepanciesAsync(discrepancies.SelectMany(d => d));
 						}
 
+						// Resolve discrepancies
+						using (var scope = _serviceProvider.CreateScope())
+						{
+							var discrepancyService = scope
+								.ServiceProvider
+								.GetRequiredService<IDiscrepancyService>();
+
+							await discrepancyService
+								.ResolveDiscrepanciesAsync(
+									await discrepancyService
+										.FindResolvedDiscrepanciesAsync(
+											await context.Discrepancies.Where(d => !d.Resolved).ToListAsync()
+										)
+								);
+						}
+
 						// Wait
 						Thread.Sleep(_intervals[ServiceManagerServices.Discrepancy]);
 

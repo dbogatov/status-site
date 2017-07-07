@@ -287,7 +287,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			var metric = await context.Metrics.AddAsync(
 				new Metric
 				{
-					Source = "the-source",
+					Source = "lolchik.com",
 					Type = Metrics.Ping.AsInt()
 				}
 			);
@@ -322,7 +322,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			await context.PingSettings.AddAsync(
 				new PingSetting
 				{
-					ServerUrl = "the-source",
+					ServerUrl = "https://lolchik.com",
 					MaxFailures = 1
 				}
 			);
@@ -341,7 +341,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 					DateFirstOffense = dataPoints[2].Timestamp,
 					Type = DiscrepancyType.PingFailedNTimes,
 					MetricType = Metrics.Ping,
-					MetricSource = "the-source"
+					MetricSource = "lolchik.com"
 				}
 			};
 
@@ -368,7 +368,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			var metric = new Metric
 			{
 				Type = type.AsInt(),
-				Source = "the-source"
+				Source = "lolchik.com"
 			};
 			var discrepancyService = new DiscrepancyService(
 				new Mock<ILogger<DiscrepancyService>>().Object,

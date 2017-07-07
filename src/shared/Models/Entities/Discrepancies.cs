@@ -22,9 +22,12 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// </summary>
 		public Metrics MetricType { get; set; }
 
+		public DateTime DateResolved { get; set; }
+		public bool Resolved { get; set; } = false;
+
 		public override string ToString()
 		{
-			switch(Type)
+			switch (Type)
 			{
 				case DiscrepancyType.GapInData:
 					return $"Gap in data from {MetricSource} has been detected. The gap starts on {DateFirstOffense}.";
