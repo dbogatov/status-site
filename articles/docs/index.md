@@ -25,7 +25,7 @@
 	- Different severities - with different frequencies
 * Discrepancies
 	- Detect discrepancies in data points (gaps, high values, ping failures)
-	- Detect the start and end of discrepancy - not reported twice[^1]
+	- Detect the start and end of discrepancy - not reported twice
 * Rich API
 * Served as a docker composition - easy to install, configure and update
 * Different databases for old and recent data

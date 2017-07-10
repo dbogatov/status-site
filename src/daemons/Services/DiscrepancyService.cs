@@ -25,6 +25,20 @@ namespace StatusMonitor.Daemons.Services
 	public interface IDiscrepancyService
 	{
 		/// <summary>
+		/// Schedules notifications about resolved discrepancies.
+		/// Sets resolved flag.
+		/// </summary>
+		/// <param name="discrepancies">List of discrepancies set to be resolved.</param>
+		Task<IEnumerable<Discrepancy>> ResolveDiscrepanciesAsync(IEnumerable<Discrepancy> discrepancies);
+
+		/// <summary>
+		/// Returns a list of discrepancies that needs to be resolved.
+		/// </summary>
+		/// <param name="discrepancies">List of unresolved discrepancies to check for resolutions.</param>
+		/// <returns>A list of need-to-be-resolved discrepancies</returns>
+		Task<IEnumerable<Discrepancy>> FindResolvedDiscrepanciesAsync(IEnumerable<Discrepancy> discrepancies);
+
+		/// <summary>
 		/// Stores in database and schedules notifications for those discrepancies from input
 		/// that do not yet exist in data provider.
 		/// </summary>
@@ -90,6 +104,12 @@ namespace StatusMonitor.Daemons.Services
 			{
 				lock (_locker)
 				{
+					if (discrepancy.Resolved)
+					{
+						_logger.LogWarning(LoggingEvents.Discrepancies.AsInt(), "Resolved discrepancy is passed to RecordDiscrepanciesAsync");
+						continue;
+					}
+
 					if (
 						!_context.
 							Discrepancies.
@@ -119,6 +139,43 @@ namespace StatusMonitor.Daemons.Services
 
 			return unique;
 		}
+
+		public async Task<IEnumerable<Discrepancy>> ResolveDiscrepanciesAsync(IEnumerable<Discrepancy> discrepancies)
+		{
+			if (discrepancies.Count() == 0)
+			{
+				return discrepancies;
+			}
+
+			_context.Discrepancies.AttachRange(discrepancies);
+
+			foreach (var discrepancy in discrepancies)
+			{
+				if (discrepancy.Resolved)
+				{
+					_logger.LogWarning(LoggingEvents.Discrepancies.AsInt(), "Resolved discrepancy passed to ResolveDiscrepancies method.");
+					continue;
+				}
+
+				discrepancy.Resolved = true;
+				discrepancy.DateResolved = DateTime.UtcNow;
+
+				_logger.LogDebug(
+					LoggingEvents.Discrepancies.AsInt(), 
+					$"Discrepancy \"{discrepancy.ToString()}\" has been resolved!"
+				);
+
+				await _notification.ScheduleNotificationAsync(
+					$"Discrepancy \"{discrepancy.ToString()}\" has been resolved!",
+					NotificationSeverity.High
+				);
+			}
+
+			await _context.SaveChangesAsync();
+
+			return discrepancies;
+		}
+
 
 		public async Task<List<Discrepancy>> FindGapsAsync(Metric metric, TimeSpan ago)
 		{
@@ -159,7 +216,7 @@ namespace StatusMonitor.Daemons.Services
 					.ToListAsync(),
 				await _context
 					.PingSettings
-					.FirstAsync(s => s.ServerUrl == metric.Source),
+					.FirstAsync(s => new Uri(s.ServerUrl).Host == metric.Source),
 				metric
 			);
 		}
@@ -309,7 +366,7 @@ namespace StatusMonitor.Daemons.Services
 					NormalLoad = d.Value < Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Load:Threshold"]),
 					Timestamp = d.Timestamp
 				});
-			
+
 			if (!loads.Any(l => l.NormalLoad))
 			{
 				// Means that server is overloaded for the whole timeframe
@@ -339,8 +396,8 @@ namespace StatusMonitor.Daemons.Services
 					}
 				)
 				.Where(
-					t => 
-						!t.StateGood && 
+					t =>
+						!t.StateGood &&
 						t.Count > Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Load:MaxFailures"])
 				)
 				.Select(x => new Discrepancy
@@ -351,6 +408,73 @@ namespace StatusMonitor.Daemons.Services
 					MetricSource = metric.Source
 				})
 				.ToList();
+		}
+
+		public async Task<IEnumerable<Discrepancy>> FindResolvedDiscrepanciesAsync(IEnumerable<Discrepancy> discrepancies)
+		{
+			var resolvedDiscrepancies = new List<Discrepancy>();
+
+			foreach (var discrepancy in discrepancies)
+			{
+				if (discrepancy.Resolved)
+				{
+					_logger.LogWarning(LoggingEvents.Discrepancies.AsInt(), "Resolved discrepancy passed to FindResolvedDiscrepanciesAsync method.");
+					continue;
+				}
+
+				switch (discrepancy.Type)
+				{
+					case DiscrepancyType.GapInData:
+						if (
+							await _context
+								.NumericDataPoints
+								.Where(dp =>
+									dp.Metric.Source == discrepancy.MetricSource &&
+									dp.Metric.Type == discrepancy.MetricType.AsInt() &&
+									dp.Timestamp > discrepancy.DateFirstOffense
+								)
+								.AnyAsync()
+						)
+						{
+							resolvedDiscrepancies.Add(discrepancy);
+						}
+						break;
+					case DiscrepancyType.HighLoad:
+						if (
+							await _context
+								.NumericDataPoints
+								.Where(dp =>
+									dp.Metric.Source == discrepancy.MetricSource &&
+									dp.Metric.Type == discrepancy.MetricType.AsInt() &&
+									dp.Timestamp > discrepancy.DateFirstOffense
+								)
+								.AnyAsync(dp => dp.Value <= Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Load:Threshold"]))
+						)
+						{
+							resolvedDiscrepancies.Add(discrepancy);
+						}
+						break;
+					case DiscrepancyType.PingFailedNTimes:
+						if (
+							await _context
+								.PingDataPoints
+								.Where(dp =>
+									dp.Metric.Source == discrepancy.MetricSource &&
+									dp.Metric.Type == discrepancy.MetricType.AsInt() &&
+									dp.Timestamp > discrepancy.DateFirstOffense
+								)
+								.AnyAsync(dp => dp.HttpStatusCode == HttpStatusCode.OK.AsInt())
+						)
+						{
+							resolvedDiscrepancies.Add(discrepancy);
+						}
+						break;
+					default:
+						throw new ArgumentException($"Unknown discrepancy type: {discrepancy.Type}.");
+				}
+			}
+
+			return resolvedDiscrepancies;
 		}
 	}
 

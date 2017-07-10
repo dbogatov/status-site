@@ -235,6 +235,6 @@ namespace StatusMonitor.Shared.Extensions
 	/// </summary>
 	public enum LoggingEvents
 	{
-		Ping = 1, ModelState, ApiCheck, Startup, ServiceManager, Metrics, Clean, Cache, Demo, HomeController, ActionFilters, GenericError, Notifications
+		Ping = 1, ModelState, ApiCheck, Startup, ServiceManager, Metrics, Clean, Cache, Demo, HomeController, ActionFilters, GenericError, Notifications, Discrepancies
 	}
 }

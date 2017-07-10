@@ -57,6 +57,10 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				.Setup(ping => ping.PingServerAsync(It.IsAny<PingSetting>()))
 				.ReturnsAsync(new PingDataPoint());
 
+			_mockDiscrepancyService
+				.Setup(d => d.FindResolvedDiscrepanciesAsync(It.IsAny<IEnumerable<Discrepancy>>()))
+				.ReturnsAsync(new List<Discrepancy>());
+
 			_mockServiceProvider
 				.Setup(provider => provider.GetService(typeof(IDataContext)))
 				.Returns(GenerateNewDataContext());
@@ -158,7 +162,8 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				);
 		}
 
-		[Theory(Skip = "Unstable test, needs investigation")]
+		// [Theory(Skip = "Unstable test, needs investigation")]
+		[Theory]
 		[InlineData(ServiceManagerServices.Cache)]
 		[InlineData(ServiceManagerServices.Clean)]
 		[InlineData(ServiceManagerServices.Ping)]
@@ -178,7 +183,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 
 			// Act
 			var task = serviceManagerService.StartServices();
-			await Task.Delay(2000);
+			await Task.Delay(3000);
 			serviceManagerService.StopServices();
 
 			// Let it finish its job
@@ -230,7 +235,22 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				service == ServiceManagerServices.Discrepancy ? Times.AtLeastOnce() : Times.Never()
 			);
 			_mockDiscrepancyService.Verify(
+				discrepancy => discrepancy.FindHighLoadsAsync(
+					It.IsAny<Metric>(),
+					It.IsAny<TimeSpan>()
+				),
+				service == ServiceManagerServices.Discrepancy ? Times.AtLeastOnce() : Times.Never()
+			);
+			_mockDiscrepancyService.Verify(
 				discrepancy => discrepancy.RecordDiscrepanciesAsync(It.IsAny<IEnumerable<Discrepancy>>()),
+				service == ServiceManagerServices.Discrepancy ? Times.AtLeastOnce() : Times.Never()
+			);
+			_mockDiscrepancyService.Verify(
+				discrepancy => discrepancy.FindResolvedDiscrepanciesAsync(It.IsAny<IEnumerable<Discrepancy>>()),
+				service == ServiceManagerServices.Discrepancy ? Times.AtLeastOnce() : Times.Never()
+			);
+			_mockDiscrepancyService.Verify(
+				discrepancy => discrepancy.ResolveDiscrepanciesAsync(It.IsAny<IEnumerable<Discrepancy>>()),
 				service == ServiceManagerServices.Discrepancy ? Times.AtLeastOnce() : Times.Never()
 			);
 
