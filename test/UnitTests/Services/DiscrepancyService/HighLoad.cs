@@ -351,6 +351,85 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		}
 
 		[Fact]
+		public void HighLoadDataStartsWithHighLoad()
+		{
+			// Arrange
+			var mockConfig = new Mock<IConfiguration>();
+			mockConfig
+				.SetupGet(conf => conf["ServiceManager:DiscrepancyService:Load:Threshold"])
+				.Returns(90.ToString());
+			mockConfig
+				.SetupGet(conf => conf["ServiceManager:DiscrepancyService:Load:MaxFailures"])
+				.Returns(2.ToString()); // 3 is discrepancy
+
+			var discrepancyService = new DiscrepancyService(
+				new Mock<ILogger<DiscrepancyService>>().Object,
+				new Mock<IDataContext>().Object,
+				new Mock<INotificationService>().Object,
+				mockConfig.Object
+			);
+
+			var input = new List<NumericDataPoint>() {
+				new NumericDataPoint { // Good
+					Timestamp = DateTime.UtcNow.AddMinutes(0),
+					Value = 68
+				},
+				new NumericDataPoint { // Bad
+					Timestamp = DateTime.UtcNow.AddMinutes(-1),
+					Value = 91
+				},
+				new NumericDataPoint { // Bad
+					Timestamp = DateTime.UtcNow.AddMinutes(-2),
+					Value = 99
+				},
+				new NumericDataPoint { // Bad
+					Timestamp = DateTime.UtcNow.AddMinutes(-3),
+					Value = 95
+				},
+				new NumericDataPoint { // Good
+					Timestamp = DateTime.UtcNow.AddMinutes(-4),
+					Value = 68
+				},
+				new NumericDataPoint { // Bad
+					Timestamp = DateTime.UtcNow.AddMinutes(-5),
+					Value = 99
+				},
+				new NumericDataPoint { // Bad
+					Timestamp = DateTime.UtcNow.AddMinutes(-6),
+					Value = 98
+				},
+				new NumericDataPoint { // Bad
+					Timestamp = DateTime.UtcNow.AddMinutes(-7),
+					Value = 92
+				}
+			};
+
+			var expected = new List<Discrepancy> {
+				new Discrepancy
+				{
+					DateFirstOffense = input[3].Timestamp,
+					Type = DiscrepancyType.HighLoad,
+					MetricType = Metrics.CpuLoad,
+					MetricSource = "the-source"
+				}
+			};
+
+			// Act
+			var actual = discrepancyService
+				.FindHighLoadInDataPoints(
+					input,
+					new Metric
+					{
+						Type = Metrics.CpuLoad.AsInt(),
+						Source = "the-source"
+					}
+				);
+
+			// Assert
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
 		public async Task FindsHighLoad()
 		{
 			// Arrange

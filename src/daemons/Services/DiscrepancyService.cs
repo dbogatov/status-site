@@ -323,6 +323,7 @@ namespace StatusMonitor.Daemons.Services
 
 			return failures
 				.OrderBy(p => p.Timestamp)
+				.SkipWhile(p => !p.StatusOK)
 				.Aggregate(
 					new Stack<BoolIntDateTuple>(),
 					(rest, self) =>
@@ -384,6 +385,7 @@ namespace StatusMonitor.Daemons.Services
 
 			return loads
 				.OrderBy(p => p.Timestamp)
+				.SkipWhile(p => !p.NormalLoad)
 				.Aggregate(
 					new Stack<BoolIntDateTuple>(),
 					(rest, self) =>
