@@ -132,7 +132,7 @@ namespace StatusMonitor.Daemons.Services
 			foreach (var discrepancy in unique)
 			{
 				await _notification.ScheduleNotificationAsync(
-					discrepancy.ToString(),
+					discrepancy.ToStringWithTimeZone(_config["ServiceManager:NotificationService:TimeZone"]),
 					NotificationSeverity.High
 				);
 			}
@@ -162,11 +162,11 @@ namespace StatusMonitor.Daemons.Services
 
 				_logger.LogDebug(
 					LoggingEvents.Discrepancies.AsInt(),
-					$"Discrepancy \"{discrepancy.ToString()}\" has been resolved!"
+					$"Discrepancy \"{discrepancy.ToStringWithTimeZone()}\" has been resolved!"
 				);
 
 				await _notification.ScheduleNotificationAsync(
-					$"Discrepancy \"{discrepancy.ToString()}\" has been resolved!",
+					$"Discrepancy \"{discrepancy.ToStringWithTimeZone(_config["ServiceManager:NotificationService:TimeZone"])}\" has been resolved!",
 					NotificationSeverity.High
 				);
 			}

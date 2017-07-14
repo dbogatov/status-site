@@ -88,6 +88,7 @@ ServiceManager:
   NotificationService:
     Enabled: true
     Interval: 30
+    TimeZone: "America/New_York"
     Frequencies:
       Low: 86400
       Medium: 360

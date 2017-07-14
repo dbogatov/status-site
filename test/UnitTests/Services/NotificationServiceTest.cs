@@ -338,5 +338,40 @@ namespace StatusMonitor.Tests.UnitTests.Services
 					Times.Never()
 				);
 		}
+
+		[Fact]
+		public void UsesCorrectTimeZone()
+		{
+			// Arrange
+			var config = new Mock<IConfiguration>();
+			config
+				.SetupGet(conf => conf["ServiceManager:NotificationService:TimeZone"])
+				.Returns("Asia/Kabul");
+
+			var notificationService = new NotificationService(
+				new Mock<ILogger<NotificationService>>().Object,
+				config.Object,
+				new Mock<IDataContext>().Object,
+				new Mock<IEmailService>().Object,
+				new Mock<ISlackService>().Object
+			);
+
+			var date = DateTime.SpecifyKind(new DateTime(2017, 07, 14, 18, 25, 43), DateTimeKind.Utc);
+
+			var input = new List<Notification> {
+				new Notification {
+					DateCreated = date,
+					Message = $"The message.",
+					Severity = NotificationSeverity.Medium
+				}
+			};
+			var expected = date.ToStringUsingTimeZone("Asia/Kabul");
+
+			// Act
+			var actual = notificationService.ComposeMessage(input);
+
+			// Assert
+			Assert.Contains(expected, actual);
+		}
 	}
 }
