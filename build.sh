@@ -263,6 +263,8 @@ build-app () {
 
 	build-dotnet
 
+	build-ping-server
+
 	echo "Build app completed!"
 }
 
