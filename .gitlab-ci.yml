@@ -24,6 +24,8 @@ build-ping:
   image: golang:alpine
   stage: build
   script:
+  - apk update
+  - apk add bash
   - ./build.sh -f build-ping-server
   artifacts:
     expire_in: 90 min
