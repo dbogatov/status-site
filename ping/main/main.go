@@ -32,8 +32,7 @@ func main() {
 
 		w.Header().Set("Content-Type", "application/json")
 
-		// url := r.URL.Query().Get("url");
-		url := "http://localhost:5555"
+		url := r.URL.Query().Get("url")
 		method := r.URL.Query().Get("method")
 		timeout, timeoutConversionErr := strconv.Atoi(r.URL.Query().Get("timeout"))
 
@@ -111,7 +110,7 @@ func main() {
 		w.Write(data)
 	})
 
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(":8888", nil))
 }
 
 func sendError(w *http.ResponseWriter, error error, response response) {
