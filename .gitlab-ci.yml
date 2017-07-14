@@ -20,6 +20,18 @@ build-docs:
   tags:
   - docker
 
+build-ping:
+  image: golang:alpine
+  stage: build
+  script:
+  - ./build.sh -f build-ping-server
+  artifacts:
+    expire_in: 90 min
+    paths:
+    - ping/bin/*
+  tags:
+  - docker
+
 build-app:
   image: dbogatov/docker-containers:dotnet-core-latest
   stage: build
@@ -101,6 +113,7 @@ release-all:
   dependencies:
   - build-app
   - build-docs
+  - build-ping
   script:
   - ./build.sh -f build-docker-images
   - docker login -u $DOCKER_USER -p $DOCKER_PASS

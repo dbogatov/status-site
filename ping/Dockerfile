@@ -1,4 +1,4 @@
-FROM golang:alpine
+FROM alpine
 
 # Create directory for the app source code
 WORKDIR /srv
