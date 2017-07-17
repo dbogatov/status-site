@@ -166,7 +166,7 @@ namespace StatusMonitor.Shared.Services
 							(value, key) => $@"Severity {(NotificationSeverity)value.Key}:{Environment.NewLine}			
 								{
 									value
-										.Select(ntf => $"[{ntf.DateCreated}] {ntf.Message}")
+										.Select(ntf => $"[{ntf.DateCreated.ToStringUsingTimeZone(_config["ServiceManager:NotificationService:TimeZone"])}] {ntf.Message}")
 										.Aggregate((self, next) => $"{self}{Environment.NewLine}{next}")
 								}
 							"

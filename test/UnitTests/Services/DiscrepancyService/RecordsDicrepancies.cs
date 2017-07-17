@@ -171,5 +171,48 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			// Assert
 			Assert.Empty(actual);
 		}
+
+		[Fact]
+		public async Task UsesCorrectTimeZone()
+		{
+			// Arrange
+			var config = new Mock<IConfiguration>();
+			config
+				.SetupGet(conf => conf["ServiceManager:NotificationService:TimeZone"])
+				.Returns("Asia/Kabul");
+
+			var date = DateTime.SpecifyKind(new DateTime(2017, 07, 14, 18, 25, 43), DateTimeKind.Utc);
+
+			var context = _serviceProvider.GetRequiredService<IDataContext>();
+			var mockNotifications = new Mock<INotificationService>();
+
+			var discrepancyService = new DiscrepancyService(
+				new Mock<ILogger<DiscrepancyService>>().Object,
+				context,
+				mockNotifications.Object,
+				config.Object
+			);
+
+			var input = new List<Discrepancy> {
+				new Discrepancy {
+					DateFirstOffense = date,
+					Type = DiscrepancyType.GapInData,
+					MetricSource = "the-source",
+					MetricType = Metrics.CpuLoad
+				}
+			};
+
+			// Act
+			await discrepancyService.RecordDiscrepanciesAsync(input);
+
+			// Assert
+			mockNotifications
+				.Verify(
+					n => n.ScheduleNotificationAsync(
+						It.Is<string>(s => s.Contains(date.ToStringUsingTimeZone("Asia/Kabul"))),
+						NotificationSeverity.High
+					)
+				);
+		}
 	}
 }

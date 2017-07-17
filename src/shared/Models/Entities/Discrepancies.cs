@@ -25,20 +25,22 @@ namespace StatusMonitor.Shared.Models.Entities
 		public DateTime DateResolved { get; set; }
 		public bool Resolved { get; set; } = false;
 
-		public override string ToString()
+		public string ToStringWithTimeZone(string timeZoneId = null)
 		{
 			switch (Type)
 			{
 				case DiscrepancyType.GapInData:
-					return $"Gap in data from {MetricSource} has been detected. The gap starts on {DateFirstOffense}.";
+					return $"Gap in data from {MetricSource} has been detected. The gap starts on {DateFirstOffense.ToStringUsingTimeZone(timeZoneId)}.";
 				case DiscrepancyType.HighLoad:
-					return $"{MetricSource} reported high load starting from {DateFirstOffense}.";
+					return $"{MetricSource} reported high load starting from {DateFirstOffense.ToStringUsingTimeZone(timeZoneId)}.";
 				case DiscrepancyType.PingFailedNTimes:
-					return $"Requests to {MetricSource} failed too many consecutive times. First failure occurred on {DateFirstOffense}.";
+					return $"Requests to {MetricSource} failed too many consecutive times. First failure occurred on {DateFirstOffense.ToStringUsingTimeZone(timeZoneId)}.";
 				default:
-					return $"Discrepancy of an unknown type from {MetricSource} has been detected. It started on {DateFirstOffense}.";
+					return $"Discrepancy of an unknown type from {MetricSource} has been detected. It started on {DateFirstOffense.ToStringUsingTimeZone(timeZoneId)}.";
 			}
 		}
+
+		public override string ToString() => ToStringWithTimeZone();
 	}
 
 	public enum DiscrepancyType
