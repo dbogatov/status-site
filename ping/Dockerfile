@@ -1,5 +1,8 @@
 FROM alpine
 
+# Install CA Certs for HTTPS
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+
 # Create directory for the app source code
 WORKDIR /srv
 
