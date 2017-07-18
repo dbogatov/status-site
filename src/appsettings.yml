@@ -50,6 +50,7 @@ Data:
     Compilation: "Compilations"
     Log: "Log Messages"
     Ping: "Response time"
+  PingServerUrl: http://ping:8888
 Logging:
   MinLogLevel: "Information"
   LogSeverityReported: "Error"

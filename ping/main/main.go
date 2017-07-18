@@ -18,12 +18,13 @@ type response struct {
 	Method  string
 	Timeout int // milliseconds
 
-	Latency       int               `json:",omitempty"` // milliseconds
-	Headers       map[string]string `json:",omitempty"`
-	ContentLength int               `json:",omitempty"`
-	Status        string            `json:",omitempty"`
+	Latency       int      `json:",omitempty"` // milliseconds
+	Headers       []string `json:",omitempty"`
+	ContentLength int      `json:",omitempty"`
+	StatusCode    int      `json:",omitempty"`
 
-	Error string `json:",omitempty"`
+	Error   string `json:",omitempty"`
+	IsError bool
 }
 
 func main() {
@@ -40,6 +41,7 @@ func main() {
 			URL:     url,
 			Method:  method,
 			Timeout: timeout,
+			IsError: false,
 		}
 
 		if timeoutConversionErr != nil {
@@ -97,12 +99,21 @@ func main() {
 		copied, _ := io.Copy(ioutil.Discard, resp.Body)
 		response.ContentLength = int(copied)
 
-		response.Status = resp.Status
+		response.StatusCode = resp.StatusCode
 
-		response.Headers = make(map[string]string)
+		if resp.StatusCode != 200 {
+			sendError(
+				&w,
+				fmt.Errorf("Server responded %d", resp.StatusCode),
+				response,
+			)
+			return
+		}
+
+		response.Headers = make([]string, len(resp.Header))
 
 		for k, v := range resp.Header {
-			response.Headers[k] = fmt.Sprintf("%s", v)
+			response.Headers = append(response.Headers, fmt.Sprintf("%s: %s", k, v))
 		}
 
 		data, _ := json.Marshal(response)
@@ -114,7 +125,9 @@ func main() {
 }
 
 func sendError(w *http.ResponseWriter, error error, response response) {
+	response.IsError = true
 	response.Error = error.Error()
+	response.StatusCode = 502
 
 	data, _ := json.Marshal(response)
 

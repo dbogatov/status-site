@@ -5,9 +5,11 @@
     TrackingId: "UA-XXXXXXX-X"
 Data:
   PingSettings:
+    - ServerUrl: "https://socialimps.dbogatov.org"
     - ServerUrl: "https://google.com"
       MaxFailures: 3
       GetMethodRequired: false
+  PingServerUrl: http://localhost:8888
 ServiceManager:
   PingService:
     Enabled: true

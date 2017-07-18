@@ -118,12 +118,13 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// </summary>
 		public TimeSpan ResponseTime { get; set; }
 		public int HttpStatusCode { get; set; }
+		public string Message { get; set; }
 
 		public override int? NormalizedValue()
 		{
-			return 
-				HttpStatusCode == System.Net.HttpStatusCode.OK.AsInt() ? 
-				Convert.ToInt32(ResponseTime.TotalMilliseconds) : 
+			return
+				HttpStatusCode == System.Net.HttpStatusCode.OK.AsInt() ?
+				Convert.ToInt32(ResponseTime.TotalMilliseconds) :
 				(int?)null
 			;
 		}
@@ -134,7 +135,8 @@ namespace StatusMonitor.Shared.Models.Entities
 			{
 				Timestamp,
 				ResponseTime = Convert.ToInt32(ResponseTime.TotalMilliseconds),
-				HttpStatusCode
+				HttpStatusCode,
+				Message
 			};
 		}
 	}

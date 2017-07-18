@@ -15,27 +15,39 @@ using StatusMonitor.Shared.Services.Factories;
 using System.Net.Http;
 using StatusMonitor.Tests.Mock;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace StatusMonitor.Tests.UnitTests.Services
 {
-	public class PingServiceTest
+	public class RemotePingServiceTest
 	{
-
 		[Theory]
 		[InlineData(HttpResponseOption.Success)]
-		[InlineData(HttpResponseOption.Timeout)]
 		[InlineData(HttpResponseOption.ServiceUnavailable)]
-		/// <summary>
-		/// Checks that the service correctly determines status code and response time.
-		/// </summary>
-		/// <param name="option">Option describing the expected behavior</param>
 		public async Task GeneratesCorrectDataPoint(HttpResponseOption option)
 		{
 			// Arrange
 			var responseHandler = new ResponseHandler();
-			responseHandler.AddHandler(
-				new Uri("https://my.url.com"),
-				option
+			responseHandler.AddAction(
+				new Uri("http://ping.server"),
+				() =>
+					option == HttpResponseOption.Success ?
+					JsonConvert.SerializeObject(
+						new RemotePingServerResponse
+						{
+							Latency = 100,
+							StatusCode = 200,
+							IsError = false
+						}
+					) :
+					JsonConvert.SerializeObject(
+						new RemotePingServerResponse
+						{
+							StatusCode = 503,
+							IsError = true,
+							Error = "Some error"
+						}
+					)
 			);
 
 			var mockHttpFactory = new Mock<IHttpClientFactory>();
@@ -49,17 +61,24 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				.Setup(mock => mock.GetOrCreateMetricAsync(Metrics.Ping, "https://my.url.com"))
 				.ReturnsAsync(new Metric());
 
-			var pingService = new PingService(
+			var config = new Mock<IConfiguration>();
+			config
+				.SetupGet(conf => conf["Data:PingServerUrl"])
+				.Returns("http://ping.server");
+
+			var pingService = new RemotePingService(
 				metricServiceMock.Object,
 				new Mock<ILogger<PingService>>().Object,
+				config.Object,
 				mockHttpFactory.Object
 			);
 
 			// Act
 			var dataPoint = await pingService.PingServerAsync(
-				new PingSetting { 
+				new PingSetting
+				{
 					ServerUrl = "https://my.url.com",
-					MaxResponseTime = new TimeSpan(0,0,0,0,500)
+					MaxResponseTime = new TimeSpan(0, 0, 0, 0, 500)
 				}
 			);
 
@@ -68,21 +87,19 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			{
 				case HttpResponseOption.Success:
 					Assert.Equal(HttpStatusCode.OK.AsInt(), dataPoint.HttpStatusCode);
-					Assert.True(dataPoint.ResponseTime < new TimeSpan(0, 0, 0, 0, 2000));
-					break;
-				case HttpResponseOption.Timeout:
-					Assert.Equal(HttpStatusCode.ServiceUnavailable.AsInt(), dataPoint.HttpStatusCode);
-					Assert.Equal(new TimeSpan(0), dataPoint.ResponseTime);
+					Assert.Equal(dataPoint.ResponseTime, new TimeSpan(0, 0, 0, 0, 100));
+					Assert.Equal("OK", dataPoint.Message);
 					break;
 				case HttpResponseOption.ServiceUnavailable:
 					Assert.Equal(HttpStatusCode.ServiceUnavailable.AsInt(), dataPoint.HttpStatusCode);
-					Assert.True(dataPoint.ResponseTime < new TimeSpan(0, 0, 0, 0, 2000));
+					Assert.Equal(dataPoint.ResponseTime, new TimeSpan(0));
+					Assert.Equal("Some error", dataPoint.Message);
 					break;
 			}
 
 			// Clean up
-			responseHandler.RemoveHandler(
-				new Uri("https://my.url.com")
+			responseHandler.RemoveAction(
+				new Uri("http://ping.server")
 			);
 		}
 	}

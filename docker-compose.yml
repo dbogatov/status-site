@@ -23,7 +23,6 @@ services:
       - postgres
     links:
       - "postgres:database"
-      - "ping:ping"
     volumes:
       - ./appsettings.yml:/srv/appsettings.production.yml
     restart: on-failure
@@ -40,6 +39,7 @@ services:
       - postgres
     links:
       - "postgres:database"
+      - "ping:ping"
     volumes:
       - ./appsettings.yml:/srv/appsettings.production.yml
     restart: on-failure

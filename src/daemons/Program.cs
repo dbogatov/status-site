@@ -51,7 +51,15 @@ namespace StatusMonitor.Daemons
 
 			services.RegisterSharedServices(env, configuration);
 
-			services.AddScoped<IPingService, PingService>();
+			if (env.IsProduction())
+			{
+				services.AddScoped<IPingService, RemotePingService>();
+			}
+			else
+			{
+				services.AddScoped<IPingService, PingService>();
+			}
+
 			services.AddScoped<ICacheService, CacheService>();
 			services.AddScoped<ICleanService, CleanService>();
 			services.AddScoped<IDemoService, DemoService>();
