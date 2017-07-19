@@ -30,6 +30,10 @@ namespace StatusMonitor.Daemons.Services
 		Task<PingDataPoint> PingServerAsync(PingSetting setting);
 	}
 
+	/// <summary>
+	/// Makes requests to a separate ping server
+	/// Expects RemotePingServerResponse response
+	/// </summary>
 	public class RemotePingService : IPingService
 	{
 		private readonly IMetricService _metrics;
@@ -90,6 +94,9 @@ namespace StatusMonitor.Daemons.Services
 		}
 	}
 
+	/// <summary>
+	/// Structure of a separate ping server response expected by RemotePingService
+	/// </summary>
 	internal class RemotePingServerResponse
 	{
 		public string Url { get; set; }
