@@ -8,7 +8,8 @@ import "../../vendor/jquery.flot.tooltip.js";
 type JsonPingDataPoint = {
 	Timestamp: string;
 	ResponseTime: number;
-	HttpStatusCode: number;
+	Success: boolean;
+	Message: string;
 }
 
 /**
@@ -21,14 +22,16 @@ type JsonPingDataPoint = {
 export class PingDataPoint extends DataPoint {
 
 	public responseTime: number;
-	public httpStatusCode: number;
+	public success: boolean;
+	public message: string;
 
 	constructor(json: JsonPingDataPoint) {
 		super();
 
 		this.timestamp = Utility.toDate(json.Timestamp);
 		this.responseTime = json.ResponseTime;
-		this.httpStatusCode = json.HttpStatusCode;
+		this.success = json.Success;
+		this.message = json.Message;
 	}
 }
 
@@ -56,7 +59,7 @@ export class PingMetric extends Metric<PingDataPoint> {
 			.sortByProperty(dp => dp.timestamp.getTime())
 			.forEach(
 			(value, index, array) => {
-				if (value.httpStatusCode == 200) {
+				if (value.success) {
 					data.push([index, value.responseTime]);
 				} else {
 					errors.push([index, this.max]);

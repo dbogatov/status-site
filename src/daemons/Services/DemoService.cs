@@ -81,7 +81,7 @@ namespace StatusMonitor.Daemons.Services
 					{
 						Timestamp = timestamp ?? DateTime.UtcNow,
 						Metric = metric,
-						HttpStatusCode = success ? HttpStatusCode.OK.AsInt() : HttpStatusCode.ServiceUnavailable.AsInt(),
+						Success = success,
 						ResponseTime = new TimeSpan(0, 0, 0, 0, success ? random.Next(100, 900) : 0)
 					};
 					await _context.PingDataPoints.AddAsync((PingDataPoint)result);

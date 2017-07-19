@@ -76,14 +76,14 @@ namespace StatusMonitor.Daemons.Services
 					{
 						Metric = metric,
 						ResponseTime = new TimeSpan(0),
-						HttpStatusCode = data.StatusCode,
+						Success = data.StatusCode / 100 == 2, // 2xx
 						Message = data.Error
 					}:
 					new PingDataPoint
 					{
 						Metric = metric,
 						ResponseTime = new TimeSpan(0, 0, 0, 0, data.Latency),
-						HttpStatusCode = data.StatusCode,
+						Success = data.StatusCode / 100 == 2, // 2xx
 						Message = "OK"
 					};
 			}
@@ -183,8 +183,8 @@ namespace StatusMonitor.Daemons.Services
 				{
 					Metric = metric,
 					ResponseTime = responseTime,
-					HttpStatusCode = statusCode.AsInt(),
-					Message = statusCode.AsInt() == 200 ? "OK" : "Unavailable"
+					Success = statusCode.AsInt() / 100 == 2, // 2xx
+					Message = statusCode.AsInt() / 100 == 2 ? "OK" : "Failure"
 				};
 			}
 		}

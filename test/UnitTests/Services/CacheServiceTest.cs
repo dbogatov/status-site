@@ -186,31 +186,31 @@ namespace StatusMonitor.Tests.UnitTests.Services
 					await context.PingDataPoints.AddRangeAsync(
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 432),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 750),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 750),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Success = false,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 70),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Success = false,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 70),
 							Metric = metric
 						}
@@ -273,61 +273,61 @@ namespace StatusMonitor.Tests.UnitTests.Services
 					await context.PingDataPoints.AddRangeAsync(
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 432),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 750),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Success = false,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 70),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 876),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Success = false,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 345),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 750),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 850),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 50),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 740),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							ResponseTime = new TimeSpan(0, 0, 0, 0, 234),
 							Metric = metric,
 							Timestamp = DateTime.UtcNow.AddSeconds(5), // make sure it is the most recent data point
@@ -390,61 +390,61 @@ namespace StatusMonitor.Tests.UnitTests.Services
 					await context.PingDataPoints.AddRangeAsync(
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							Timestamp = DateTime.UtcNow.AddSeconds(0),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							Timestamp = DateTime.UtcNow.AddSeconds(1),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Success = false,
 							Timestamp = DateTime.UtcNow.AddSeconds(2),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							Timestamp = DateTime.UtcNow.AddSeconds(1),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							Timestamp = DateTime.UtcNow.AddSeconds(1),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							Timestamp = DateTime.UtcNow.AddSeconds(1),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Success = false,
 							Timestamp = DateTime.UtcNow.AddSeconds(2),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							Timestamp = DateTime.UtcNow.AddSeconds(1),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.OK.AsInt(),
+							Success = true,
 							Timestamp = DateTime.UtcNow.AddSeconds(1),
 							Metric = metric
 						},
 						new PingDataPoint
 						{
-							HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+							Success = false,
 							Timestamp = DateTime.UtcNow.AddSeconds(2),
 							Metric = metric
 						}
@@ -504,16 +504,16 @@ namespace StatusMonitor.Tests.UnitTests.Services
 						}
 					);
 					await context.PingDataPoints.AddRangeAsync(
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(), Metric = metric },
-						new PingDataPoint { HttpStatusCode = HttpStatusCode.OK.AsInt(), Metric = metric }
+						new PingDataPoint { Success = true, Metric = metric },
+						new PingDataPoint { Success = true, Metric = metric },
+						new PingDataPoint { Success = false, Metric = metric },
+						new PingDataPoint { Success = true, Metric = metric },
+						new PingDataPoint { Success = false, Metric = metric },
+						new PingDataPoint { Success = false, Metric = metric },
+						new PingDataPoint { Success = true, Metric = metric },
+						new PingDataPoint { Success = false, Metric = metric },
+						new PingDataPoint { Success = false, Metric = metric },
+						new PingDataPoint { Success = true, Metric = metric }
 					);
 					break;
 			}

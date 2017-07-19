@@ -86,12 +86,12 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			switch (option)
 			{
 				case HttpResponseOption.Success:
-					Assert.Equal(HttpStatusCode.OK.AsInt(), dataPoint.HttpStatusCode);
+					Assert.True(dataPoint.Success);
 					Assert.Equal(dataPoint.ResponseTime, new TimeSpan(0, 0, 0, 0, 100));
 					Assert.Equal("OK", dataPoint.Message);
 					break;
 				case HttpResponseOption.ServiceUnavailable:
-					Assert.Equal(HttpStatusCode.ServiceUnavailable.AsInt(), dataPoint.HttpStatusCode);
+					Assert.False(dataPoint.Success);
 					Assert.Equal(dataPoint.ResponseTime, new TimeSpan(0));
 					Assert.Equal("Some error", dataPoint.Message);
 					break;
