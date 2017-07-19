@@ -107,6 +107,7 @@ Configuration spec:
 		NotificationService: 								# Settings for notification service of the app
 			Enabled: true 									# Whether to use the service
 			Interval: 20									# How many seconds to wait between re-runs of the service
+			TimeZone: "America/New_York"					# Preferred time zone for displaying dates and times in notifications
 			Frequencies: 									# Number of seconds to wait before sending out notifications of given severity
 				Low: 86400 									# Example: notifications of low severity will be sent no more than once in 86400 seconds
 				Medium: 360 								# Example: notifications of medium severity will be sent no more than once in 360 seconds
