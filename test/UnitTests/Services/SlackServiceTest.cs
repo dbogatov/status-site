@@ -73,7 +73,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				.Returns(uri.AbsoluteUri);
 			
 			var responseHandler = new ResponseHandler();
-			responseHandler.AddAction(uri, () => requestMade = true);
+			responseHandler.AddAction(uri, () => (requestMade = true).ToString());
 			
 			var httpClientFactory = new Mock<IHttpClientFactory>();
 			httpClientFactory

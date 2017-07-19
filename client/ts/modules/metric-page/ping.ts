@@ -36,7 +36,7 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 			.reverse()
 			.forEach(
 			(value, index, array) => {
-				if (value.httpStatusCode == 200) {
+				if (value.success) {
 					data.push([value.timestamp.getTime(), value.responseTime]);
 				} else {
 					errors.push([value.timestamp.getTime(), this.max]);
@@ -157,7 +157,7 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 				<tr>
 					<th>Timestamp</th>
 					<th>Latency</th>
-					<th>Response Code</th>
+					<th>Result</th>
 				</tr>
 			`;
 
@@ -173,7 +173,7 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 						<tr>
 							<td>${dp.timestamp}</td>
 							<td>${dp.responseTime} ms</td>
-							<td>${dp.httpStatusCode}</td>
+							<td>${dp.success ? "Success" : dp.message}</td>
 						</tr>
 					`
 					)

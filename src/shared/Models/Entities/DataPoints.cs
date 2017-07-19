@@ -117,13 +117,14 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// 0 for ServiceUnavailable status code.
 		/// </summary>
 		public TimeSpan ResponseTime { get; set; }
-		public int HttpStatusCode { get; set; }
+		public bool Success { get; set; }
+		public string Message { get; set; }
 
 		public override int? NormalizedValue()
 		{
-			return 
-				HttpStatusCode == System.Net.HttpStatusCode.OK.AsInt() ? 
-				Convert.ToInt32(ResponseTime.TotalMilliseconds) : 
+			return
+				Success ?
+				Convert.ToInt32(ResponseTime.TotalMilliseconds) :
 				(int?)null
 			;
 		}
@@ -134,7 +135,8 @@ namespace StatusMonitor.Shared.Models.Entities
 			{
 				Timestamp,
 				ResponseTime = Convert.ToInt32(ResponseTime.TotalMilliseconds),
-				HttpStatusCode
+				Success,
+				Message
 			};
 		}
 	}

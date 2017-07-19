@@ -15,16 +15,16 @@ namespace StatusMonitor.Tests.Mock
 	public class ResponseHandler : DelegatingHandler
 	{
 		private readonly Dictionary<Uri, HttpResponseOption> _urls = new Dictionary<Uri, HttpResponseOption>();
-		private readonly Dictionary<Uri, Action> _actions = new Dictionary<Uri, Action>();
+		private readonly Dictionary<string, Func<string>> _actions = new Dictionary<string, Func<string>>();
 
-		public void AddAction(Uri uri, Action action)
+		public void AddAction(Uri uri, Func<string> action)
 		{
-			_actions.Add(uri, action);
+			_actions.Add(uri.Host, action);
 		}
 
 		public void RemoveAction(Uri uri)
 		{
-			_actions.Remove(uri);
+			_actions.Remove(uri.Host);
 		}
 
 		public void AddHandler(Uri uri, HttpResponseOption option)
@@ -44,10 +44,12 @@ namespace StatusMonitor.Tests.Mock
 		{
 			if (_actions.Count > 0)
 			{
-				if (_actions.ContainsKey(request.RequestUri))
+				if (_actions.ContainsKey(request.RequestUri.Host))
 				{
-					_actions[request.RequestUri].Invoke();
-					return await Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+					return new HttpResponseMessage {
+						Content = new StringContent(_actions[request.RequestUri.Host].Invoke()),
+						StatusCode = HttpStatusCode.OK
+					};
 				}
 				else
 				{
@@ -78,7 +80,7 @@ namespace StatusMonitor.Tests.Mock
 				}
 			}
 
-			throw new InvalidOperationException("Mo option or action was registered");
+			throw new InvalidOperationException("No option or action was registered");
 		}
 	}
 

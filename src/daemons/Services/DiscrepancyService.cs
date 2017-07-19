@@ -310,7 +310,7 @@ namespace StatusMonitor.Daemons.Services
 			var failures = pings
 				.Select(p => new
 				{
-					StatusOK = p.HttpStatusCode == HttpStatusCode.OK.AsInt(),
+					StatusOK = p.Success,
 					Timestamp = p.Timestamp
 				});
 
@@ -473,7 +473,7 @@ namespace StatusMonitor.Daemons.Services
 									dp.Metric.Type == discrepancy.MetricType.AsInt() &&
 									dp.Timestamp > discrepancy.DateFirstOffense
 								)
-								.AnyAsync(dp => dp.HttpStatusCode == HttpStatusCode.OK.AsInt())
+								.AnyAsync(dp => dp.Success)
 						)
 						{
 							resolvedDiscrepancies.Add(discrepancy);

@@ -8,6 +8,10 @@ using System.Net;
 using Microsoft.Extensions.Logging;
 using StatusMonitor.Shared.Services;
 using StatusMonitor.Shared.Services.Factories;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace StatusMonitor.Daemons.Services
 {
@@ -24,6 +28,94 @@ namespace StatusMonitor.Daemons.Services
 		/// <param name="setting">Set of parameters needed to ping a server.</param>
 		/// <returns>Ping data point with recorded response time and status code.</returns>
 		Task<PingDataPoint> PingServerAsync(PingSetting setting);
+	}
+
+	/// <summary>
+	/// Makes requests to a separate ping server
+	/// Expects RemotePingServerResponse response
+	/// </summary>
+	public class RemotePingService : IPingService
+	{
+		private readonly IMetricService _metrics;
+		private readonly ILogger<PingService> _logger;
+		private readonly IConfiguration _conf;
+		private readonly IHttpClientFactory _factory;
+
+		public RemotePingService(
+			IMetricService metrics,
+			ILogger<PingService> logger,
+			IConfiguration conf,
+			IHttpClientFactory factory
+		)
+		{
+			_conf = conf;
+			_logger = logger;
+			_metrics = metrics;
+			_factory = factory;
+		}
+
+		public async Task<PingDataPoint> PingServerAsync(PingSetting setting)
+		{
+			using (var client = _factory.BuildClient())
+			{
+				var parameters = new Dictionary<string, string> {
+					{ "url", setting.ServerUrl },
+					{ "method", setting.GetMethodRequired ? "GET" : "HEAD" },
+					{ "timeout", setting.MaxResponseTime.TotalMilliseconds.ToString() }
+				};
+
+				var result = await client.GetAsync(QueryHelpers.AddQueryString(_conf["Data:PingServerUrl"], parameters));
+
+				var data = JsonConvert.DeserializeObject<RemotePingServerResponse>(
+					await result.Content.ReadAsStringAsync()
+				);
+
+				_logger.LogDebug(LoggingEvents.Ping.AsInt(), $"Ping completed for {setting.ServerUrl}");
+
+				var metric = await _metrics.GetOrCreateMetricAsync(Metrics.Ping, new Uri(setting.ServerUrl).Host);
+
+				return
+					data.IsError ?
+					new PingDataPoint
+					{
+						Metric = metric,
+						ResponseTime = new TimeSpan(0),
+						Success = data.StatusCode / 100 == 2, // 2xx
+						Message = data.Error
+					}:
+					new PingDataPoint
+					{
+						Metric = metric,
+						ResponseTime = new TimeSpan(0, 0, 0, 0, data.Latency),
+						Success = data.StatusCode / 100 == 2, // 2xx
+						Message = "OK"
+					};
+			}
+		}
+	}
+
+	/// <summary>
+	/// Structure of a separate ping server response expected by RemotePingService
+	/// </summary>
+	internal class RemotePingServerResponse
+	{
+		public string Url { get; set; }
+		public string Method { get; set; }
+		/// <summary>
+		/// In milliseconds
+		/// </summary>
+		public int Timeout { get; set; }
+
+		/// <summary>
+		/// In milliseconds
+		/// </summary>
+		public int Latency { get; set; }
+		public string[] Headers { get; set; }
+		public int ContentLength { get; set; }
+		public int StatusCode { get; set; }
+
+		public string Error { get; set; }
+		public bool IsError { get; set; }
 	}
 
 	public class PingService : IPingService
@@ -63,7 +155,7 @@ namespace StatusMonitor.Daemons.Services
 				// Make sure task finishes in TotalMilliseconds milliseconds
 				if (
 					await Task.WhenAny(
-						task, 
+						task,
 						Task.Delay(Convert.ToInt32(setting.MaxResponseTime.TotalMilliseconds))
 					) == task
 				)
@@ -76,7 +168,7 @@ namespace StatusMonitor.Daemons.Services
 					responseTime = timer.Elapsed;
 					statusCode = response.StatusCode;
 				}
-				
+
 				if (
 					statusCode == HttpStatusCode.ServiceUnavailable ||
 					responseTime > setting.MaxResponseTime
@@ -98,7 +190,8 @@ namespace StatusMonitor.Daemons.Services
 				{
 					Metric = metric,
 					ResponseTime = responseTime,
-					HttpStatusCode = statusCode.AsInt()
+					Success = statusCode.AsInt() / 100 == 2, // 2xx
+					Message = statusCode.AsInt() / 100 == 2 ? "OK" : "Failure"
 				};
 			}
 		}

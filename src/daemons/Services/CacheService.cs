@@ -222,18 +222,18 @@ namespace StatusMonitor.Daemons.Services
 							.PingDataPoints
 							.Where(dp => dp.Metric == metric)
 							.OrderByDescending(dp => dp.Timestamp)
-							.Select(dp => dp.HttpStatusCode)
+							.Select(dp => dp.Success)
 							.ToListAsync());
 
 					if (
-						pingValues.Take(10).Count(code => code != System.Net.HttpStatusCode.OK.AsInt())
+						pingValues.Take(10).Count(code => !code)
 						>=
 						pingSetting.MaxFailures
 					)
 					{
 						label = AutoLabels.Critical;
 					}
-					else if (pingValues.First() != System.Net.HttpStatusCode.OK.AsInt())
+					else if (!pingValues.First())
 					{
 						label = AutoLabels.Warning;
 					}

@@ -161,6 +161,14 @@ move-static-files () {
 	chmod -x documentation/out/deploy.sh
 }
 
+build-ping-server () {
+	cd $CWD/ping
+
+	echo "Building ping server..."
+
+	go build -o bin/ping main/main.go 
+}
+
 build-dev-client () {
 
 	cd $CWD
@@ -207,6 +215,9 @@ build-docker-images () {
 	echo "Building nginx-$DOTNET_TAG"
 	docker build -f nginx/Dockerfile -t dbogatov/status-site:nginx-$DOTNET_TAG nginx/
 
+	echo "Building ping-$DOTNET_TAG"
+	docker build -f ping/Dockerfile -t dbogatov/status-site:ping-$DOTNET_TAG ping/
+
 	echo "Done!"
 }
 
@@ -227,6 +238,9 @@ push-docker-images () {
 
 	echo "Pushing nginx-$DOTNET_TAG"
 	docker push dbogatov/status-site:nginx-$DOTNET_TAG
+
+	echo "Pushing ping-$DOTNET_TAG"
+	docker push dbogatov/status-site:ping-$DOTNET_TAG
 
 	echo "Done!"
 }

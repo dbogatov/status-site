@@ -165,11 +165,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 
 				case Metrics.Ping:
 					var pingDataPoint = Assert.IsType<PingDataPoint>(result);
-					Assert.True(
-						pingDataPoint.HttpStatusCode == HttpStatusCode.OK.AsInt() ||
-						pingDataPoint.HttpStatusCode == HttpStatusCode.ServiceUnavailable.AsInt()
-					);
-					if (pingDataPoint.HttpStatusCode == HttpStatusCode.OK.AsInt())
+					if (pingDataPoint.Success)
 					{
 						Assert.InRange(
 							pingDataPoint.ResponseTime,

@@ -26,6 +26,11 @@ services:
     volumes:
       - ./appsettings.yml:/srv/appsettings.production.yml
     restart: on-failure
+  ping:
+    image: dbogatov/status-site:ping-${DOTNET_TAG}
+    ports:
+      - 8888:8888
+    restart: on-failure
   daemons:
     image: dbogatov/status-site:daemons-${DOTNET_TAG}
     environment:
@@ -34,6 +39,7 @@ services:
       - postgres
     links:
       - "postgres:database"
+      - "ping:ping"
     volumes:
       - ./appsettings.yml:/srv/appsettings.production.yml
     restart: on-failure

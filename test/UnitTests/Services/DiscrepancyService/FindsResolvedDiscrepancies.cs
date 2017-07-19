@@ -234,25 +234,25 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				new PingDataPoint
 				{
 					Metric = metric,
-					HttpStatusCode = HttpStatusCode.OK.AsInt(),
+					Success = true,
 					Timestamp = DateTime.UtcNow.AddMinutes(-1)
 				},
 				new PingDataPoint
 				{
 					Metric = metric,
-					HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+					Success = false,
 					Timestamp = DateTime.UtcNow.AddMinutes(1)
 				},
 				new PingDataPoint
 				{
 					Metric = metric,
-					HttpStatusCode = HttpStatusCode.ServiceUnavailable.AsInt(),
+					Success = false,
 					Timestamp = DateTime.UtcNow.AddMinutes(2)
 				},
 				new PingDataPoint
 				{
 					Metric = metric,
-					HttpStatusCode = (shouldResolve ? HttpStatusCode.OK : HttpStatusCode.ServiceUnavailable).AsInt(),
+					Success = shouldResolve,
 					Timestamp = DateTime.UtcNow.AddMinutes(3)
 				}
 			);
