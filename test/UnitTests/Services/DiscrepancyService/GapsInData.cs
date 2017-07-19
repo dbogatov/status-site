@@ -263,6 +263,71 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			Assert.Equal(expected, actual);
 		}
 
+		[Fact]
+		public async Task ReportsGapIfServerIsDown()
+		{
+			// Arrange
+			var mockConfig = new Mock<IConfiguration>();
+			mockConfig
+				.SetupGet(conf => conf["ServiceManager:DiscrepancyService:Gaps:MaxDifference"])
+				.Returns(60.ToString());
+			mockConfig
+				.SetupGet(conf => conf["ServiceManager:DiscrepancyService:DataTimeframe"])
+				.Returns(1800.ToString());
+
+			var context = _serviceProvider.GetRequiredService<IDataContext>();
+			var metric = await context.Metrics.AddAsync(
+				new Metric
+				{
+					Source = "the-source",
+					Type = Metrics.CpuLoad.AsInt()
+				}
+			);
+			var dataPoints = new List<NumericDataPoint> {
+				new NumericDataPoint {
+					Timestamp = DateTime.UtcNow.AddMinutes(-2),
+					Metric = metric.Entity
+				},
+				new NumericDataPoint {
+					Timestamp = DateTime.UtcNow.AddMinutes(-3),
+					Metric = metric.Entity
+				},
+				new NumericDataPoint {
+					Timestamp = DateTime.UtcNow.AddMinutes(-4),
+					Metric = metric.Entity
+				}
+			};
+			await context.NumericDataPoints.AddRangeAsync(dataPoints);
+			await context.SaveChangesAsync();
+
+			var discrepancyService = new DiscrepancyService(
+				new Mock<ILogger<DiscrepancyService>>().Object,
+				context,
+				new Mock<INotificationService>().Object,
+				mockConfig.Object
+			);
+
+			var expected = new List<Discrepancy> {
+				new Discrepancy
+				{
+					DateFirstOffense = dataPoints[0].Timestamp,
+					Type = DiscrepancyType.GapInData,
+					MetricType = Metrics.CpuLoad,
+					MetricSource = "the-source"
+				}
+			};
+
+			// Act
+			var actual = await discrepancyService
+				.FindGapsAsync(
+					metric.Entity,
+					new TimeSpan(0, 30, 0)
+				);
+
+			// Assert
+			Assert.Equal(expected, actual);
+		}
+
 		[Theory]
 		[InlineData(Metrics.Compilation, false)]
 		[InlineData(Metrics.CpuLoad, true)]

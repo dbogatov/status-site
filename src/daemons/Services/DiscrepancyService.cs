@@ -132,7 +132,7 @@ namespace StatusMonitor.Daemons.Services
 			foreach (var discrepancy in unique)
 			{
 				await _notification.ScheduleNotificationAsync(
-					discrepancy.ToString(),
+					discrepancy.ToStringWithTimeZone(_config["ServiceManager:NotificationService:TimeZone"]),
 					NotificationSeverity.High
 				);
 			}
@@ -161,12 +161,12 @@ namespace StatusMonitor.Daemons.Services
 				discrepancy.DateResolved = DateTime.UtcNow;
 
 				_logger.LogDebug(
-					LoggingEvents.Discrepancies.AsInt(), 
-					$"Discrepancy \"{discrepancy.ToString()}\" has been resolved!"
+					LoggingEvents.Discrepancies.AsInt(),
+					$"Discrepancy \"{discrepancy.ToStringWithTimeZone()}\" has been resolved!"
 				);
 
 				await _notification.ScheduleNotificationAsync(
-					$"Discrepancy \"{discrepancy.ToString()}\" has been resolved!",
+					$"Discrepancy \"{discrepancy.ToStringWithTimeZone(_config["ServiceManager:NotificationService:TimeZone"])}\" has been resolved!",
 					NotificationSeverity.High
 				);
 			}
@@ -257,8 +257,9 @@ namespace StatusMonitor.Daemons.Services
 			}
 
 			var ordered = timestamps.OrderBy(dp => dp);
+			var maxDiff = new TimeSpan(0, 0, (int)Math.Round(Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Gaps:MaxDifference"]) * 1.5));
 
-			return ordered
+			var result = ordered
 				.Zip(
 					ordered.Skip(1),
 					(x, y) => new
@@ -267,13 +268,7 @@ namespace StatusMonitor.Daemons.Services
 						DateFirstOffense = x
 					}
 				)
-				.Where(
-					x => x.Difference >= new TimeSpan(
-						0,
-						0,
-						(int)Math.Round(Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Gaps:MaxDifference"]) * 1.5)
-					)
-				)
+				.Where(x => x.Difference >= maxDiff)
 				.Select(x => new Discrepancy
 				{
 					DateFirstOffense = x.DateFirstOffense,
@@ -282,6 +277,19 @@ namespace StatusMonitor.Daemons.Services
 					MetricSource = metric.Source
 				})
 				.ToList();
+
+			if (DateTime.UtcNow - ordered.Last() >= maxDiff)
+			{
+				result.Add(new Discrepancy
+				{
+					DateFirstOffense = ordered.Last(),
+					Type = DiscrepancyType.GapInData,
+					MetricType = (Metrics)metric.Type,
+					MetricSource = metric.Source
+				});
+			}
+
+			return result;
 		}
 
 		/// <summary>
@@ -315,6 +323,7 @@ namespace StatusMonitor.Daemons.Services
 
 			return failures
 				.OrderBy(p => p.Timestamp)
+				.SkipWhile(p => !p.StatusOK)
 				.Aggregate(
 					new Stack<BoolIntDateTuple>(),
 					(rest, self) =>
@@ -376,6 +385,7 @@ namespace StatusMonitor.Daemons.Services
 
 			return loads
 				.OrderBy(p => p.Timestamp)
+				.SkipWhile(p => !p.NormalLoad)
 				.Aggregate(
 					new Stack<BoolIntDateTuple>(),
 					(rest, self) =>

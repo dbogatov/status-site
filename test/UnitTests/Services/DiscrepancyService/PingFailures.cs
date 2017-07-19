@@ -219,34 +219,108 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			var input = new List<PingDataPoint>() {
 				new PingDataPoint {
 					Success = true,
-					Timestamp = DateTime.UtcNow - new TimeSpan(0, 0, 0)
+					Timestamp = DateTime.UtcNow.AddMinutes(0)
 				},
 				new PingDataPoint {
 					Success = false,
-					Timestamp = DateTime.UtcNow - new TimeSpan(0, 1, 0)
+					Timestamp = DateTime.UtcNow.AddMinutes(-1)
 				},
 				new PingDataPoint {
 					Success = false,
-					Timestamp = DateTime.UtcNow - new TimeSpan(0, 2, 0)
+					Timestamp = DateTime.UtcNow.AddMinutes(-2)
 				},
 				new PingDataPoint {
 					Success = true,
-					Timestamp = DateTime.UtcNow - new TimeSpan(0, 3, 0)
+					Timestamp = DateTime.UtcNow.AddMinutes(-3)
 				},
 				new PingDataPoint {
 					Success = false,
-					Timestamp = DateTime.UtcNow - new TimeSpan(0, 4, 0)
+					Timestamp = DateTime.UtcNow.AddMinutes(-4)
 				},
+				new PingDataPoint {
+					Success = false,
+					Timestamp = DateTime.UtcNow.AddMinutes(-5)
+				},
+				new PingDataPoint {
+					Success = true,
+					Timestamp = DateTime.UtcNow.AddMinutes(-6)
+				}
 			};
 
 			var expected = new List<Discrepancy> {
 				new Discrepancy
 				{
-					DateFirstOffense = input[4].Timestamp,
+					DateFirstOffense = input[5].Timestamp,
 					Type = DiscrepancyType.PingFailedNTimes,
 					MetricType = Metrics.Ping,
 					MetricSource = "the-source"
 				},
+				new Discrepancy
+				{
+					DateFirstOffense = input[2].Timestamp,
+					Type = DiscrepancyType.PingFailedNTimes,
+					MetricType = Metrics.Ping,
+					MetricSource = "the-source"
+				}
+			}
+			.OrderBy(d => d.DateFirstOffense); ;
+
+			// Act
+			var actual = discrepancyService
+				.FindPingFailuresFromDataPoints(
+					input,
+					new PingSetting { MaxFailures = 0 },
+					new Metric
+					{
+						Type = Metrics.Ping.AsInt(),
+						Source = "the-source"
+					}
+				)
+				.OrderBy(d => d.DateFirstOffense); ;
+
+			// Assert
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void PingFailuresDataStartsWithFailure()
+		{
+			// Arrange
+			var discrepancyService = new DiscrepancyService(
+				new Mock<ILogger<DiscrepancyService>>().Object,
+				new Mock<IDataContext>().Object,
+				new Mock<INotificationService>().Object,
+				new Mock<IConfiguration>().Object
+			);
+
+			var input = new List<PingDataPoint>() {
+				new PingDataPoint {
+					Success = true,
+					Timestamp = DateTime.UtcNow.AddMinutes(0)
+				},
+				new PingDataPoint {
+					Success = false,
+					Timestamp = DateTime.UtcNow.AddMinutes(-1)
+				},
+				new PingDataPoint {
+					Success = false,
+					Timestamp = DateTime.UtcNow.AddMinutes(-2)
+				},
+				new PingDataPoint {
+					Success = true,
+					Timestamp = DateTime.UtcNow.AddMinutes(-3)
+				},
+				new PingDataPoint {
+					Success = false,
+					Timestamp = DateTime.UtcNow.AddMinutes(-4)
+				},
+				new PingDataPoint {
+					Success = false,
+					Timestamp = DateTime.UtcNow.AddMinutes(-5)
+				}
+			};
+
+			var expected = new List<Discrepancy> {
 				new Discrepancy
 				{
 					DateFirstOffense = input[2].Timestamp,
