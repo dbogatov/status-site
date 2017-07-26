@@ -19,7 +19,7 @@ namespace StatusMonitor.Daemons.Services
 	/// </summary>
 	public enum ServiceManagerServices
 	{
-		Ping, Cache, Clean, Demo, Notification, Discrepancy
+		Ping, Cache, Clean, Demo, Notification, Discrepancy, Health
 	}
 
 	/// <summary>
@@ -260,6 +260,54 @@ namespace StatusMonitor.Daemons.Services
 		}
 
 		/// <summary>
+		/// Starts IHealthService service.
+		/// Does NOT return until _status is set to false.
+		/// </summary>
+		private async Task RunHealthServiceAsync()
+		{
+			_logger.LogInformation(LoggingEvents.ServiceManager.AsInt(), "Health service started.");
+
+			while (true)
+			{
+				// Check exit condition
+				if (!_status[ServiceManagerServices.Health])
+				{
+					_logger.LogInformation(LoggingEvents.ServiceManager.AsInt(), "Health service stopped.");
+					break;
+				}
+
+				try
+				{
+					using (var scope = _serviceProvider.CreateScope())
+					{
+						var context = scope.ServiceProvider.GetRequiredService<IDataContext>();
+
+						var report = await scope
+							.ServiceProvider
+							.GetRequiredService<IHealthService>()
+							.ProduceHealthReportAsync();
+
+						await context.HealthReports.AddAsync(report);
+						await context.SaveChangesAsync();
+					}
+					// Wait
+					Thread.Sleep(_intervals[ServiceManagerServices.Health]);
+
+					_logger.LogInformation(LoggingEvents.ServiceManager.AsInt(), "Health service run complete");
+				}
+				catch (System.Exception e)
+				{
+					_logger.LogError(
+						LoggingEvents.ServiceManager.AsInt(),
+						e,
+						"Something terribly wrong happend to Health Service run in Service Manager"
+					);
+					Thread.Sleep(_intervals[ServiceManagerServices.Health]);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Starts IPingService service.
 		/// Retrieves a list of PingSetting from the data provider and for each 
 		/// setting runs a PingServerAsync method on the IPingService.
@@ -377,7 +425,7 @@ namespace StatusMonitor.Daemons.Services
 											.ServiceProvider
 											.GetRequiredService<IDiscrepancyService>()
 											.FindGapsAsync(
-												metric, 
+												metric,
 												new TimeSpan(
 													0,
 													0,
@@ -399,7 +447,7 @@ namespace StatusMonitor.Daemons.Services
 											.ServiceProvider
 											.GetRequiredService<IDiscrepancyService>()
 											.FindHighLoadsAsync(
-												metric, 
+												metric,
 												new TimeSpan(
 													0,
 													0,
@@ -421,7 +469,7 @@ namespace StatusMonitor.Daemons.Services
 											.ServiceProvider
 											.GetRequiredService<IDiscrepancyService>()
 											.FindPingFailuresAsync(
-												metric, 
+												metric,
 												new TimeSpan(
 													0,
 													0,
@@ -434,7 +482,7 @@ namespace StatusMonitor.Daemons.Services
 
 						// Wait completion of all tasks
 						var discrepancies = await Task.WhenAll(
-							new Task<List<Discrepancy>>[] {}
+							new Task<List<Discrepancy>>[] { }
 								.Concat(gapTasks).ToArray()
 								.Concat(pingTasks).ToArray()
 								.Concat(highLoadTasks).ToArray())
@@ -570,7 +618,8 @@ namespace StatusMonitor.Daemons.Services
 				Task.Run(RunCleanServiceAsync),
 				Task.Run(RunDemoServiceAsync),
 				Task.Run(RunNotificationServiceAsync),
-				Task.Run(RunDiscrepancyServiceAsync)
+				Task.Run(RunDiscrepancyServiceAsync),
+				Task.Run(RunHealthServiceAsync)
 			}.ToArray();
 
 			await Task.WhenAll(tasks);

@@ -71,6 +71,9 @@ ServiceManager:
   PingService:
     Enabled: true
     Interval: 60
+  HealthService:
+    Enabled: true
+    Interval: 30
   DemoService:
     Enabled: true
     Interval: 30

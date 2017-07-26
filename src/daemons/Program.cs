@@ -62,6 +62,7 @@ namespace StatusMonitor.Daemons
 
 			services.AddScoped<ICacheService, CacheService>();
 			services.AddScoped<ICleanService, CleanService>();
+			services.AddScoped<IHealthService, HealthService>();
 			services.AddScoped<IDemoService, DemoService>();
 			services.AddScoped<IDiscrepancyService, DiscrepancyService>();
 			services.AddTransient<IServiceManagerService, ServiceManagerService>();
