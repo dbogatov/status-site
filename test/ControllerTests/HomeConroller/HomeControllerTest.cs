@@ -24,6 +24,9 @@ namespace StatusMonitor.Tests.ControllerTests
 	{
 		private readonly Mock<IMetricService> _mockMetricService = new Mock<IMetricService>();
 		private readonly Mock<IAuthService> _mockAuth = new Mock<IAuthService>();
+		private readonly Mock<IBadgeService> _mockBadge = new Mock<IBadgeService>();
+
+		private readonly IDataContext _context;
 
 		private readonly HomeController _controller;
 
@@ -39,12 +42,12 @@ namespace StatusMonitor.Tests.ControllerTests
 
 			services.RegisterSharedServices(env, new Mock<IConfiguration>().Object);
 
-			var context = services
+			_context = services
 				.BuildServiceProvider()
 				.GetRequiredService<IDataContext>();
 
-			context.ManualLabels.Add(new ManualLabel { Id = ManualLabels.None.AsInt() });
-			context.SaveChanges();
+			_context.ManualLabels.Add(new ManualLabel { Id = ManualLabels.None.AsInt() });
+			_context.SaveChanges();
 
 			_mockAuth
 				.Setup(auth => auth.IsAuthenticated())
@@ -52,8 +55,9 @@ namespace StatusMonitor.Tests.ControllerTests
 
 			_controller = new HomeController(
 				_mockMetricService.Object,
-				context,
-				_mockAuth.Object
+				_context,
+				_mockAuth.Object,
+				_mockBadge.Object
 			);
 			_controller.ControllerContext.HttpContext = new DefaultHttpContext();
 			_controller.TempData = new Mock<ITempDataDictionary>().Object;

@@ -4,6 +4,7 @@
 	Status site is the application for monitoring the health of the servers and web services.
 
 [![build status](https://git.dbogatov.org/dbogatov/status-site/badges/master/build.svg)](https://git.dbogatov.org/dbogatov/status-site/commits/master)
+[![system health](https://status.dbogatov.org/home/health)](https://status.dbogatov.org/)
 
 ## Features
 

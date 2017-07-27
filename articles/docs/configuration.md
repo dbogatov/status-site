@@ -89,6 +89,9 @@ Configuration spec:
 		PingService: 										# Settings for ping service of the app
 			Enabled: true 									# Whether to use the service
 			Interval: 60									# How many seconds to wait between re-runs of the service
+		PingService: 										# Settings for health service of the app
+			Enabled: true 									# Whether to use the service
+			Interval: 60									# How many seconds to wait between re-runs of the service
 		DemoService: 										# Settings for demo service of the app
 			Enabled: true 									# Whether to use the service
 			Interval: 30 									# How many seconds to wait between re-runs of the service

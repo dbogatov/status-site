@@ -47,6 +47,8 @@ namespace StatusMonitor.Tests.UnitTests
 
 			TestBoolKey("Secrets:Slack:Enabled");
 			TestStringKey("Secrets:Slack:WebHook");
+
+			TestStringKey("Secrets:GoogleAnalytics:TrackingId");
 		}
 
 		[Theory]
@@ -98,6 +100,7 @@ namespace StatusMonitor.Tests.UnitTests
 		[InlineData(ServiceManagerServices.Notification)]
 		[InlineData(ServiceManagerServices.Discrepancy)]
 		[InlineData(ServiceManagerServices.Ping)]
+		[InlineData(ServiceManagerServices.Health)]
 		public void TestServiceManagerCommon(ServiceManagerServices service)
 		{
 			TestBoolKey($"ServiceManager:{service.ToString()}Service:Enabled");
@@ -120,6 +123,8 @@ namespace StatusMonitor.Tests.UnitTests
 			TestIntKey($"ServiceManager:NotificationService:Frequencies:{NotificationSeverity.Low.ToString()}");
 			TestIntKey($"ServiceManager:NotificationService:Frequencies:{NotificationSeverity.Medium.ToString()}");
 			TestIntKey($"ServiceManager:NotificationService:Frequencies:{NotificationSeverity.High.ToString()}");
+
+			TestStringKey($"ServiceManager:NotificationService:TimeZone");
 		}
 
 		private void TestStringKey(string key)

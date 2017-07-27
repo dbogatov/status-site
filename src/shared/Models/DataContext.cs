@@ -28,6 +28,7 @@ namespace StatusMonitor.Shared.Models
 		DbSet<PingSetting> PingSettings { get; set; }
 		DbSet<Notification> Notifications { get; set; }
 		DbSet<Discrepancy> Discrepancies { get; set; }
+		DbSet<HealthReport> HealthReports { get; set; }
 
 		DatabaseFacade Database { get; }
 
@@ -62,6 +63,7 @@ namespace StatusMonitor.Shared.Models
 		public DbSet<PingSetting> PingSettings { get; set; }
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<Discrepancy> Discrepancies { get; set; }
+		public DbSet<HealthReport> HealthReports { get; set; }
 
 		/// <summary>
 		/// This method gets called by the framework.
@@ -114,6 +116,11 @@ namespace StatusMonitor.Shared.Models
 			builder
 				.Entity<Notification>()
 					.HasIndex(ntf => ntf.DateCreated)
+					.IsUnique(false);
+
+			builder
+				.Entity<HealthReport>()
+					.HasIndex(report => report.Timestamp)
 					.IsUnique(false);
 
 			foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

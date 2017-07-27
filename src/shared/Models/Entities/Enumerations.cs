@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace StatusMonitor.Shared.Models.Entities
@@ -20,7 +21,36 @@ namespace StatusMonitor.Shared.Models.Entities
 	/// <summary>
 	/// Represents the label which is set automatically depending on resource status.
 	/// </summary>
-	public class AutoLabel : Label { }
+	public class AutoLabel : Label
+	{
+		/// <summary>
+		/// Returns the highest available health value for the metric
+		/// </summary>
+		/// <returns>Highest available health value for the metric</returns>
+		public static int MaxHealthValue()
+		{
+			return 2;
+		}
+
+		/// <summary>
+		/// Returns health value of this particular label
+		/// </summary>
+		/// <returns>Health value of this particular label</returns>
+		public int HealthValue()
+		{
+			switch ((AutoLabels)Id)
+			{
+				case AutoLabels.Normal:
+					return 2;
+				case AutoLabels.Warning:
+					return 1;
+				case AutoLabels.Critical:
+					return 0;
+				default:
+					throw new ArgumentException("Invalid auto label ID.");
+			}
+		}
+	}
 	public enum AutoLabels
 	{
 		Normal = 1, Warning, Critical
@@ -62,7 +92,7 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// </summary>
 		public string Description { get; set; }
 	}
-	
+
 	public enum LogEntrySeverities
 	{
 		Debug = 1, Detail, User, Info, Warn, Error, Fatal

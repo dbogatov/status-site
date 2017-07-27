@@ -28,17 +28,33 @@ namespace StatusMonitor.Web.Controllers.View
 		private readonly IMetricService _metricService;
 		private readonly IDataContext _context;
 		private readonly IAuthService _auth;
+		private readonly IBadgeService _badge;
 
 		public HomeController(
 			IMetricService metricService,
 			IDataContext context,
-			IAuthService auth
+			IAuthService auth,
+			IBadgeService badge
 		)
 		{
 			_metricService = metricService;
 			_context = context;
 			_auth = auth;
+			_badge = badge;
 		}
+
+		public async Task<IActionResult> Health()
+		{
+			return
+				await _context.HealthReports.CountAsync() > 0 ?
+				new BadgeResult(
+					_badge.GetHealthBadge(
+						await _context.HealthReports.OrderByDescending(hp => hp.Timestamp).FirstAsync()
+					)
+				) :
+				(IActionResult)NoContent();
+		}
+
 
 		public async Task<IActionResult> Index()
 		{
@@ -94,8 +110,8 @@ namespace StatusMonitor.Web.Controllers.View
 				var pingSetting = await _context
 					.PingSettings
 					.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == source);
-				
-				ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;		
+
+				ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;
 			}
 
 			return View(model.First());
