@@ -12,8 +12,15 @@ using StatusMonitor.Shared.Models;
 
 namespace StatusMonitor.Web.Services
 {
+	/// <summary>
+	/// Generates SVG badges
+	/// </summary>
 	public interface IBadgeService
 	{
+		/// <summary>
+		/// Generates overall health of the system badge
+		/// </summary>
+		/// <returns>Badge indicating overall health of the system</returns>
 		Task<Badge> GetHealthBadgeAsync();
 	}
 
@@ -37,7 +44,7 @@ namespace StatusMonitor.Web.Services
 				Title = "System health",
 				Message = $"{healthReport.Health.ToString("D2")}%",
 				Status =
-					healthReport.Health == 100 ?
+					healthReport.Health >= 90 ?
 						BadgeStatus.Success :
 						(healthReport.Health >= 70 ?
 							BadgeStatus.Neutural :
@@ -50,7 +57,7 @@ namespace StatusMonitor.Web.Services
 	}
 
 	/// <summary>
-	/// Special action result that returns sitemap
+	/// Special action result that returns badge
 	/// </summary>
 	public class BadgeResult : IActionResult
 	{
@@ -123,15 +130,37 @@ namespace StatusMonitor.Web.Services
 		}
 	}
 
+	/// <summary>
+	/// Badge model
+	/// </summary>
 	public class Badge
 	{
+		/// <summary>
+		/// Leftmost text
+		/// </summary>
 		public string Title { get; set; }
+		/// <summary>
+		/// Rightmost text
+		/// </summary>
 		public string Message { get; set; }
+		/// <summary>
+		/// Semantic meaning of the badge (good/bad)
+		/// </summary>
 		public BadgeStatus Status { get; set; }
 
+		/// <summary>
+		/// Width in px of the title
+		/// </summary>
 		public int TitleWidth { get; set; }
+		/// <summary>
+		/// Width in px of the message
+		/// </summary>
 		public int MessageWidth { get; set; }
 
+		/// <summary>
+		/// HEX color representation of the badge semantic meaning
+		/// </summary>
+		/// <returns></returns>
 		public string HexColor
 		{
 			get

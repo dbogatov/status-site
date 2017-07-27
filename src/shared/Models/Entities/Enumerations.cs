@@ -23,12 +23,20 @@ namespace StatusMonitor.Shared.Models.Entities
 	/// </summary>
 	public class AutoLabel : Label
 	{
+		/// <summary>
+		/// Returns the highest available health value for the metric
+		/// </summary>
+		/// <returns>Highest available health value for the metric</returns>
 		public static int MaxHealthValue()
 		{
 			return 2;
 		}
 
-		public int DamageUnit()
+		/// <summary>
+		/// Returns health value of this particular label
+		/// </summary>
+		/// <returns>Health value of this particular label</returns>
+		public int HealthValue()
 		{
 			switch ((AutoLabels)Id)
 			{

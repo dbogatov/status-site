@@ -8,8 +8,16 @@ using StatusMonitor.Shared.Models.Entities;
 
 namespace StatusMonitor.Daemons.Services
 {
+	/// <summary>
+	/// Produces overall health report of the system
+	/// </summary>
 	public interface IHealthService
 	{
+		/// <summary>
+		/// Returns a health report of the whole system at the moment
+		/// Analyzes only public metrics
+		/// </summary>
+		/// <returns>Overall health report of the system</returns>
 		Task<HealthReport> ProduceHealthReportAsync();
 	}
 
@@ -44,7 +52,7 @@ namespace StatusMonitor.Daemons.Services
 							MetricType = (Metrics)mt.Type,
 							MetricLabel = (AutoLabels)mt.AutoLabel.Id
 						})
-						.ToArrayAsync()
+						.ToListAsync()
 			};
 
 			_logger.LogDebug($"Health report created. Health level: {report.Health}");

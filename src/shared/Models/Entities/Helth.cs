@@ -8,10 +8,17 @@ using StatusMonitor.Shared.Extensions;
 
 namespace StatusMonitor.Shared.Models.Entities
 {
+	/// <summary>
+	/// An elementary piece of health data.
+	/// Stores the label of a metric.
+	/// </summary>
 	public class HealthReportDataPoint
 	{
 		[JsonIgnore]
 		[NotMapped]
+		/// <summary>
+		/// Type of the metric
+		/// </summary>
 		public Metrics MetricType
 		{
 			get
@@ -31,11 +38,19 @@ namespace StatusMonitor.Shared.Models.Entities
 			}
 		}
 
+		/// <summary>
+		/// String alias of the metric's type
+		/// Should not be used directly
+		/// Serves as a column in DB
+		/// </summary>
 		public string Type { get; set; }
 
 
 		[JsonIgnore]
 		[NotMapped]
+		/// <summary>
+		/// Label of the metric
+		/// </summary>
 		public AutoLabels MetricLabel
 		{
 			get
@@ -56,13 +71,25 @@ namespace StatusMonitor.Shared.Models.Entities
 		}
 
 		[JsonProperty("Label")]
+		/// <summary>
+		/// String alias of the metric's label
+		/// Should not be used directly
+		/// Serves as a column in DB
+		/// </summary>
 		public string Label { get; set; }
 
 		public string Source { get; set; }
 	}
 
+	/// <summary>
+	/// Entity that encapsulates the overall health of the system at the moment
+	/// </summary>
 	public class HealthReport
 	{
+		/// <summary>
+		/// Percentage that encapsulates numeric value of the health
+		/// Computed as a weighted average of individual healths, which are derived from the auto labels
+		/// </summary>
 		public int Health
 		{
 			get
@@ -77,7 +104,7 @@ namespace StatusMonitor.Shared.Models.Entities
 									0,
 									(sum, element) =>
 										sum +
-										new AutoLabel { Id = element.Key.AsInt() }.DamageUnit() * element.Count()
+										new AutoLabel { Id = element.Key.AsInt() }.HealthValue() * element.Count()
 								)
 							)
 							/
@@ -89,11 +116,15 @@ namespace StatusMonitor.Shared.Models.Entities
 				;
 			}
 			set {
-				
+
 			}
 		}
 
 		[NotMapped]
+		/// <summary>
+		/// Collection of individual health pieces.
+		/// Wrapper around HealthData which is a JSON of this property
+		/// </summary>
 		public IEnumerable<HealthReportDataPoint> Data
 		{
 			get
@@ -107,9 +138,17 @@ namespace StatusMonitor.Shared.Models.Entities
 		}
 
 		[JsonIgnore]
+		/// <summary>
+		/// JSONified value of Data
+		/// Should not be used directly
+		/// Serves as a column in DB
+		/// </summary>
 		public string HealthData { get; set; } = JsonConvert.SerializeObject(new List<HealthReportDataPoint>());
 
 		[Key]
+		/// <summary>
+		/// Timestamp when this health report was generated
+		/// </summary>
 		public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 	}
 }
