@@ -95,6 +95,7 @@ namespace StatusMonitor.Shared.Models.Entities
 			get
 			{
 				return 
+					Data.Count() > 0 ?
 					(int)Math.Round(
 						(
 							(double)(
@@ -112,7 +113,8 @@ namespace StatusMonitor.Shared.Models.Entities
 								Data.Count() * AutoLabel.MaxHealthValue()
 							)
 						) * 100
-					)
+					) :
+					0
 				;
 			}
 			set {

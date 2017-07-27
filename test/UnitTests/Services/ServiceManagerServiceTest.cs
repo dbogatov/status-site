@@ -28,6 +28,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		private readonly Mock<IPingService> _mockPingService = new Mock<IPingService>();
 		private readonly Mock<IDiscrepancyService> _mockDiscrepancyService = new Mock<IDiscrepancyService>();
 		private readonly Mock<IDemoService> _mockDemoService = new Mock<IDemoService>();
+		private readonly Mock<IHealthService> _mockHealthService = new Mock<IHealthService>();
 
 		private readonly Mock<ILogger<ServiceManagerService>> _mockLog = new Mock<ILogger<ServiceManagerService>>();
 		private readonly Mock<IConfiguration> _config = new Mock<IConfiguration>();
@@ -61,6 +62,10 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				.Setup(d => d.FindResolvedDiscrepanciesAsync(It.IsAny<IEnumerable<Discrepancy>>()))
 				.ReturnsAsync(new List<Discrepancy>());
 
+			_mockHealthService
+				.Setup(health => health.ProduceHealthReportAsync())
+				.ReturnsAsync(new HealthReport());
+
 			_mockServiceProvider
 				.Setup(provider => provider.GetService(typeof(IDataContext)))
 				.Returns(GenerateNewDataContext());
@@ -82,6 +87,9 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			_mockServiceProvider
 				.Setup(provider => provider.GetService(typeof(IDemoService)))
 				.Returns(_mockDemoService.Object);
+			_mockServiceProvider
+				.Setup(provider => provider.GetService(typeof(IHealthService)))
+				.Returns(_mockHealthService.Object);
 
 			var mockServiceScope = new Mock<IServiceScope>();
 			mockServiceScope
@@ -135,7 +143,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			serviceManagerService.StopServices();
 
 			// Assert
-			
+
 			// Let it finish its job
 			// Check that services are stopped
 			// If not done in 30 seconds, consider timeout
@@ -170,6 +178,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[InlineData(ServiceManagerServices.Demo)]
 		[InlineData(ServiceManagerServices.Discrepancy)]
 		[InlineData(ServiceManagerServices.Notification)]
+		[InlineData(ServiceManagerServices.Health)]
 		public async Task RunsOnlyIfEnabled(ServiceManagerServices service)
 		{
 			// Arrange
@@ -217,6 +226,12 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			_mockDemoService.Verify(
 				demo => demo.GenerateDemoLogAsync(It.IsAny<string>()),
 				service == ServiceManagerServices.Demo ? Times.AtLeastOnce() : Times.Never()
+			);
+
+			// Health
+			_mockHealthService.Verify(
+				health => health.ProduceHealthReportAsync(),
+				service == ServiceManagerServices.Health ? Times.AtLeastOnce() : Times.Never()
 			);
 
 			// Discrepancy

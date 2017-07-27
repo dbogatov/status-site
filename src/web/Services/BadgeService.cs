@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using StatusMonitor.Shared.Models;
+using StatusMonitor.Shared.Models.Entities;
 
 namespace StatusMonitor.Web.Services
 {
@@ -20,33 +21,23 @@ namespace StatusMonitor.Web.Services
 		/// <summary>
 		/// Generates overall health of the system badge
 		/// </summary>
+		/// <param name="report">Health report from which to generate badge</param>
 		/// <returns>Badge indicating overall health of the system</returns>
-		Task<Badge> GetHealthBadgeAsync();
+		Badge GetHealthBadge(HealthReport report);
 	}
 
 	public class BadgeService : IBadgeService
 	{
-		private readonly IDataContext _context;
-
-		public BadgeService(
-			IDataContext context
-		)
+		public Badge GetHealthBadge(HealthReport report)
 		{
-			_context = context;
-		}
-
-		public async Task<Badge> GetHealthBadgeAsync()
-		{
-			var healthReport = await _context.HealthReports.OrderByDescending(hp => hp.Timestamp).FirstAsync();
-
 			return new Badge
 			{
 				Title = "System health",
-				Message = $"{healthReport.Health.ToString("D2")}%",
+				Message = $"{report.Health}%",
 				Status =
-					healthReport.Health >= 90 ?
+					report.Health >= 90 ?
 						BadgeStatus.Success :
-						(healthReport.Health >= 70 ?
+						(report.Health >= 70 ?
 							BadgeStatus.Neutural :
 							BadgeStatus.Failure
 						),

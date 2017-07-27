@@ -43,10 +43,16 @@ namespace StatusMonitor.Web.Controllers.View
 			_badge = badge;
 		}
 
-		public async Task<BadgeResult> Health()
+		public async Task<IActionResult> Health()
 		{
-			var badge = await _badge.GetHealthBadgeAsync();
-			return new BadgeResult(badge);
+			return
+				await _context.HealthReports.CountAsync() > 0 ?
+				new BadgeResult(
+					_badge.GetHealthBadge(
+						await _context.HealthReports.OrderByDescending(hp => hp.Timestamp).FirstAsync()
+					)
+				) :
+				(IActionResult)NoContent();
 		}
 
 
@@ -104,8 +110,8 @@ namespace StatusMonitor.Web.Controllers.View
 				var pingSetting = await _context
 					.PingSettings
 					.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == source);
-				
-				ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;		
+
+				ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;
 			}
 
 			return View(model.First());

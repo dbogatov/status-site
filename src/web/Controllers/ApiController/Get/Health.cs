@@ -14,7 +14,10 @@ namespace StatusMonitor.Web.Controllers.Api
 		[Produces("application/json")]
 		public async Task<IActionResult> Health()
 		{
-			return Json(await _context.HealthReports.OrderByDescending(hp => hp.Timestamp).FirstAsync());
+			return
+				await _context.HealthReports.CountAsync() > 0 ?
+			 	Json(await _context.HealthReports.OrderByDescending(hp => hp.Timestamp).FirstAsync()) :
+				(IActionResult)NoContent();
 		}
 	}
 }
