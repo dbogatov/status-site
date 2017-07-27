@@ -53,7 +53,8 @@ namespace StatusMonitor.Tests.ControllerTests
 			_controller = new HomeController(
 				_mockMetricService.Object,
 				context,
-				_mockAuth.Object
+				_mockAuth.Object,
+				new Mock<IBadgeService>().Object
 			);
 			_controller.ControllerContext.HttpContext = new DefaultHttpContext();
 			_controller.TempData = new Mock<ITempDataDictionary>().Object;

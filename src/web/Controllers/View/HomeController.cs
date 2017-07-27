@@ -28,17 +28,27 @@ namespace StatusMonitor.Web.Controllers.View
 		private readonly IMetricService _metricService;
 		private readonly IDataContext _context;
 		private readonly IAuthService _auth;
+		private readonly IBadgeService _badge;
 
 		public HomeController(
 			IMetricService metricService,
 			IDataContext context,
-			IAuthService auth
+			IAuthService auth,
+			IBadgeService badge
 		)
 		{
 			_metricService = metricService;
 			_context = context;
 			_auth = auth;
+			_badge = badge;
 		}
+
+		public async Task<BadgeResult> Health()
+		{
+			var badge = await _badge.GetHealthBadgeAsync();
+			return new BadgeResult(badge);
+		}
+
 
 		public async Task<IActionResult> Index()
 		{

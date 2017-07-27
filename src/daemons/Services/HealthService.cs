@@ -34,30 +34,11 @@ namespace StatusMonitor.Daemons.Services
 
 			var report = new HealthReport
 			{
-				Health =
-					(int)Math.Round(
-						(
-							(double)(await _context
-								.Metrics
-								.Include(mt => mt.AutoLabel)
-								.ToListAsync())
-								.GroupBy(mt => mt.AutoLabel)
-								.Aggregate(0, (sum, element) => sum + element.Key.DamageUnit() * element.Count())
-							/
-							(
-								await _context
-									.Metrics
-									.CountAsync()
-									*
-									AutoLabel.MaxHealthValue()
-							)
-						) * 100
-					),
-
 				Data = 
 					await _context
 						.Metrics
 						.Include(mt => mt.AutoLabel)
+						.Where(mt => mt.Public)
 						.Select(mt => new HealthReportDataPoint {
 							Source = mt.Source,
 							MetricType = (Metrics)mt.Type,

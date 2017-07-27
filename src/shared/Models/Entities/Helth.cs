@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Newtonsoft.Json;
 using StatusMonitor.Shared.Extensions;
 
@@ -62,10 +63,38 @@ namespace StatusMonitor.Shared.Models.Entities
 
 	public class HealthReport
 	{
-		public int Health { get; set; } = 0;
+		public int Health
+		{
+			get
+			{
+				return 
+					(int)Math.Round(
+						(
+							(double)(
+								Data
+								.GroupBy(d => d.MetricLabel)
+								.Aggregate(
+									0,
+									(sum, element) =>
+										sum +
+										new AutoLabel { Id = element.Key.AsInt() }.DamageUnit() * element.Count()
+								)
+							)
+							/
+							(
+								Data.Count() * AutoLabel.MaxHealthValue()
+							)
+						) * 100
+					)
+				;
+			}
+			set {
+				
+			}
+		}
 
 		[NotMapped]
-		public HealthReportDataPoint[] Data
+		public IEnumerable<HealthReportDataPoint> Data
 		{
 			get
 			{

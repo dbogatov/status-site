@@ -130,6 +130,7 @@ namespace StatusMonitor.Web
 			services.AddTransient<AccountController>();
 
 			services.AddTransient<IAuthService, AuthService>();
+			services.AddTransient<IBadgeService, BadgeService>();
 
 			services.AddTransient<ModelValidation>();
 			services.AddTransient<ApiKeyCheck>();
