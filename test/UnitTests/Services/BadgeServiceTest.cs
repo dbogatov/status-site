@@ -15,7 +15,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			var badgeService = new BadgeService();
 
 			// Act
-			var badge = badgeService.GetHealthBadge(new HealthReport());
+			var badge = badgeService.GetSystemHealthBadge(new HealthReport());
 
 			// Assert
 			Assert.Equal(BadgeStatus.Failure, badge.Status);
@@ -79,7 +79,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			var report = new HealthReport { Data = dataPoints };
 
 			// Act
-			var badge = badgeService.GetHealthBadge(report);
+			var badge = badgeService.GetSystemHealthBadge(report);
 
 			// Assert
 			Assert.Equal(status, badge.Status);

@@ -43,18 +43,6 @@ namespace StatusMonitor.Web.Controllers.View
 			_badge = badge;
 		}
 
-		public async Task<IActionResult> Health()
-		{
-			return
-				await _context.HealthReports.CountAsync() > 0 ?
-				new BadgeResult(
-					_badge.GetHealthBadge(
-						await _context.HealthReports.OrderByDescending(hp => hp.Timestamp).FirstAsync()
-					)
-				) :
-				(IActionResult)NoContent();
-		}
-
 
 		public async Task<IActionResult> Index()
 		{

@@ -80,6 +80,13 @@ namespace StatusMonitor.Shared.Services
 				);
 			}
 
+			if (await _context.HealthReports.AnyAsync(dp => dp.Timestamp < toTimestamp))
+			{
+				_context.HealthReports.RemoveRange(
+					_context.HealthReports.Where(dp => dp.Timestamp < toTimestamp)
+				);
+			}
+
 			await _context.SaveChangesAsync();
 
 			_logger.LogDebug(LoggingEvents.Clean.AsInt(), "Cleaned old data.");

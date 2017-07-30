@@ -97,19 +97,19 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			});
 
 			await context.Discrepancies.AddRangeAsync(new List<Discrepancy> {
-				new Discrepancy { 
+				new Discrepancy {
 					DateFirstOffense = twoDaysAgo,
 					Type = DiscrepancyType.GapInData,
 					MetricSource = "the-source",
 					MetricType = Metrics.CpuLoad
 				},
-				new Discrepancy { 
+				new Discrepancy {
 					DateFirstOffense = hourAgo,
 					Type = DiscrepancyType.GapInData,
 					MetricSource = "the-source",
 					MetricType = Metrics.CpuLoad
 				},
-				new Discrepancy { 
+				new Discrepancy {
 					DateFirstOffense = now,
 					Type = DiscrepancyType.GapInData,
 					MetricSource = "the-source",
@@ -117,12 +117,18 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				}
 			});
 
+			await context.HealthReports.AddRangeAsync(
+				new HealthReport { Timestamp = twoDaysAgo },
+				new HealthReport { Timestamp = hourAgo },
+				new HealthReport { Timestamp = now }
+			);
+
 			await context.SaveChangesAsync();
 
 			// Act
 			await new CleanService(
-				new Mock<ILogger<CleanService>>().Object, 
-				context, 
+				new Mock<ILogger<CleanService>>().Object,
+				context,
 				_config
 			)
 			.CleanDataPointsAsync();
@@ -133,8 +139,10 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			Assert.Equal(2, await context.UserActionDataPoints.CountAsync());
 			Assert.Equal(2, await context.CompilationDataPoints.CountAsync());
 			Assert.Equal(2, await context.PingDataPoints.CountAsync());
+			Assert.Equal(2, await context.LogEntries.CountAsync());
 			Assert.Equal(3, await context.Notifications.CountAsync());
 			Assert.Equal(2, await context.Discrepancies.CountAsync());
+			Assert.Equal(2, await context.HealthReports.CountAsync());
 		}
 	}
 }

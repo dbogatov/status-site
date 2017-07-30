@@ -26,7 +26,10 @@
 	- Different severities - with different frequencies
 * Discrepancies
 	- Detect discrepancies in data points (gaps, high values, ping failures)
-	- Detect the start and end of discrepancy - not reported twice
+	- Detect the start and the end of discrepancy - not reported twice
+* Badges
+	- System health
+	- Individual metrics
 * Rich API
 * Served as a docker composition - easy to install, configure and update
 * Different databases for old and recent data
@@ -48,6 +51,11 @@
 
 !!! tip
 	Detailed instruction can be found [here](configuration/).
+
+## How to use badges
+
+!!! tip
+	Detailed instruction can be found [here](badges/).
 
 ## A little story
 
