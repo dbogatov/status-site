@@ -3,7 +3,7 @@
 > Status site is the application for monitoring the health of the servers and web services.
 
 [![build status](https://git.dbogatov.org/dbogatov/status-site/badges/master/build.svg)](https://git.dbogatov.org/dbogatov/status-site/commits/master)
-[![system health](https://status.dbogatov.org/home/health)](https://status.dbogatov.org/)
+[![system health](https://status.dbogatov.org/health)](https://status.dbogatov.org/)
 
 ## Features
 
@@ -26,6 +26,9 @@
 * Discrepancies
 	- Detect discrepancies in data points (gaps, high values, ping failures)
 	- Detect the start and end of discrepancy - not reported twice
+* Badges
+	- System health
+	- Individual metrics
 * Rich API
 * Served as a docker composition - easy to install, configure and update
 * Different databases for old and recent data
@@ -44,6 +47,10 @@
 ## How to configure
 
 > Detailed instruction can be found [here](https://status.dbogatov.org/docs/configuration/).
+
+## How to use badges
+
+> Detailed instruction can be found [here](https://status.dbogatov.org/docs/badges/).
 
 ## A little story
 
