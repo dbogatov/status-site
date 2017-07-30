@@ -23,12 +23,30 @@ namespace StatusMonitor.Web.Services
 		/// </summary>
 		/// <param name="report">Health report from which to generate badge</param>
 		/// <returns>Badge indicating overall health of the system</returns>
-		Badge GetHealthBadge(HealthReport report);
+		Badge GetSystemHealthBadge(HealthReport report);
+
+		Badge GetMetricHealthBadge(string source, Metrics type, AutoLabels label);
 	}
 
 	public class BadgeService : IBadgeService
 	{
-		public Badge GetHealthBadge(HealthReport report)
+		public Badge GetMetricHealthBadge(string source, Metrics type, AutoLabels label)
+		{
+			return new Badge
+			{
+				Title = $"{type.ToString().ToLower()} of {source.ToLower()}",
+				Message = label.ToString(),
+				Status =
+					label == AutoLabels.Normal ?
+						BadgeStatus.Success :
+						(label == AutoLabels.Warning ?
+							BadgeStatus.Neutural :
+							BadgeStatus.Failure
+						)
+			};
+		}
+
+		public Badge GetSystemHealthBadge(HealthReport report)
 		{
 			return new Badge
 			{
@@ -40,9 +58,7 @@ namespace StatusMonitor.Web.Services
 						(report.Health >= 70 ?
 							BadgeStatus.Neutural :
 							BadgeStatus.Failure
-						),
-				TitleWidth = 100,
-				MessageWidth = 40
+						)
 			};
 		}
 	}
@@ -142,11 +158,25 @@ namespace StatusMonitor.Web.Services
 		/// <summary>
 		/// Width in px of the title
 		/// </summary>
-		public int TitleWidth { get; set; }
+		public int TitleWidth
+		{
+			get
+			{
+				return Title.Length * 8;
+			}
+			private set { }
+		}
 		/// <summary>
 		/// Width in px of the message
 		/// </summary>
-		public int MessageWidth { get; set; }
+		public int MessageWidth
+		{
+			get
+			{
+				return (int)Math.Round(Message.Length * 12.5);
+			}
+			private set { }
+		}
 
 		/// <summary>
 		/// HEX color representation of the badge semantic meaning

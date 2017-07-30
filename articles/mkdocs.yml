@@ -71,6 +71,7 @@ pages:
   - Development: development.md
   - Deployment: deployment.md
   - Configuration: configuration.md
+  - Badges: badges.md
   - Documentation: documentation.md
   - Server:
     - Home: server/index.md

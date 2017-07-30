@@ -21,10 +21,10 @@ using System.Linq;
 
 namespace StatusMonitor.Tests.ControllerTests
 {
-	public partial class HomeControllerTest
+	public partial class HealthControllerTest
 	{
 		[Fact]
-		public async Task Health()
+		public async Task Index()
 		{
 			// Arrange
 			await _context.HealthReports.AddAsync(new HealthReport());
@@ -33,17 +33,15 @@ namespace StatusMonitor.Tests.ControllerTests
 			var badge = new Badge {
 				Title = "System health",
 				Message = "95%",
-				Status = BadgeStatus.Success,
-				TitleWidth = 100,
-				MessageWidth = 40
+				Status = BadgeStatus.Success
 			};
 
 			_mockBadge
-				.Setup(mock => mock.GetHealthBadge(It.IsAny<HealthReport>()))
+				.Setup(mock => mock.GetSystemHealthBadge(It.IsAny<HealthReport>()))
 				.Returns(badge);
 
 			// Act
-			var result = await _controller.Health();
+			var result = await _controller.Index();
 
 			// Assert
 			var badgeResult = Assert.IsType<BadgeResult>(result);
@@ -56,10 +54,10 @@ namespace StatusMonitor.Tests.ControllerTests
 		}
 
 		[Fact]
-		public async Task HealthNoData()
+		public async Task IndexNoData()
 		{
 			// Act
-			var result = await _controller.Health();
+			var result = await _controller.Index();
 
 			// Assert
 			var noContentResult = Assert.IsType<NoContentResult>(result);

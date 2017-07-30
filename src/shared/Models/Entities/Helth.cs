@@ -90,7 +90,7 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// Percentage that encapsulates numeric value of the health
 		/// Computed as a weighted average of individual healths, which are derived from the auto labels
 		/// </summary>
-		public int Health
+		public virtual int Health
 		{
 			get
 			{
