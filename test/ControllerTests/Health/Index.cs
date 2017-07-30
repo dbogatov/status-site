@@ -34,8 +34,6 @@ namespace StatusMonitor.Tests.ControllerTests
 				Title = "System health",
 				Message = "95%",
 				Status = BadgeStatus.Success
-				// TitleWidth = 100,
-				// MessageWidth = 40
 			};
 
 			_mockBadge

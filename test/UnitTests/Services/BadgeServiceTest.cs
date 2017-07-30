@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Moq;
 using StatusMonitor.Shared.Models.Entities;
 using StatusMonitor.Shared.Services;
 using StatusMonitor.Web.Services;
@@ -8,8 +9,42 @@ namespace StatusMonitor.Tests.UnitTests.Services
 {
 	public class BadgeServiceTest
 	{
+		[Theory]
+		[InlineData(BadgeStatus.Success)]
+		[InlineData(BadgeStatus.Neutural)]
+		[InlineData(BadgeStatus.Failure)]
+		public void ProducesMetricHealthBadge(BadgeStatus status)
+		{
+			// Arrange
+			var badgeService = new BadgeService();
+			var label = 
+				status == BadgeStatus.Success ?
+				AutoLabels.Normal :
+				(
+					status == BadgeStatus.Neutural ?
+					AutoLabels.Warning :
+					AutoLabels.Critical
+				);
+
+			// Act
+			var badge = badgeService
+				.GetMetricHealthBadge(
+					"the-source",
+					Metrics.CpuLoad,
+					label
+				);
+
+			// Assert
+			Assert.Equal(status, badge.Status);
+			Assert.NotEqual(0, badge.TitleWidth);
+			Assert.NotEqual(0, badge.MessageWidth);
+			Assert.Contains("the-source", badge.Title.ToLower());
+			Assert.Contains(Metrics.CpuLoad.ToString().ToLower(), badge.Title.ToLower());
+			Assert.Contains(label.ToString().ToLower(), badge.Message.ToLower());
+		}
+
 		[Fact]
-		public void ProducesHealthBadgeNoData()
+		public void ProducesSystemHealthBadgeNoData()
 		{
 			// Arrange
 			var badgeService = new BadgeService();
@@ -29,57 +64,18 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[InlineData(BadgeStatus.Success)]
 		[InlineData(BadgeStatus.Neutural)]
 		[InlineData(BadgeStatus.Failure)]
-		public void ProducesHealthBadge(BadgeStatus status)
+		public void ProducesSystemHealthBadge(BadgeStatus status)
 		{
 			// Arrange
 			var badgeService = new BadgeService();
 
-			IEnumerable<HealthReportDataPoint> dataPoints = null;
-
-			switch (status)
-			{
-				case BadgeStatus.Success:
-					dataPoints = new List<HealthReportDataPoint> { // 94
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Warning }
-					};
-					break;
-				case BadgeStatus.Neutural:
-					dataPoints = new List<HealthReportDataPoint> { // 81
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Critical },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Warning }
-					};
-					break;
-				case BadgeStatus.Failure:
-					dataPoints = new List<HealthReportDataPoint> { // 56
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Critical },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Critical },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Normal },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Critical },
-						new HealthReportDataPoint { MetricLabel = AutoLabels.Warning }
-					};
-					break;
-			}
-
-			var report = new HealthReport { Data = dataPoints };
+			var report = new Mock<HealthReport>();
+			report
+				.SetupGet(rep => rep.Health)
+				.Returns(status == BadgeStatus.Success ? 94 : (status == BadgeStatus.Neutural ? 81 : 56));
 
 			// Act
-			var badge = badgeService.GetSystemHealthBadge(report);
+			var badge = badgeService.GetSystemHealthBadge(report.Object);
 
 			// Assert
 			Assert.Equal(status, badge.Status);
