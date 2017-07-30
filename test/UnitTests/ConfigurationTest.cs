@@ -125,6 +125,7 @@ namespace StatusMonitor.Tests.UnitTests
 			TestIntKey($"ServiceManager:NotificationService:Frequencies:{NotificationSeverity.High.ToString()}");
 
 			TestStringKey($"ServiceManager:NotificationService:TimeZone");
+			TestStringKey($"ServiceManager:NotificationService:Verbosity");
 		}
 
 		private void TestStringKey(string key)

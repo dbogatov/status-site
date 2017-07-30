@@ -48,6 +48,9 @@ namespace StatusMonitor.Tests.UnitTests.Services
 					config => config[$"ServiceManager:NotificationService:Frequencies:{NotificationSeverity.Low.ToString()}"]
 				)
 				.Returns($"{24 * 60 * 60}");
+			mockConfig
+				.SetupGet(conf => conf["ServiceManager:NotificationService:Verbosity"])
+				.Returns("normal");
 			_config = mockConfig.Object;
 
 			services.RegisterSharedServices(env, new Mock<IConfiguration>().Object);
@@ -65,7 +68,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 
 			var notificationService = new NotificationService(
 				new Mock<ILogger<NotificationService>>().Object,
-				new Mock<IConfiguration>().Object,
+				_config,
 				context,
 				new Mock<IEmailService>().Object,
 				new Mock<ISlackService>().Object
@@ -87,12 +90,10 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		public void ChecksIfNeedToSend_NoNotifications()
 		{
 			// Arrange
-			var context = _serviceProvider.GetRequiredService<IDataContext>();
-
 			var notificationService = new NotificationService(
 				new Mock<ILogger<NotificationService>>().Object,
-				new Mock<IConfiguration>().Object,
-				context,
+				_config,
+				_serviceProvider.GetRequiredService<IDataContext>(),
 				new Mock<IEmailService>().Object,
 				new Mock<ISlackService>().Object
 			);
@@ -175,7 +176,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[InlineData(NotificationSeverity.High)]
 		[InlineData(NotificationSeverity.Medium)]
 		[InlineData(NotificationSeverity.Low)]
-		public void ComposesMessage(NotificationSeverity severity)
+		public async Task ComposesMessage(NotificationSeverity severity)
 		{
 			// Arrange
 			var input = new List<Notification> {
@@ -190,14 +191,14 @@ namespace StatusMonitor.Tests.UnitTests.Services
 
 			var notificationService = new NotificationService(
 				new Mock<ILogger<NotificationService>>().Object,
-				new Mock<IConfiguration>().Object,
-				new Mock<IDataContext>().Object,
+				_config,
+				_serviceProvider.GetRequiredService<IDataContext>(),
 				new Mock<IEmailService>().Object,
 				new Mock<ISlackService>().Object
 			);
 
 			// Act
-			var actual = notificationService.ComposeMessage(input);
+			var actual = await notificationService.ComposeMessageAsync(input);
 
 			// Assert
 			Assert.Contains($"Severity {severity}", actual);
@@ -211,7 +212,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 
 			var notificationService = new NotificationService(
 				new Mock<ILogger<NotificationService>>().Object,
-				new Mock<IConfiguration>().Object,
+				_config,
 				context,
 				new Mock<IEmailService>().Object,
 				new Mock<ISlackService>().Object
@@ -294,7 +295,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 					slack => slack.SendMessageAsync(It.IsAny<string>()),
 					Times.Once()
 				);
-			
+
 			Assert.True(context.Notifications.All(notif => notif.IsSent));
 			Assert.True(context.Notifications.All(notif => notif.DateSent != null));
 		}
@@ -303,15 +304,13 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		public async Task ProcessesNotificationQueue_NoData()
 		{
 			// Arrange
-			var context = _serviceProvider.GetRequiredService<IDataContext>();
-
 			var mockEmail = new Mock<IEmailService>();
 			var mockSlack = new Mock<ISlackService>();
 
 			var notificationService = new NotificationService(
 				new Mock<ILogger<NotificationService>>().Object,
 				_config,
-				context,
+				_serviceProvider.GetRequiredService<IDataContext>(),
 				mockEmail.Object,
 				mockSlack.Object
 			);
@@ -340,18 +339,21 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		}
 
 		[Fact]
-		public void UsesCorrectTimeZone()
+		public async Task UsesCorrectTimeZone()
 		{
 			// Arrange
 			var config = new Mock<IConfiguration>();
 			config
 				.SetupGet(conf => conf["ServiceManager:NotificationService:TimeZone"])
 				.Returns("Asia/Kabul");
+			config
+				.SetupGet(conf => conf["ServiceManager:NotificationService:Verbosity"])
+				.Returns("normal");
 
 			var notificationService = new NotificationService(
 				new Mock<ILogger<NotificationService>>().Object,
 				config.Object,
-				new Mock<IDataContext>().Object,
+				 _serviceProvider.GetRequiredService<IDataContext>(),
 				new Mock<IEmailService>().Object,
 				new Mock<ISlackService>().Object
 			);
@@ -368,10 +370,47 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			var expected = date.ToStringUsingTimeZone("Asia/Kabul");
 
 			// Act
-			var actual = notificationService.ComposeMessage(input);
+			var actual = await notificationService.ComposeMessageAsync(input);
 
 			// Assert
 			Assert.Contains(expected, actual);
 		}
+
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task GeneratesUnresolvedDiscrepanciesNoteAsync(bool discrepancies)
+		{
+			// Arrange
+			var context = _serviceProvider.GetRequiredService<IDataContext>();
+
+			if (discrepancies)
+			{
+				await context.Discrepancies.AddAsync(new Discrepancy {
+					Type = DiscrepancyType.GapInData,
+					MetricType = Metrics.CpuLoad,
+					MetricSource = "the-source",
+					DateFirstOffense = DateTime.UtcNow
+				});	
+				await context.SaveChangesAsync();
+			}
+
+
+			var notificationService = new NotificationService(
+				new Mock<ILogger<NotificationService>>().Object,
+				new Mock<IConfiguration>().Object,
+				context,
+				new Mock<IEmailService>().Object,
+				new Mock<ISlackService>().Object
+			);
+
+			// Act
+			var actual = await notificationService.GenerateUnresolvedDiscrepanciesNoteAsync();
+
+			// Assert
+			Assert.Contains(discrepancies ? 1.ToString() : "no", actual);
+		}
+
+
 	}
 }

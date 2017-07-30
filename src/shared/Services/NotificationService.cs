@@ -79,7 +79,7 @@ namespace StatusMonitor.Shared.Services
 					.OrderBy(ntf => ntf.DateCreated)
 					.ToListAsync();
 
-				var message = ComposeMessage(notifications);
+				var message = await ComposeMessageAsync(notifications);
 
 				await _email.SendEmailAsync(
 					new string[] { _config["Secrets:Email:ToEmail"] },
@@ -148,35 +148,68 @@ namespace StatusMonitor.Shared.Services
 			return true;
 		}
 
+		internal async Task<string> GenerateUnresolvedDiscrepanciesNoteAsync() {
+			var unresolved = 	await _context.Discrepancies.Where(d => !d.Resolved).CountAsync();
+
+			return
+				unresolved == 0 ?
+				"There are no outstanding issues. Well done." :
+				$"There {(unresolved == 1 ? "is" : "are")} still outstanding {unresolved} issue{(unresolved == 1 ? "" : "s")}."
+			;
+
+		}
+
 		/// <summary>
 		/// Generate a message containing all given notifications grouped by severities
 		/// </summary>
 		/// <param name="notifications">List of notifications to include in the message</param>
 		/// <returns>The composed message</returns>
-		internal string ComposeMessage(IEnumerable<Notification> notifications) =>
-			$@"
-				Dear recipient,
+		internal async Task<string> ComposeMessageAsync(IEnumerable<Notification> notifications) =>
+			_config["ServiceManager:NotificationService:Verbosity"] == "normal" ?
+				$@"
+					Dear recipient,
 
-				Following are the notification messages from Status Site.
+					Following are the notification messages from Status Site.
 
-				{
-					notifications
-						.GroupBy(ntf => ntf.Severity)
-						.Select(			
-							(value, key) => $@"Severity {(NotificationSeverity)value.Key}:{Environment.NewLine}			
-								{
-									value
-										.Select(ntf => $"[{ntf.DateCreated.ToStringUsingTimeZone(_config["ServiceManager:NotificationService:TimeZone"])}] {ntf.Message}")
-										.Aggregate((self, next) => $"{self}{Environment.NewLine}{next}")
-								}
-							"
-						)
-						.Aggregate((self, next) => $"{self}{Environment.NewLine}{next}")
-				}
+					{
+						notifications
+							.GroupBy(ntf => ntf.Severity)
+							.Select(			
+								(value, key) => $@"Severity {(NotificationSeverity)value.Key}:{Environment.NewLine}			
+									{
+										value
+											.Select(ntf => $"[{ntf.DateCreated.ToStringUsingTimeZone(_config["ServiceManager:NotificationService:TimeZone"])}] {ntf.Message}")
+											.Aggregate((self, next) => $"{self}{Environment.NewLine}{next}")
+									}
+								"
+							)
+							.Aggregate((self, next) => $"{self}{Environment.NewLine}{next}")
+					}
 
-				Always yours, 
-				Notificator
-			"
-			.Replace("\t", "");
+					{await GenerateUnresolvedDiscrepanciesNoteAsync()}
+
+					Always yours, 
+					Notificator
+				"
+				.Replace("\t", "")
+			: 
+				$@"
+					{
+						notifications
+							.Select(
+								ntf => $@"[{
+									ntf.
+										DateCreated.
+										ToStringUsingTimeZone(
+											_config["ServiceManager:NotificationService:TimeZone"]
+										)
+								}] {ntf.Message}"
+							)
+							.Aggregate((self, next) => $"{self}{Environment.NewLine}{next}")
+					}
+					{await GenerateUnresolvedDiscrepanciesNoteAsync()}
+					"
+					.Replace("\t", "")
+			;
 	}
 }
