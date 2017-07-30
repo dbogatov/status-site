@@ -20,5 +20,7 @@ ServiceManager:
     Interval: 10
     Gaps:
       MaxDifference: 5
+  NotificationService:
+    Verbosity: "less"
 Logging:
   MinLogLevel: "Debug"
