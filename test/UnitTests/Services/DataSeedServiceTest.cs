@@ -82,7 +82,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		}
 
 		[Fact]
-		public async Task ProperlyUpdatesData()
+		public async Task ProperlyAddsData()
 		{
 			// Arrange
 			var dataSeedService = new DataSeedService(
@@ -95,6 +95,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				new CompilationStage { Id = CompilationStages.M4.AsInt(), Name = "M4 stage" },
 				new CompilationStage { Id = CompilationStages.SandPiper.AsInt(), Name = "SandPiper" }
 			});
+			await _dataContext.SaveChangesAsync();
 
 			// Act
 			await dataSeedService.SeedDataAsync();
@@ -104,6 +105,29 @@ namespace StatusMonitor.Tests.UnitTests.Services
 				Enum.GetNames(typeof(CompilationStages)).Count(),
 				await _dataContext.CompilationStages.CountAsync()
 			);
+		}
+
+		[Fact]
+		public async Task ProperlyUpdatesData()
+		{
+			// Arrange
+			var dataSeedService = new DataSeedService(
+				_dataContext,
+				new Mock<ILogger<DataSeedService>>().Object,
+				_config
+			);
+
+			await _dataContext.CompilationStages.AddRangeAsync(new List<CompilationStage> {
+				new CompilationStage { Id = CompilationStages.M4.AsInt(), Name = "M5 stage" }, // here it is
+				new CompilationStage { Id = CompilationStages.SandPiper.AsInt(), Name = "SandPiper" }
+			});
+			await _dataContext.SaveChangesAsync();
+
+			// Act
+			await dataSeedService.SeedDataAsync();
+
+			// Assert
+			Assert.Equal("test-title", (await _dataContext.CompilationStages.SingleAsync(st => st.Id == CompilationStages.M4.AsInt())).Name);
 		}
 
 		[Fact]

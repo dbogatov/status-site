@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace StatusMonitor.Shared.Services
 {
@@ -185,15 +186,30 @@ namespace StatusMonitor.Shared.Services
 		/// </summary>
 		private bool SeedSpecificEntity<T>(List<T> values, DbSet<T> dbSets) where T : class
 		{
-			if (values.Count != dbSets.Count())
+			var inserted = false;
+
+			foreach (var item in values)
 			{
-				dbSets.Clear();
+				if (dbSets.Any(i => i == item))
+				{
+					var element = dbSets.Single(i => i == item);
+
+					PropertyInfo[] properties = typeof(T).GetProperties();
+					foreach (PropertyInfo property in properties)
+					{
+						property.SetValue(element, property.GetValue(item));
+					}
+				}
+				else
+				{
+					dbSets.Add(item);
+
+					inserted = true;
+				}
 				_context.SaveChanges();
-				dbSets.AddRange(values);
-				_context.SaveChanges();
-				return true;
 			}
-			return false;
+
+			return inserted;
 		}
 
 		/// <summary>
@@ -206,20 +222,33 @@ namespace StatusMonitor.Shared.Services
 		/// These are to be replaced by values.</param>
 		/// <returns>True if values has been replaced, false if values were in sync and did not require 
 		/// replacement.</returns>
-		private async Task<bool> SeedSpecificEntityAsync<T>(List<T> values, DbSet<T> dbSets, bool ignoreCount = false) where T : class
+		private async Task<bool> SeedSpecificEntityAsync<T>(List<T> values, DbSet<T> dbSets) where T : class
 		{
-			if (values.Count != await dbSets.CountAsync() || ignoreCount)
+			var inserted = false;
+
+			foreach (var item in values)
 			{
-				if (!ignoreCount)
+				if (await dbSets.AnyAsync(i => i == item))
 				{
-					dbSets.Clear();
+					var element = await dbSets.SingleAsync(i => i == item);
+
+					PropertyInfo[] properties = typeof(T).GetProperties();
+					foreach (PropertyInfo property in properties)
+					{
+						property.SetValue(element, property.GetValue(item));
+					}
 				}
+				else
+				{
+					await dbSets.AddAsync(item);
+
+					inserted = true;
+				}
+
 				await _context.SaveChangesAsync();
-				await dbSets.AddRangeAsync(values);
-				await _context.SaveChangesAsync();
-				return true;
 			}
-			return false;
+
+			return inserted;
 		}
 	}
 }
