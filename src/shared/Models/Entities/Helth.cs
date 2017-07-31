@@ -70,7 +70,6 @@ namespace StatusMonitor.Shared.Models.Entities
 			}
 		}
 
-		[JsonProperty("Label")]
 		/// <summary>
 		/// String alias of the metric's label
 		/// Should not be used directly
@@ -157,7 +156,8 @@ namespace StatusMonitor.Shared.Models.Entities
 		{
 			return new {
 				Timestamp,
-				Health
+				Health,
+				Data
 			};
 		}
 	}

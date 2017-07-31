@@ -8,6 +8,13 @@ import "../../vendor/jquery.flot.tooltip.js";
 type JsonHealthDataPoint = {
 	Timestamp: string;
 	Health: number;
+	Data: HealthReportDataPoint[];
+}
+
+export class HealthReportDataPoint {
+	public label: string;
+	public source: string;
+	public type: string;
 }
 
 /**
@@ -27,6 +34,8 @@ export class HealthDataPoint extends DataPoint {
 	 */
 	public health: number;
 
+	public data: HealthReportDataPoint[];
+
 
 	/**
 	 * Creates an instance of HealthDataPoint.
@@ -39,6 +48,7 @@ export class HealthDataPoint extends DataPoint {
 
 		this.timestamp = Utility.toDate(json.Timestamp);
 		this.health = json.Health;
+		this.data = json.Data;
 	}
 }
 
