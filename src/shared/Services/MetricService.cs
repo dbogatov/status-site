@@ -63,6 +63,8 @@ namespace StatusMonitor.Shared.Services
 			{
 				case Metrics.CpuLoad:
 					return await GetCurrentValueForMetricFromDataPointsAsync(metric, _context.NumericDataPoints);
+				case Metrics.Health:
+					return await GetCurrentValueForMetricFromDataPointsAsync(metric, _context.HealthReports);
 				case Metrics.Compilation:
 					return await GetCurrentValueForMetricFromDataPointsAsync(metric, _context.CompilationDataPoints);
 				case Metrics.Ping:

@@ -2,6 +2,7 @@ import { Metric, MetricType, DataPoint } from "./abstract";
 import { PingMetric } from "../metrics/ping";
 import { CpuLoadMetric } from "../metrics/cpu-load";
 import { UserActionMetric } from "./user-action";
+import { HealthMetric } from "./health";
 
 /**
  * 
@@ -11,7 +12,7 @@ import { UserActionMetric } from "./user-action";
  */
 export class MetricFactory {
 
-	private source : string;
+	private source: string;
 
 	constructor(source: string) {
 		this.source = source;
@@ -33,6 +34,8 @@ export class MetricFactory {
 				return new PingMetric(this.source);
 			case MetricType.UserAction:
 				return new UserActionMetric(this.source);
+			case MetricType.Health:
+				return new HealthMetric(this.source);
 			default:
 				throw `Metric type not supported. Type: ${type}`;
 		}

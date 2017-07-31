@@ -50,6 +50,7 @@ Data:
     Compilation: "Compilations"
     Log: "Log Messages"
     Ping: "Response time"
+    Health: "System Health"
   PingServerUrl: http://ping:8888
 Logging:
   MinLogLevel: "Information"
@@ -73,7 +74,7 @@ ServiceManager:
     Interval: 60
   HealthService:
     Enabled: true
-    Interval: 30
+    Interval: 60
   DemoService:
     Enabled: true
     Interval: 30

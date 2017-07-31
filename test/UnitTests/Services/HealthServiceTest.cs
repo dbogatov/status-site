@@ -87,7 +87,8 @@ namespace StatusMonitor.Tests.UnitTests.Services
 
 			var healthService = new HealthService(
 				context,
-				new Mock<ILogger<HealthService>>().Object
+				new Mock<ILogger<HealthService>>().Object,
+				new Mock<IMetricService>().Object
 			);
 
 			// Act
@@ -104,7 +105,8 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			// Arrange
 			var healthService = new HealthService(
 				_serviceProvider.GetRequiredService<IDataContext>(),
-				new Mock<ILogger<HealthService>>().Object
+				new Mock<ILogger<HealthService>>().Object,
+				new Mock<IMetricService>().Object
 			);
 
 			// Act

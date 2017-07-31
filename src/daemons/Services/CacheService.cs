@@ -51,6 +51,9 @@ namespace StatusMonitor.Daemons.Services
 				case Metrics.CpuLoad:
 					values = await NormalizedValues(metric, _context.NumericDataPoints);
 					break;
+				case Metrics.Health:
+					values = await NormalizedValues(metric, _context.HealthReports);
+					break;
 				case Metrics.Ping:
 					values = await NormalizedValues(metric, _context.PingDataPoints);
 					break;
@@ -201,6 +204,38 @@ namespace StatusMonitor.Daemons.Services
 						label = AutoLabels.Warning;
 					}
 					break;
+
+				case Metrics.Health:
+
+					if (
+						await _context
+							.HealthReports
+							.Where(dp => dp.Metric == metric)
+							.CountAsync() < 5
+						)
+					{
+						break;
+					}
+
+					var healthData =
+						(await _context
+							.HealthReports
+							.Where(dp => dp.Metric == metric)
+							.OrderByDescending(dp => dp.Timestamp)
+							.Select(dp => dp.Health)
+							.ToListAsync())
+							.Take(5);
+
+					if (healthData.Average() < 70)
+					{
+						label = AutoLabels.Critical;
+					}
+					else if (healthData.Average() < 90)
+					{
+						label = AutoLabels.Warning;
+					}
+					break;
+
 				case Metrics.Ping:
 					var pingSetting =
 						await _context

@@ -11,7 +11,7 @@ import { IDataProvider } from "./data-provider";
  * @enum {number}
  */
 export enum MetricType {
-	CpuLoad = 1, UserAction, Compilation, Log, Ping
+	CpuLoad = 1, UserAction, Compilation, Log, Ping, Health
 }
 
 

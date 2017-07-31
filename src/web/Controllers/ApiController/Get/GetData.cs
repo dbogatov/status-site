@@ -52,6 +52,13 @@ namespace StatusMonitor.Web.Controllers.Api
 							fromTimestamp
 						);
 						break;
+					case Metrics.Health:
+						data = await GrabDataAsync<HealthReport, Object>(
+							_context.HealthReports,
+							metric,
+							fromTimestamp
+						);
+						break;
 					case Metrics.Compilation:
 						data = await GrabDataAsync<CompilationDataPoint, Object>(
 							_context.CompilationDataPoints,

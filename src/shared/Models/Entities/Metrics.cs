@@ -61,6 +61,6 @@ namespace StatusMonitor.Shared.Models.Entities
 
 	public enum Metrics
 	{
-		CpuLoad = 1, UserAction, Compilation, Log, Ping
+		CpuLoad = 1, UserAction, Compilation, Log, Ping, Health
 	}
 }
