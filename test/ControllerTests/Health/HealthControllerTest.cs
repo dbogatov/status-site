@@ -25,6 +25,7 @@ namespace StatusMonitor.Tests.ControllerTests
 		private readonly Mock<IMetricService> _mockMetricService = new Mock<IMetricService>();
 		private readonly Mock<IAuthService> _mockAuth = new Mock<IAuthService>();
 		private readonly Mock<IBadgeService> _mockBadge = new Mock<IBadgeService>();
+		private readonly Mock<IUptimeReportService> _mockUptime = new Mock<IUptimeReportService>();
 
 		private readonly IDataContext _context;
 
@@ -57,7 +58,8 @@ namespace StatusMonitor.Tests.ControllerTests
 				_mockMetricService.Object,
 				_context,
 				_mockAuth.Object,
-				_mockBadge.Object
+				_mockBadge.Object,
+				_mockUptime.Object
 			);
 
 			_controller.ControllerContext.HttpContext = new DefaultHttpContext();

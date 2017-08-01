@@ -95,5 +95,70 @@ namespace StatusMonitor.Tests.UnitTests.Services
 			}
 			Assert.Equal("System health".ToLower(), badge.Title.ToLower());
 		}
+
+		[Theory]
+		[InlineData(BadgeStatus.Success)]
+		[InlineData(BadgeStatus.Neutural)]
+		[InlineData(BadgeStatus.Failure)]
+		public void ProducesIndividualHealthBadge(BadgeStatus status)
+		{
+			// Act
+			var badge =  new BadgeService().GetMetricHealthBadge(
+				"the-source",
+				Metrics.CpuLoad,
+				status == BadgeStatus.Success ? AutoLabels.Normal : (status == BadgeStatus.Neutural ? AutoLabels.Warning : AutoLabels.Critical)
+			);
+
+			// Assert
+			Assert.Equal(status, badge.Status);
+			Assert.NotEqual(0, badge.TitleWidth);
+			Assert.NotEqual(0, badge.MessageWidth);
+			switch (status)
+			{
+				case BadgeStatus.Success:
+					Assert.Contains(AutoLabels.Normal.ToString().ToLower(), badge.Message.ToLower());
+					break;
+				case BadgeStatus.Neutural:
+					Assert.Contains(AutoLabels.Warning.ToString().ToLower(), badge.Message.ToLower());
+					break;
+				case BadgeStatus.Failure:
+					Assert.Contains(AutoLabels.Critical.ToString().ToLower(), badge.Message.ToLower());
+					break;
+			}
+			Assert.Contains(Metrics.CpuLoad.ToString().ToLower(), badge.Title.ToLower());
+			Assert.Contains("the-source", badge.Title.ToLower());
+		}
+
+		[Theory]
+		[InlineData(BadgeStatus.Success)]
+		[InlineData(BadgeStatus.Neutural)]
+		[InlineData(BadgeStatus.Failure)]
+		public void ProducesUptimeBadge(BadgeStatus status)
+		{
+			// Act
+			var badge =  new BadgeService().GetUptimeBadge(
+				"the-url.com",
+				status == BadgeStatus.Success ? 98 : (status == BadgeStatus.Neutural ? 90 : 80)
+			);
+
+			// Assert
+			Assert.Equal(status, badge.Status);
+			Assert.NotEqual(0, badge.TitleWidth);
+			Assert.NotEqual(0, badge.MessageWidth);
+			switch (status)
+			{
+				case BadgeStatus.Success:
+					Assert.Contains(98.ToString(), badge.Message);
+					break;
+				case BadgeStatus.Neutural:
+					Assert.Contains(90.ToString(), badge.Message);
+					break;
+				case BadgeStatus.Failure:
+					Assert.Contains(80.ToString(), badge.Message);
+					break;
+			}
+			Assert.Contains("uptime", badge.Title.ToLower());
+			Assert.Contains("the-url.com", badge.Title.ToLower());
+		}
 	}
 }

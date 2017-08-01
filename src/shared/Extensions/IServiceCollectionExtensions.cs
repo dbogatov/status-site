@@ -62,6 +62,7 @@ namespace StatusMonitor.Shared.Extensions
 			services.AddTransient<IMetricService, MetricService>();
 			services.AddTransient<ILoggingService, LoggingService>();
 			services.AddTransient<ICleanService, CleanService>();
+			services.AddTransient<IUptimeReportService, UptimeReportService>();
 			services.AddTransient<IEmailService, EmailService>();
 			services.AddTransient<ISlackService, SlackService>();
 			services.AddTransient<INotificationService, NotificationService>();

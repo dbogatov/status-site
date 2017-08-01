@@ -29,18 +29,21 @@ namespace StatusMonitor.Web.Controllers.View
 		private readonly IDataContext _context;
 		private readonly IAuthService _auth;
 		private readonly IBadgeService _badge;
+		private readonly IUptimeReportService _uptime;
 
 		public HomeController(
 			IMetricService metricService,
 			IDataContext context,
 			IAuthService auth,
-			IBadgeService badge
+			IBadgeService badge,
+			IUptimeReportService uptime
 		)
 		{
 			_metricService = metricService;
 			_context = context;
 			_auth = auth;
 			_badge = badge;
+			_uptime = uptime;
 		}
 
 
@@ -100,6 +103,8 @@ namespace StatusMonitor.Web.Controllers.View
 					.FirstOrDefaultAsync(setting => new Uri(setting.ServerUrl).Host == source);
 
 				ViewBag.Max = pingSetting.MaxResponseTime.TotalMilliseconds;
+
+				ViewBag.Uptime = await _uptime.ComputeUptimeAsync(source);
 			}
 
 			return View(model.First());
