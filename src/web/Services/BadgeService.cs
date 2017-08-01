@@ -25,7 +25,22 @@ namespace StatusMonitor.Web.Services
 		/// <returns>Badge indicating overall health of the system</returns>
 		Badge GetSystemHealthBadge(HealthReport report);
 
+		/// <summary>
+		/// Generates individual metric's health badge
+		/// </summary>
+		/// <param name="source">Metric source</param>
+		/// <param name="type">Metric type</param>
+		/// <param name="label">Metric label</param>
+		/// <returns>Badge indicating individual health of the metric</returns>
 		Badge GetMetricHealthBadge(string source, Metrics type, AutoLabels label);
+
+		/// <summary>
+		/// Generates server's uptime
+		/// </summary>
+		/// <param name="url">URL of the servers whose uptime is presented</param>
+		/// <param name="uptime">Percentage of time when service is online</param>
+		/// <returns>Badge indicating server's uptime</returns>
+		Badge GetUptimeBadge(string url, int uptime);
 	}
 
 	public class BadgeService : IBadgeService
@@ -59,6 +74,22 @@ namespace StatusMonitor.Web.Services
 							BadgeStatus.Neutural :
 							BadgeStatus.Failure
 						)
+			};
+		}
+
+		public Badge GetUptimeBadge(string url, int uptime)
+		{
+			return new Badge
+			{
+				Title = $"{url} uptime",
+				Message = $"{uptime}%",
+				Status =
+				uptime >= 95 ?
+					BadgeStatus.Success :
+					(uptime >= 85 ?
+						BadgeStatus.Neutural :
+						BadgeStatus.Failure
+					)
 			};
 		}
 	}
