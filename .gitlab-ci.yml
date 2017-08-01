@@ -6,128 +6,128 @@ stages:
 before_script:
 - export DOTNET_TAG="$CI_BUILD_REF_NAME"
 
-# ## BUILD
+## BUILD
 
-# build-docs:
-#   image: dbogatov/docker-containers:mkdocs-latest
-#   stage: build
-#   script:
-#   - ./build.sh -f build-docs
-#   artifacts:
-#     expire_in: 90 min
-#     paths:
-#     - documentation/out/
-#   tags:
-#   - docker
+build-docs:
+  image: dbogatov/docker-containers:mkdocs-latest
+  stage: build
+  script:
+  - ./build.sh -f build-docs
+  artifacts:
+    expire_in: 90 min
+    paths:
+    - documentation/out/
+  tags:
+  - docker
 
-# build-ping:
-#   image: golang:alpine
-#   stage: build
-#   script:
-#   - apk update
-#   - apk add bash
-#   - ./build.sh -f build-ping-server
-#   artifacts:
-#     expire_in: 90 min
-#     paths:
-#     - ping/bin/*
-#   tags:
-#   - docker
+build-ping:
+  image: golang:alpine
+  stage: build
+  script:
+  - apk update
+  - apk add bash
+  - ./build.sh -f build-ping-server
+  artifacts:
+    expire_in: 90 min
+    paths:
+    - ping/bin/*
+  tags:
+  - docker
 
-# build-app:
-#   image: dbogatov/docker-containers:dotnet-core-latest
-#   stage: build
-#   script:
-#   - export ASPNETCORE_ENVIRONMENT="Production"
-#   - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
-#   - yarn config set registry https://registry.npmjs.cf/ # TODO: remove workaround
-#   - ./build.sh
-#   artifacts:
-#     expire_in: 90 min
-#     paths:
-#     - src/web/bin/
-#     - src/daemons/bin/
-#   tags:
-#   - docker
+build-app:
+  image: dbogatov/docker-containers:dotnet-core-latest
+  stage: build
+  script:
+  - export ASPNETCORE_ENVIRONMENT="Production"
+  - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
+  - yarn config set registry https://registry.npmjs.cf/ # TODO: remove workaround
+  - ./build.sh
+  artifacts:
+    expire_in: 90 min
+    paths:
+    - src/web/bin/
+    - src/daemons/bin/
+  tags:
+  - docker
 
-# ## TEST
+## TEST
 
-# unit-test-app:
-#   stage: test
-#   image: microsoft/dotnet:1.1.1-sdk
-#   script:
-#   - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
-#   - cd test
-#   - dotnet restore
-#   - ./test.sh | tee tests.out
-#   - "cat tests.out | grep 'Failed: 0.'"
-#   tags:
-#   - docker
+unit-test-app:
+  stage: test
+  image: microsoft/dotnet:1.1.1-sdk
+  script:
+  - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
+  - cd test
+  - dotnet restore
+  - ./test.sh | tee tests.out
+  - "cat tests.out | grep 'Failed: 0.'"
+  tags:
+  - docker
 
-# tidy-app:
-#   stage: test
-#   image: dbogatov/docker-containers:dotnet-core-latest
-#   dependencies:
-#   - build-app
-#   before_script:
-#   - export ASPNETCORE_ENVIRONMENT="Staging"
-#   - cd src/web/bin/release/netcoreapp1.1/publish/
-#   - dotnet web.dll > /dev/null &
-#   - sleep 15
-#   script:
-#   - curl -Ls http://localhost:5555/ | tidy -e
-#   - curl -Ls http://localhost:5555/home/metric/CpuLoad/the-source | tidy -e
-#   tags:
-#   - docker
+tidy-app:
+  stage: test
+  image: dbogatov/docker-containers:dotnet-core-latest
+  dependencies:
+  - build-app
+  before_script:
+  - export ASPNETCORE_ENVIRONMENT="Staging"
+  - cd src/web/bin/release/netcoreapp1.1/publish/
+  - dotnet web.dll > /dev/null &
+  - sleep 15
+  script:
+  - curl -Ls http://localhost:5555/ | tidy -e
+  - curl -Ls http://localhost:5555/home/metric/CpuLoad/the-source | tidy -e
+  tags:
+  - docker
   
-# blc-app:
-#   stage: test
-#   image: dbogatov/docker-containers:dotnet-core-latest
-#   dependencies:
-#   - build-app
-#   before_script:
-#   - export ASPNETCORE_ENVIRONMENT="Staging"
-#   - cd src/web/bin/release/netcoreapp1.1/publish/
-#   - dotnet web.dll > /dev/null &
-#   - sleep 15
-#   script:
-#   - blc --filter-level 3 --input http://localhost:5555 -rog --exclude "*linkedin.*" --exclude "*authenticate*"
-#   tags:
-#   - docker
+blc-app:
+  stage: test
+  image: dbogatov/docker-containers:dotnet-core-latest
+  dependencies:
+  - build-app
+  before_script:
+  - export ASPNETCORE_ENVIRONMENT="Staging"
+  - cd src/web/bin/release/netcoreapp1.1/publish/
+  - dotnet web.dll > /dev/null &
+  - sleep 15
+  script:
+  - blc --filter-level 3 --input http://localhost:5555 -rog --exclude "*linkedin.*" --exclude "*authenticate*"
+  tags:
+  - docker
 
-# blc-docs:
-#   stage: test
-#   image: dbogatov/docker-containers:jekyll-latest
-#   dependencies:
-#   - build-docs
-#   before_script:
-#   - http-server documentation/out/ -p 8080 > /dev/null &
-#   - sleep 5
-#   script:
-#   - blc --filter-level 3 --input http://localhost:8080 -rog --exclude "*linkedin.*" --exclude "*doxygen.*" --exclude "*status.dbogatov.org*"
-#   tags:
-#   - docker
+blc-docs:
+  stage: test
+  image: dbogatov/docker-containers:jekyll-latest
+  dependencies:
+  - build-docs
+  before_script:
+  - http-server documentation/out/ -p 8080 > /dev/null &
+  - sleep 5
+  script:
+  - blc --filter-level 3 --input http://localhost:8080 -rog --exclude "*linkedin.*" --exclude "*doxygen.*" --exclude "*status.dbogatov.org*"
+  tags:
+  - docker
 
-# ## RELEASE
+## RELEASE
 
-# release-app-docs:
-#   stage: release
-#   dependencies:
-#   - build-app
-#   - build-docs
-#   - build-ping
-#   script:
-#   - ./build.sh -f build-docker-images
-#   - docker login -u $DOCKER_USER -p $DOCKER_PASS
-#   - ./build.sh -f push-docker-images
-#   - cp src/appsettings.production.yml appsettings.yml.example
-#   artifacts:
-#     paths:
-#     - docker-compose.yml
-#     - .env.example
-#     - appsettings.yml.example
-#   tags:
-#   - shell
+release-app-docs:
+  stage: release
+  dependencies:
+  - build-app
+  - build-docs
+  - build-ping
+  script:
+  - ./build.sh -f build-docker-images
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - ./build.sh -f push-docker-images
+  - cp src/appsettings.production.yml appsettings.yml.example
+  artifacts:
+    paths:
+    - docker-compose.yml
+    - .env.example
+    - appsettings.yml.example
+  tags:
+  - shell
 
 release-debian:
   stage: release
