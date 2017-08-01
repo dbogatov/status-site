@@ -33,6 +33,8 @@ namespace StatusMonitor.Shared.Models.Entities
 					return $"Gap in data from {MetricSource} has been detected. The gap starts on {DateFirstOffense.ToStringUsingTimeZone(timeZoneId)}.";
 				case DiscrepancyType.HighLoad:
 					return $"{MetricSource} reported high load starting from {DateFirstOffense.ToStringUsingTimeZone(timeZoneId)}.";
+				case DiscrepancyType.LowHealth:
+					return $"{MetricSource} reported low health starting from {DateFirstOffense.ToStringUsingTimeZone(timeZoneId)}.";
 				case DiscrepancyType.PingFailedNTimes:
 					return $"Requests to {MetricSource} failed too many consecutive times. First failure occurred on {DateFirstOffense.ToStringUsingTimeZone(timeZoneId)}.";
 				default:
@@ -45,6 +47,6 @@ namespace StatusMonitor.Shared.Models.Entities
 
 	public enum DiscrepancyType
 	{
-		GapInData, PingFailedNTimes, HighLoad
+		GapInData, PingFailedNTimes, HighLoad, LowHealth
 	}
 }

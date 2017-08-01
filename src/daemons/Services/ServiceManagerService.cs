@@ -414,6 +414,11 @@ namespace StatusMonitor.Daemons.Services
 						   .Where(mt => mt.Type == Metrics.Ping.AsInt())
 						   .ToListAsync();
 
+						var healthMetrics = await context
+							.Metrics
+							.Where(mt => mt.Type == Metrics.Health.AsInt())
+							.ToListAsync();
+
 						// Find GapInData discrepancies
 						var gapTasks = cpuMetrics
 							.Select(metric =>
@@ -458,6 +463,28 @@ namespace StatusMonitor.Daemons.Services
 								})
 							);
 
+						// Find LowHealth discrepancies
+						var lowHealthTasks = healthMetrics
+							.Select(metric =>
+								Task.Run(async () =>
+								{
+									using (var scope = _serviceProvider.CreateScope())
+									{
+										return await scope
+											.ServiceProvider
+											.GetRequiredService<IDiscrepancyService>()
+											.FindLowHealthsAsync(
+												metric,
+												new TimeSpan(
+													0,
+													0,
+													Convert.ToInt32(_config["ServiceManager:DiscrepancyService:DataTimeframe"])
+												)
+											);
+									}
+								})
+							);
+
 						// Find PingFailedNTimes discrepancies
 						var pingTasks = pingMetrics
 							.Select(metric =>
@@ -485,7 +512,8 @@ namespace StatusMonitor.Daemons.Services
 							new Task<List<Discrepancy>>[] { }
 								.Concat(gapTasks).ToArray()
 								.Concat(pingTasks).ToArray()
-								.Concat(highLoadTasks).ToArray())
+								.Concat(highLoadTasks).ToArray()
+								.Concat(lowHealthTasks).ToArray())
 						;
 
 						using (var scope = _serviceProvider.CreateScope())

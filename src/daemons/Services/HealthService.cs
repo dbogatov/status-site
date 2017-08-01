@@ -3,8 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using StatusMonitor.Shared.Extensions;
 using StatusMonitor.Shared.Models;
 using StatusMonitor.Shared.Models.Entities;
+using StatusMonitor.Shared.Services;
 
 namespace StatusMonitor.Daemons.Services
 {
@@ -24,12 +26,18 @@ namespace StatusMonitor.Daemons.Services
 	public class HealthService : IHealthService
 	{
 		private readonly IDataContext _context;
+		private readonly IMetricService _metrics;
 		private readonly ILogger<HealthService> _logger;
 
-		public HealthService(IDataContext context, ILogger<HealthService> logger)
+		public HealthService(
+			IDataContext context, 
+			ILogger<HealthService> logger,
+			IMetricService metrics
+		)
 		{
 			_context = context;
 			_logger = logger;
+			_metrics = metrics;
 		}
 
 		public async Task<HealthReport> ProduceHealthReportAsync()
@@ -46,13 +54,14 @@ namespace StatusMonitor.Daemons.Services
 					await _context
 						.Metrics
 						.Include(mt => mt.AutoLabel)
-						.Where(mt => mt.Public)
+						.Where(mt => mt.Public && mt.Type != Metrics.Health.AsInt()) // don't include health metrics
 						.Select(mt => new HealthReportDataPoint {
 							Source = mt.Source,
 							MetricType = (Metrics)mt.Type,
 							MetricLabel = (AutoLabels)mt.AutoLabel.Id
 						})
-						.ToListAsync()
+						.ToListAsync(),
+				Metric = await _metrics.GetOrCreateMetricAsync(Metrics.Health, "system")
 			};
 
 			_logger.LogDebug($"Health report created. Health level: {report.Health}");

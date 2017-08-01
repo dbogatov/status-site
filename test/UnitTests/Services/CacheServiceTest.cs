@@ -148,6 +148,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[Theory]
 		[InlineData(Metrics.CpuLoad)]
 		[InlineData(Metrics.Ping)]
+		[InlineData(Metrics.Health)]
 		public async Task LabelForTooFewPoints(Metrics type)
 		{
 			// Arrange
@@ -172,6 +173,13 @@ namespace StatusMonitor.Tests.UnitTests.Services
 						new NumericDataPoint { Value = 23, Metric = metric },
 						new NumericDataPoint { Value = 65, Metric = metric },
 						new NumericDataPoint { Value = 43, Metric = metric }
+					);
+					break;
+				case Metrics.Health:
+					await context.HealthReports.AddRangeAsync(
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric)
 					);
 					break;
 				case Metrics.Ping:
@@ -233,6 +241,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[Theory]
 		[InlineData(Metrics.CpuLoad)]
 		[InlineData(Metrics.Ping)]
+		[InlineData(Metrics.Health)]
 		public async Task LabelNormal(Metrics type)
 		{
 			// Arrange
@@ -259,6 +268,15 @@ namespace StatusMonitor.Tests.UnitTests.Services
 						new NumericDataPoint { Value = 43, Metric = metric },
 						new NumericDataPoint { Value = 45, Metric = metric },
 						new NumericDataPoint { Value = 34, Metric = metric }
+					);
+					break;
+				case Metrics.Health:
+					await context.HealthReports.AddRangeAsync(
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric)
 					);
 					break;
 				case Metrics.Ping:
@@ -351,6 +369,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[Theory]
 		[InlineData(Metrics.CpuLoad)]
 		[InlineData(Metrics.Ping)]
+		[InlineData(Metrics.Health)]
 		public async Task LabelWarning(Metrics type)
 		{
 			// Arrange
@@ -377,6 +396,15 @@ namespace StatusMonitor.Tests.UnitTests.Services
 						new NumericDataPoint { Value = 43, Metric = metric },
 						new NumericDataPoint { Value = 45, Metric = metric },
 						new NumericDataPoint { Value = 90, Metric = metric }
+					);
+					break;
+				case Metrics.Health:
+					await context.HealthReports.AddRangeAsync(
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(false, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(false, metric)
 					);
 					break;
 				case Metrics.Ping:
@@ -467,6 +495,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[Theory]
 		[InlineData(Metrics.CpuLoad)]
 		[InlineData(Metrics.Ping)]
+		[InlineData(Metrics.Health)]
 		public async Task LabelCritical(Metrics type)
 		{
 			// Arrange
@@ -493,6 +522,15 @@ namespace StatusMonitor.Tests.UnitTests.Services
 						new NumericDataPoint { Value = 88, Metric = metric },
 						new NumericDataPoint { Value = 89, Metric = metric },
 						new NumericDataPoint { Value = 100, Metric = metric }
+					);
+					break;
+				case Metrics.Health:
+					await context.HealthReports.AddRangeAsync(
+						DiscrepancyServiceTest.GenerateHealthReport(true, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(false, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(false, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(false, metric),
+						DiscrepancyServiceTest.GenerateHealthReport(false, metric)
 					);
 					break;
 				case Metrics.Ping:

@@ -119,6 +119,8 @@ namespace StatusMonitor.Tests.UnitTests
 			TestIntKey("ServiceManager:DiscrepancyService:Gaps:MaxDifference");
 			TestIntKey("ServiceManager:DiscrepancyService:Load:Threshold");
 			TestIntKey("ServiceManager:DiscrepancyService:Load:MaxFailures");
+			TestIntKey("ServiceManager:DiscrepancyService:Health:Threshold");
+			TestIntKey("ServiceManager:DiscrepancyService:Health:MaxFailures");
 
 			TestIntKey($"ServiceManager:NotificationService:Frequencies:{NotificationSeverity.Low.ToString()}");
 			TestIntKey($"ServiceManager:NotificationService:Frequencies:{NotificationSeverity.Medium.ToString()}");

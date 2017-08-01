@@ -129,7 +129,7 @@ namespace StatusMonitor.Shared.Services
 				(label) => new AbstractMetric
 				{
 					Type = label.AsInt(),
-					Public = label == Metrics.CpuLoad || label == Metrics.Ping,
+					Public = label == Metrics.CpuLoad || label == Metrics.Ping || label == Metrics.Health,
 					Title = _configuration[$"Data:Metrics:{label.ToString()}"]
 				}
 			);

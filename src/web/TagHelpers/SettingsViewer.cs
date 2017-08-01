@@ -55,6 +55,7 @@ namespace StatusMonitor.Web.TagHelpers
 					{ "Admin password", _config["Secrets:AdminPassword"] },
 					{ "Database connection string", _config["Secrets:ConnectionString"] },
 					{ "ReCaptcha", GenerateReCaptchaInfo() },
+					{ "Google Analytics Tracking Id", _config["Secrets:GoogleAnalytics:TrackingId"] },
 					{ "Email", GenerateEmailInfo() },
 					{ "Slack", GenerateSlackInfo() }
 				})}
@@ -91,6 +92,7 @@ namespace StatusMonitor.Web.TagHelpers
 					{ "Cache service", GenerateCacheServiceInfo() },
 					{ "Clean service", GenerateCleanServiceInfo() },
 					{ "Ping service", GeneratePingServiceInfo() },
+					{ "Health service", GenerateHealthServiceInfo() },
 					{ "Demo service", GenerateDemoServiceInfo() },
 					{ "Discrepancy service", GenerateDiscrepancyServiceInfo() },
 					{ "Notification service", GenerateNotificationServiceInfo() }
@@ -156,7 +158,7 @@ namespace StatusMonitor.Web.TagHelpers
 
 		private string GenerateEnabledDisabled(string setting)
 		{
-			return Convert.ToBoolean(_config[setting]) ? "Enabled": "Disbaled";
+			return Convert.ToBoolean(_config[setting]) ? "Enabled" : "Disbaled";
 		}
 
 		private string GenerateEnabledDisabledInfo(string service, string setting, string info)
@@ -164,8 +166,8 @@ namespace StatusMonitor.Web.TagHelpers
 			return $@"
 				{service} is {GenerateEnabledDisabled(setting).ToLower()}. 
 				{(
-					Convert.ToBoolean(_config[setting]) ? 
-					info : 
+					Convert.ToBoolean(_config[setting]) ?
+					info :
 					""
 				)}";
 		}
@@ -232,6 +234,15 @@ namespace StatusMonitor.Web.TagHelpers
 			);
 		}
 
+		private string GenerateHealthServiceInfo()
+		{
+			return GenerateEnabledDisabledInfo(
+				"Health service",
+				"ServiceManager:HealthService:Enabled",
+				$"The interval is {_config["ServiceManager:HealthService:Interval"]} seconds."
+			);
+		}
+
 		private string GenerateCleanServiceInfo()
 		{
 			return GenerateEnabledDisabledInfo(
@@ -264,7 +275,8 @@ namespace StatusMonitor.Web.TagHelpers
 					The interval is {_config["ServiceManager:DiscrepancyService:Interval"]}.
 					Service will analyze {_config["ServiceManager:DiscrepancyService:DataTimeframe"]} seconds of data per run.
 					'Gap in data' discrepancy will be reported if time difference between any two consecutive datapoints is more than 1.5x of {_config["ServiceManager:DiscrepancyService:Gaps:MaxDifference"]} seconds.
-					'High load' discrepancy will be reported if load of {_config["ServiceManager:DiscrepancyService:Load:Threshold"]}+ occurs for more than {_config["ServiceManager:DiscrepancyService:Load:MaxFailures"]} consecutive recordings."
+					'High load' discrepancy will be reported if load of {_config["ServiceManager:DiscrepancyService:Load:Threshold"]}+ occurs for more than {_config["ServiceManager:DiscrepancyService:Load:MaxFailures"]} consecutive recordings.
+					'Low health' discrepancy will be reported if load of less than {_config["ServiceManager:DiscrepancyService:Health:Threshold"]} occurs for more than {_config["ServiceManager:DiscrepancyService:Health:MaxFailures"]} consecutive recordings."
 			);
 		}
 
@@ -279,15 +291,18 @@ namespace StatusMonitor.Web.TagHelpers
 						Enum
 							.GetValues(typeof(NotificationSeverity))
 							.Cast<object>()
-							.Select(obj => new { 
+							.Select(obj => new
+							{
 								Severity = obj.ToString(),
-								Frequency = _config[$"ServiceManager:NotificationService:Frequencies:{obj.ToString()}"] 
+								Frequency = _config[$"ServiceManager:NotificationService:Frequencies:{obj.ToString()}"]
 							})
 							.Select(obj => $"Recipient will get notifications of severity {obj.Severity} no more than once in {obj.Frequency} seconds.")
 							.Aggregate(
 								(self, next) => $"{next}{Environment.NewLine}{self}"
 							)
 					}
+					Timezone is set to '{_config[$"ServiceManager:NotificationService:TimeZone"]}'.
+					Verbosity is set to '{_config[$"ServiceManager:NotificationService:Verbosity"]}'.
 				"
 			);
 		}

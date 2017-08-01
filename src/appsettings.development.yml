@@ -20,6 +20,9 @@ ServiceManager:
     Interval: 10
     Gaps:
       MaxDifference: 5
+    Health:
+      Threshold: 90
+      MaxFailures: 3
   NotificationService:
     Verbosity: "less"
 Logging:

@@ -532,6 +532,7 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[InlineData(Metrics.Log, false)]
 		[InlineData(Metrics.Ping, false)]
 		[InlineData(Metrics.UserAction, false)]
+		[InlineData(Metrics.Health, false)]
 		public async Task VerifyMetricForHighLoad(Metrics type, bool shouldSucceed)
 		{
 			// Arrange

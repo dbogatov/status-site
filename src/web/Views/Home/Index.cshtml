@@ -139,6 +139,45 @@
 		</div>
 	}
 
+	@if (Model.Any(mt => mt.Type == Metrics.Health.AsInt()))
+	{
+		<div class="block-header">
+			<h2>
+				<span 
+					data-toggle="collapse" 
+					data-target="#@(Metrics.Health.AsInt())-metric-group" 
+					aria-expanded="true" 
+					class="metric-group-header"
+				>
+					System Health
+					<i 
+						class="zmdi zmdi-chevron-down" 
+						id="@(Metrics.Health.AsInt())-header-icon"
+					>
+						<!-- -->
+					</i>
+				</span>
+			</h2>
+		</div>
+
+		<div 
+			id="@(Metrics.Health.AsInt())-metric-group" 
+			data-metric-type="@(Metrics.Health.AsInt())" 
+			class="row metric-group in"
+		>
+			
+			@foreach (var metric in Model.Where(mt => mt.Type == Metrics.Health.AsInt()).OrderBy(mt => mt.Source))
+			{
+				<div class="col-md-3">
+					<metric-card metric="@metric" max-value="100" min-value="0">
+						<metric-values metric="@metric"></metric-values>
+					</metric-card>
+				</div>
+			}
+
+		</div>
+	}
+
 </div>
 
 @section scripts {

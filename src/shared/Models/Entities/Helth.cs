@@ -70,7 +70,6 @@ namespace StatusMonitor.Shared.Models.Entities
 			}
 		}
 
-		[JsonProperty("Label")]
 		/// <summary>
 		/// String alias of the metric's label
 		/// Should not be used directly
@@ -83,8 +82,9 @@ namespace StatusMonitor.Shared.Models.Entities
 
 	/// <summary>
 	/// Entity that encapsulates the overall health of the system at the moment
+	/// Also serves as a datapoint for health metric
 	/// </summary>
-	public class HealthReport
+	public class HealthReport : DataPoint
 	{
 		/// <summary>
 		/// Percentage that encapsulates numeric value of the health
@@ -147,10 +147,18 @@ namespace StatusMonitor.Shared.Models.Entities
 		/// </summary>
 		public string HealthData { get; set; } = JsonConvert.SerializeObject(new List<HealthReportDataPoint>());
 
-		[Key]
-		/// <summary>
-		/// Timestamp when this health report was generated
-		/// </summary>
-		public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+		public override int? NormalizedValue()
+		{
+			return Health;
+		}
+
+		public override object PublicFields()
+		{
+			return new {
+				Timestamp,
+				Health,
+				Data
+			};
+		}
 	}
 }
