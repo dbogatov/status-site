@@ -90,6 +90,9 @@ ServiceManager:
     Load:
       Threshold: 90
       MaxFailures: 5
+    Health:
+      Threshold: 90
+      MaxFailures: 3
   NotificationService:
     Enabled: true
     Interval: 30

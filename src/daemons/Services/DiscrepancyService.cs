@@ -72,6 +72,15 @@ namespace StatusMonitor.Daemons.Services
 		/// <param name="ago">Time ago from now which defines a timeframe of data to analyze</param>
 		/// <returns>A list of found discrepancies</returns>
 		Task<List<Discrepancy>> FindPingFailuresAsync(Metric metric, TimeSpan ago);
+
+		/// <summary>
+		/// Returns a list of discrepancies of type DiscrepancyType.LowHealth 
+		/// in the data for given metric for given timeframe.
+		/// </summary>
+		/// <param name="metric">Metric for which to find discrepancies. Must be of type Metrics.Health.</param>
+		/// <param name="ago">Time ago from now which defines a timeframe of data to analyze</param>
+		/// <returns>A list of found discrepancies</returns>
+		Task<List<Discrepancy>> FindLowHealthsAsync(Metric metric, TimeSpan ago);
 	}
 
 	public class DiscrepancyService : IDiscrepancyService
@@ -292,6 +301,26 @@ namespace StatusMonitor.Daemons.Services
 			return result;
 		}
 
+		public async Task<List<Discrepancy>> FindLowHealthsAsync(Metric metric, TimeSpan ago)
+		{
+			if (metric.Type != Metrics.Health.AsInt())
+			{
+				throw new ArgumentException($"Metric for FindLowHealthsAsync has to be of type {Metrics.Health}");
+			}
+
+			_context.Metrics.Attach(metric);
+
+			var timeAgo = DateTime.UtcNow - ago;
+
+			return FindLowHealthInDataPoints(
+				await _context
+					.HealthReports
+					.Where(dp => dp.Metric == metric && dp.Timestamp >= timeAgo)
+					.ToListAsync(),
+				metric
+			);
+		}
+
 		/// <summary>
 		/// Traverses the lists of ping datapoints looking for places where ping failed a number of times defined
 		/// in setting. 
@@ -420,6 +449,72 @@ namespace StatusMonitor.Daemons.Services
 				.ToList();
 		}
 
+		/// <summary>
+		/// Traverses the lists of health datapoints looking for places where the value is less than
+		/// the value defined in config ServiceManager:DiscrepancyService:Health:Threshold for more than 
+		/// ServiceManager:DiscrepancyService:Health:MaxFailures consecutive datapoints.
+		/// </summary>
+		/// <param name="datapoints">List of numeric datapoints to traverse</param>
+		/// <param name="metric">Metric which will appear in a resulting discrepancy object</param>
+		/// <returns>A list of discrepancies of type DiscrepancyType.LowHealth found</returns>
+		internal List<Discrepancy> FindLowHealthInDataPoints(List<HealthReport> datapoints, Metric metric)
+		{
+			if (datapoints.Count() == 0)
+			{
+				return new List<Discrepancy>();
+			}
+
+			var healths = datapoints
+				.Select(d => new
+				{
+					NormalHealth = d.Health >= Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Health:Threshold"]),
+					Timestamp = d.Timestamp
+				});
+
+			if (!healths.Any(l => l.NormalHealth))
+			{
+				// Means that health is low for the whole timeframe
+				// Discrepancy has been noticed already
+				return new List<Discrepancy>();
+			}
+
+			return healths
+				.OrderBy(p => p.Timestamp)
+				.SkipWhile(p => !p.NormalHealth)
+				.Aggregate(
+					new Stack<BoolIntDateTuple>(),
+					(rest, self) =>
+					{
+						if (rest.Count == 0 || rest.Peek().StateGood != self.NormalHealth)
+						{
+							rest.Push(new BoolIntDateTuple
+							{
+								StateGood = self.NormalHealth,
+								DateFirstOffense = self.Timestamp
+							});
+						}
+						else
+						{
+							rest.Peek().Count++;
+						}
+						return rest;
+					}
+				)
+				.Where(
+					t =>
+						!t.StateGood &&
+						t.Count > Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Health:MaxFailures"])
+				)
+				.Select(x => new Discrepancy
+				{
+					DateFirstOffense = x.DateFirstOffense,
+					Type = DiscrepancyType.LowHealth,
+					MetricType = (Metrics)metric.Type,
+					MetricSource = metric.Source
+				})
+				.ToList();
+		}
+
 		public async Task<IEnumerable<Discrepancy>> FindResolvedDiscrepanciesAsync(IEnumerable<Discrepancy> discrepancies)
 		{
 			var resolvedDiscrepancies = new List<Discrepancy>();
@@ -459,6 +554,21 @@ namespace StatusMonitor.Daemons.Services
 									dp.Timestamp > discrepancy.DateFirstOffense
 								)
 								.AnyAsync(dp => dp.Value <= Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Load:Threshold"]))
+						)
+						{
+							resolvedDiscrepancies.Add(discrepancy);
+						}
+						break;
+					case DiscrepancyType.LowHealth:
+						if (
+							await _context
+								.HealthReports
+								.Where(dp =>
+									dp.Metric.Source == discrepancy.MetricSource &&
+									dp.Metric.Type == discrepancy.MetricType.AsInt() &&
+									dp.Timestamp > discrepancy.DateFirstOffense
+								)
+								.AnyAsync(dp => dp.Health >= Convert.ToInt32(_config["ServiceManager:DiscrepancyService:Health:Threshold"]))
 						)
 						{
 							resolvedDiscrepancies.Add(discrepancy);

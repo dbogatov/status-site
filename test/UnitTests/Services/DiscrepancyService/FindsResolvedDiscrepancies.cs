@@ -149,6 +149,64 @@ namespace StatusMonitor.Tests.UnitTests.Services
 		[Theory]
 		[InlineData(true)]
 		[InlineData(false)]
+		public async Task ResolvesLowHealth(bool shouldResolve)
+		{
+			// Arrange
+			var input = new List<Discrepancy> {
+				new Discrepancy {
+					DateFirstOffense = DateTime.UtcNow,
+					Type = DiscrepancyType.LowHealth,
+					MetricSource = "the-source-1",
+					MetricType = Metrics.Health,
+				}
+			};
+
+			var metric = new Metric
+			{
+				Type = Metrics.Health.AsInt(),
+				Source = "the-source-1"
+			};
+
+			var context = _serviceProvider.GetRequiredService<IDataContext>();
+			await context.Metrics.AddAsync(metric);
+			await context.HealthReports.AddRangeAsync(
+				DiscrepancyServiceTest.GenerateHealthReport(true, metric,  DateTime.UtcNow.AddMinutes(-1)),
+				DiscrepancyServiceTest.GenerateHealthReport(false, metric,  DateTime.UtcNow.AddMinutes(1)),
+				DiscrepancyServiceTest.GenerateHealthReport(false, metric,  DateTime.UtcNow.AddMinutes(2)),
+				DiscrepancyServiceTest.GenerateHealthReport(shouldResolve, metric,  DateTime.UtcNow.AddMinutes(3))
+			);
+			await context.SaveChangesAsync();
+
+			var config = new Mock<IConfiguration>();
+			config
+				.SetupGet(conf => conf["ServiceManager:DiscrepancyService:Health:Threshold"])
+				.Returns(99.ToString());
+
+			var discrepancyService = new DiscrepancyService(
+				new Mock<ILogger<DiscrepancyService>>().Object,
+				context,
+				new Mock<INotificationService>().Object,
+				config.Object
+			);
+
+			// Act
+			var actual = await discrepancyService.FindResolvedDiscrepanciesAsync(input);
+
+			// Assert
+			if (shouldResolve)
+			{
+				Assert.NotEmpty(actual);
+				Assert.Equal(input, actual);
+			}
+			else
+			{
+				Assert.Empty(actual);
+			}
+		}
+
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
 		public async Task ResolvesGapInData(bool shouldResolve)
 		{
 			// Arrange

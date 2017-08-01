@@ -11,6 +11,12 @@ type JsonHealthDataPoint = {
 	Data: HealthReportDataPoint[];
 }
 
+/**
+ * Model for individual metric health (status)
+ * 
+ * @export
+ * @class HealthReportDataPoint
+ */
 export class HealthReportDataPoint {
 	public label: string;
 	public source: string;
@@ -34,6 +40,12 @@ export class HealthDataPoint extends DataPoint {
 	 */
 	public health: number;
 
+	/**
+	 * The detailed data used to compute overall health
+	 * 
+	 * @type {HealthReportDataPoint[]}
+	 * @memberof HealthDataPoint
+	 */
 	public data: HealthReportDataPoint[];
 
 

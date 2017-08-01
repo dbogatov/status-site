@@ -11,8 +11,8 @@ namespace StatusMonitor.Shared.Models.Entities
 	{
 		[Key]
 		public int Id { get; set; }
-		public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-		public Metric Metric { get; set; }
+		public virtual DateTime Timestamp { get; set; } = DateTime.UtcNow;
+		public virtual Metric Metric { get; set; }
 
 		/// <summary>
 		/// Generates an object which contains the fields of DataPoint visible to public
