@@ -131,7 +131,7 @@ before_script:
 
 release-debian:
   stage: release
-  image: registry.gitlab.com/rweda/docker:debian-packaging-latest
+  image: dbogatov/docker-containers:debian-latest
   script:
     - cd debian
     - ./build.sh
