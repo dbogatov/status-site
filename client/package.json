@@ -18,7 +18,7 @@
     "eonasdan-bootstrap-datetimepicker": "^4.17.47",
     "flot": "^0.8.0-alpha",
     "fullcalendar": "~3.0.0",
-    "install": "~1.0.4",
+    "install": "^0.10.1",
     "jquery": "2.2.4",
     "jquery-mask-plugin": "igorescobar/jQuery-Mask-Plugin#^1.14.0",
     "jquery-placeholder": "^2.3.1",
