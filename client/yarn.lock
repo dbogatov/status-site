@@ -46,7 +46,7 @@ chalk@^2.0.1:
     escape-string-regexp "^1.0.5"
     supports-color "^4.0.0"
 
-chosen@^1.6.2:
+chosen@^0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/chosen/-/chosen-0.0.2.tgz#217701668ffb3bc26f1d80a4cf0300db2ad66794"
 
