@@ -40,7 +40,7 @@ build-app:
   script:
   - export ASPNETCORE_ENVIRONMENT="Production"
   - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
-  - yarn config set registry https://registry.npmjs.cf/ # TODO: remove workaround
+  # - yarn config set registry https://registry.npmjs.cf/ # TODO: remove workaround
   - ./build.sh
   artifacts:
     expire_in: 90 min
