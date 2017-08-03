@@ -1,3 +1,9 @@
+status-ctl (1.0.0) unstable; urgency=medium
+
+  * First release.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 04 Aug 2017 04:35:38 +0000
+
 status-ctl (0.1.0) unstable; urgency=medium
 
   * First working prototype.

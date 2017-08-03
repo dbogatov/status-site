@@ -1,14 +1,27 @@
 #!/bin/bash
 
+# EXIT CODES
+SUCCESS=0
+GENERIC_ERROR=1
+DEPENDENCY_MISSING=2
+CONFIG_INVALID=3
+BAD_PARAMETERS=4
+
 # CONSTANTS
 CONFIG_DIR=/etc/status-site
 PROJECT="status-site"
-VERSION="0.1.0"
+VERSION="1.0.0"
+BRANCH="master"
 
 function usage {
-	printf "Usage: $0 command\n"
+	printf "Usage: \t\t$0 [options] <command>\n\n"
 
-	printf "Example: $0 stop\n"
+	printf "Example: \t$0 start\n"
+	printf "Example: \t$0 -b some-other-branch stop\n\n"
+
+	printf "options:\n"
+
+	printf "\t-b branch \t (development only) branch to use when deploying status site.\n\n"
 
 	printf "commands:\n"
 
@@ -29,7 +42,7 @@ function check-dependencies {
 		echo >&2 "See https://docs.docker.com/engine/installation/"
 		echo >&2 "Aborting."
 		
-		exit 1
+		exit $DEPENDENCY_MISSING
 	}
 
 	command -v docker-compose >/dev/null 2>&1 || { 
@@ -37,7 +50,7 @@ function check-dependencies {
 		echo >&2 "See https://docs.docker.com/compose/install/"
 		echo >&2 "Aborting."
 		
-		exit 1
+		exit $DEPENDENCY_MISSING
 	}
 }
 
@@ -70,7 +83,7 @@ function check-config {
 		echo >&2 "See log messages above."
 		echo >&2 "Aborting."
 		
-		exit 1
+		exit $CONFIG_INVALID
 	}
 }
 
@@ -115,51 +128,114 @@ check-dependencies
 
 cd $CONFIG_DIR
 
-case "$1" in
-	start)
-		start
-		;;
+printf "\n\nDOTNET_TAG=$BRANCH" >> .env
+
+while :; do
+	case "$1" in
+		-b)
+			[[ -n "$2" ]] || {
+				echo "$1 requires a non-empty option argument"
+
+				exit $BAD_PARAMETERS
+			}
+
+			BRANCH="$2"
+
+			printf "\n\nDOTNET_TAG=$BRANCH" >> .env
+
+			echo "Branch is set to $BRANCH"
+
+			shift
+
+			;;
+
+		start)
+			start
+
+			exit $SUCCESS
+
+			;;
+			
+		stop)
+			stop
+
+			exit $SUCCESS
+
+			;;
+			
+		reconfigure)
+
+			reconfigure
+
+			exit $SUCCESS
+
+			;;
+
+		check-config)
+
+			check-config
+
+			exit $SUCCESS
+
+			;;
+
+		upgrade)
+			
+			upgrade
+
+			exit $SUCCESS
+
+			;;
+
+		upgrade-clean)
+
+			upgrade-clean
+
+			exit $SUCCESS
+
+			;;
 		
-	stop)
-		stop
-		;;
-		
-	reconfigure)
-		reconfigure
-		;;
+		logs)
 
-	check-config)
-		check-config
-		;;
+			logs
 
-	upgrade)
-		upgrade
-		;;
+			exit $SUCCESS
 
-	upgrade-clean)
-		upgrade-clean
-		;;
+			;;
+
+		info)
+
+			info
+
+			exit $SUCCESS
+
+			;;
+
+		help)
+
+			help
+
+			exit $SUCCESS
+
+			;;
+
+		version)
+
+			version
+
+			exit $SUCCESS
+
+			;;
+
+		*)
+
+			help
+
+			exit $GENERIC_ERROR
 	
-	logs)
-		logs
-		;;
+	esac
 
-	info)
-		info
-		;;
+	shift
+done
 
-	help)
-		help
-		;;
-
-	version)
-		version
-		;;
-
-	*)
-		help
-		exit 1
- 
-esac
-
-exit 0
+exit $GENERIC_ERROR
