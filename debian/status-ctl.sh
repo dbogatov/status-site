@@ -3,7 +3,7 @@
 # CONSTANTS
 CONFIG_DIR=/etc/status-site
 PROJECT="status-site"
-VERSION="0.0.3"
+VERSION="0.1.0"
 
 function usage {
 	printf "Usage: $0 command\n"
@@ -18,7 +18,8 @@ function usage {
 	printf "\tcheck-config \tverifies that the config file is valid.\n"
 	printf "\tupgrade \tstops the composition, pulls latest version and starts the compostion.\n"
 	printf "\tupgrade-clean \tstops the composition, removes all containers (dataabse in particular), pulls latest version and starts the compostion.\n"
-	printf "\thelp \t\tshows this help message.\n"
+	printf "\tlogs \t\tshows app's log messages.\n"
+	printf "\tinfo \t\tshows status-site's information (eq. path to config).\n"
 	printf "\tversion \tshows this tool's version.\n"
 }
 
@@ -90,6 +91,18 @@ function upgrade-clean {
 	start
 }
 
+function logs {
+	echo "SHOWING LOG MESSAGES"
+
+	docker-compose -p $PROJECT logs
+}
+
+function info {
+	printf "Config path:\t$CONFIG_DIR/appsettings.yml\n"
+	printf "Env path:\t$CONFIG_DIR/.env\n"
+	printf "Compose path:\t$CONFIG_DIR/docker-compose.yml\n"
+}
+
 function help {
 	usage
 }
@@ -127,6 +140,14 @@ case "$1" in
 		upgrade-clean
 		;;
 	
+	logs)
+		logs
+		;;
+
+	info)
+		info
+		;;
+
 	help)
 		help
 		;;

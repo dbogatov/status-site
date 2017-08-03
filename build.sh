@@ -267,6 +267,8 @@ build-debian-package () {
 	cp ../.env.example build/status-ctl/.env
 	cp -r Makefile debian/ build/status-ctl
 
+	printf "\n\nDOTNET_TAG=master" >> build/status-ctl/.env
+
 	echo "Building debian package..."
 	cd build/status-ctl
 	debuild -us -uc
