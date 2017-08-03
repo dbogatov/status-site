@@ -2,6 +2,8 @@
 
 # CONSTANTS
 CONFIG_DIR=/etc/status-site
+PROJECT="status-site"
+VERSION="0.0.3"
 
 function usage {
 	printf "Usage: $0 command\n"
@@ -39,11 +41,15 @@ function check-dependencies {
 }
 
 function start {
-	echo "started"
+	echo "STARTING STATUS-SITE"
+
+	docker-compose -p $PROJECT up -d --remove-orphans
 }
 
 function stop {
-	echo "stoped"
+	echo "STOPPING STATUS-SITE"
+
+	docker-compose -p $PROJECT stop
 }
 
 function reconfigure {
@@ -68,23 +74,28 @@ function check-config {
 }
 
 function upgrade {
-	echo "upgrade"
+	echo "UPGRADING STATUS-SITE"
+
+	stop
+	docker-compose -p $PROJECT pull
+	start
 }
 
 function upgrade-clean {
-	echo "upgrade-cleaned"
+	echo "UPGRADING STATUS-SITE WITH CLEAN DATABASE"
+
+	stop
+	docker-compose -p $PROJECT rm -f
+	docker-compose -p $PROJECT pull
+	start
 }
 
 function help {
-	echo "helped"
-
 	usage
 }
 
 function version {
-	echo "version"
-
-	echo "0.0.1"
+	echo "status-ctl $VERSION"
 }
 
 check-dependencies

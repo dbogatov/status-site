@@ -264,6 +264,7 @@ build-debian-package () {
 	cp status-ctl.sh build/status-ctl/
 	cp ../src/appsettings.production.yml build/status-ctl/
 	cp ../docker-compose.yml build/status-ctl/
+	cp ../.env.example build/status-ctl/.env
 	cp -r Makefile debian/ build/status-ctl
 
 	echo "Building debian package..."

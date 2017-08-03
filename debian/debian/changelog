@@ -1,6 +1,12 @@
+status-ctl (0.0.4) unstable; urgency=medium
+
+  * Prototype.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 04 Aug 2017 02:35:38 +0000
+
 status-ctl (0.0.3) unstable; urgency=medium
 
-  * Pipeline working.
+  * Updated main script.
 
  -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 04 Aug 2017 01:35:38 +0000
 
