@@ -4,3 +4,4 @@ install:
 	cp --no-preserve=ownership appsettings.production.yml $$(pwd)/debian/status-ctl/etc/status-site/appsettings.yml
 	cp --no-preserve=ownership docker-compose.yml $$(pwd)/debian/status-ctl/etc/status-site/docker-compose.yml
 	cp --no-preserve=ownership .env $$(pwd)/debian/status-ctl/etc/status-site/.env
+	chmod o+rw $$(pwd)/debian/status-ctl/etc/status-site/.env
