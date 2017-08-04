@@ -1,0 +1,53 @@
+.de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+.if \n[.g] .mso www.tmac
+.TH ...
+.
+.\" Manpage for status-ctl.
+.\" Contact dmytro@dbogatov.org to correct errors or typos.
+.TH man 1 "4 August 2017" "0.1.1" "status-ctl man page"
+.SH NAME
+.B status-ctl 
+\- control tool for status site
+.SH SYNOPSIS
+.B status-ctl 
+[ \fIOPTIONS\fR ]
+\fICOMMAND\fR
+.SH DESCRIPTION
+The \fBstatus-ctl\fR is a tool to control status site. It lets user easily start, stop, reconfigure and update the status site app. Status site itself is a docker composition, and \fBstatus-ctl\fR is merely a bash wrapper around docker-compose. For the docs on status site itself, please see
+.URL "https://status.dbogatov.org/docs/" "Status Site docs" .
+.SH OPTIONS
+For a list of command-line options, run
+.PP
+.nf
+.RS
+status-ctl help
+.RE
+.fi
+.PP
+.SH EXAMPLES
+The following command will deploy status site from dev branch preserving the database:
+.PP
+.nf
+.RS
+status-ctl -b dev upgrade
+.RE
+.fi
+.PP
+The following command will deploy status site from master branch recreating the database:
+.PP
+.nf
+.RS
+status-ctl upgrade-clean
+.RE
+.fi
+.PP
+.SH BUGS
+Bug tracking is performed using
+.URL "https://github.com/Dima4ka/status-site/issues" "GitHub issues" .
+.SH COPYRIGHT
+(C) Dmytro Bogatov 2017. Licensed under the terms of MIT.
+.SH "SEE ALSO"
+.URL "https://status.dbogatov.org" "Status site demo" .
+.URL "https://status.dbogatov.org/docs/" "Status site docs" .

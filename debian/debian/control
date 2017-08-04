@@ -1,0 +1,12 @@
+Source: status-ctl  
+Maintainer: Dmytro Bogatov <dmytro@dbogatov.org>
+Build-Depends: debhelper (>= 9.0.0)
+Standards-Version: 3.9.6
+Section: utils
+
+Package: status-ctl
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}
+Description: Tool to control status site
+ Long description here.

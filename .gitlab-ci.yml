@@ -40,7 +40,6 @@ build-app:
   script:
   - export ASPNETCORE_ENVIRONMENT="Production"
   - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
-  - yarn config set registry https://registry.npmjs.cf/ # TODO: remove workaround
   - ./build.sh
   artifacts:
     expire_in: 90 min
@@ -110,7 +109,7 @@ blc-docs:
 
 ## RELEASE
 
-release-all:
+release-app-docs:
   stage: release
   dependencies:
   - build-app
@@ -128,3 +127,14 @@ release-all:
     - appsettings.yml.example
   tags:
   - shell
+
+release-debian:
+  stage: release
+  image: dbogatov/docker-containers:debian-latest
+  script:
+    - ./build.sh -f build-debian-package
+  artifacts:
+    paths:
+      - debian/build/*
+  tags:
+  - docker

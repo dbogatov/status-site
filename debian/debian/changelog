@@ -1,0 +1,41 @@
+status-ctl (1.1.0) unstable; urgency=medium
+
+  * Update man page.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 05 Aug 2017 04:35:38 +0000
+
+status-ctl (1.0.0) unstable; urgency=medium
+
+  * First release.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 04 Aug 2017 04:35:38 +0000
+
+status-ctl (0.1.0) unstable; urgency=medium
+
+  * First working prototype.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 04 Aug 2017 03:35:38 +0000
+
+status-ctl (0.0.4) unstable; urgency=medium
+
+  * Prototype.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 04 Aug 2017 02:35:38 +0000
+
+status-ctl (0.0.3) unstable; urgency=medium
+
+  * Updated main script.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 04 Aug 2017 01:35:38 +0000
+
+status-ctl (0.0.2) unstable; urgency=medium
+
+  * Pipeline working.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Thu, 03 Aug 2017 01:35:38 +0000
+
+status-ctl (0.0.1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Dmytro Bogatov <dmytro@dbogatov.org>  Tue, 01 Aug 2017 17:31:38 +0000

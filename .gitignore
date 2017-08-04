@@ -53,3 +53,6 @@ articles/site/
 documentation/out/
 
 debug
+
+# Debian build artifacts
+debian/build

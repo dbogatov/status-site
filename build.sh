@@ -250,6 +250,36 @@ build-for-compose () {
 	build-docker-images
 }
 
+## DEBIAN PACKAGE
+
+build-debian-package () {
+	
+	cd $CWD/debian
+
+	echo "(Re)creating a temporary directory for building..."
+	rm -rf build/
+	mkdir -p build/status-ctl/
+
+	echo "Copying .jar file, wrapper and scripts..."
+	cp status-ctl.sh build/status-ctl/
+	cp ../src/appsettings.production.yml build/status-ctl/
+	cp ../docker-compose.yml build/status-ctl/
+	cp ../.env.example build/status-ctl/.env
+	cp -r Makefile debian/ build/status-ctl
+
+	printf "\n\nDOTNET_TAG=master" >> build/status-ctl/.env
+
+	echo "Building debian package..."
+	cd build/status-ctl
+	debuild -us -uc
+	
+	echo "Cleaning tmp files..."
+	cd ../..
+	rm -rf build/status-ctl
+
+	echo "Done!"
+}
+
 ## APP BUILDERS
 
 build-app () {

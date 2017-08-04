@@ -29,6 +29,7 @@
 * Badges
 	- System health
 	- Individual metrics
+* Debian package tool to control the app
 * Rich API
 * Served as a docker composition - easy to install, configure and update
 * Different databases for old and recent data

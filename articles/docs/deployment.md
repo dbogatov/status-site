@@ -1,6 +1,31 @@
 # Deployment
 
-## TL;DR
+## The new way
+
+Install status site official debian package - control tool.
+
+* Make sure you have `docker` [installed](https://docs.docker.com/engine/installation/) and `docker-compose` [installed](https://docs.docker.com/compose/install/).
+* Add `apt.dbogatov.org`'s key. Run `sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7BAD7958`.
+* Add `apt.dbogatov.org` repository. Run `sudo add-apt-repository "deb http://apt.dbogatov.org/ trusty main"`.
+* Update package listings. Run `sudo apt-get update`.
+* Install `status-ctl`. Run `sudo apt-get install status-ctl`.
+
+This will install `status-ctl` in your `/usr/bin/` directory and will create config files in `/etc/status-site/` directory.
+
+* Launch the app. Run `status-ctl start`.
+
+Great! The app is served on port 5555!
+
+### To update
+
+Update control tool the way you would update any other debian package.
+`sudo apt-get update` and `sudo apt-get upgrade`.
+
+### What the tool can do
+
+Run `status-ctl help` or `man status-ctl` to view the available options and commands.
+
+## The old way
 
 Make sure you have [Docker](https://www.docker.com) and [Docker compose](https://docs.docker.com/compose/) installed.
 Run the following command in a directory where you want your configuration files to be.

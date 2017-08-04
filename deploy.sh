@@ -79,7 +79,7 @@ done
 shift $((OPTIND-1))
 
 PROJECT="status-site" # lookup in repo settings
-JOB="release-all" # change if necessary
+JOB="release-app-docs" # change if necessary
 
 echo_info "Downloading artifacts into temporary directory"
 # for now, Gitlab does not allow downloading public artifacts through API without authentication
