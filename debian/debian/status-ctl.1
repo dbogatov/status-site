@@ -4,42 +4,49 @@
 .if \n[.g] .mso www.tmac
 .TH ...
 .
-.\" Manpage for sandpiper.
-.\" Contact steve.hoover@rweda.com to correct errors or typos.
-.TH man 1 "15 March 2017" "0.1" "sandpiper man page"
+.\" Manpage for status-ctl.
+.\" Contact dmytro@dbogatov.org to correct errors or typos.
+.TH man 1 "4 August 2017" "0.1.1" "status-ctl man page"
 .SH NAME
-.B sandpiper 
-\- compiler for TL-Verilog
+.B status-ctl 
+\- control tool for status site
 .SH SYNOPSIS
-.B sandpiper 
+.B status-ctl 
 [ \fIOPTIONS\fR ]
-\fB\-\i\fR \fIINFILE\fR
-\fB\-o\fR \fIOUTFILE\fR
+\fICOMMAND\fR
 .SH DESCRIPTION
-The \fBSandPiper\fR \*(Tm tool from Redwood EDA processes Transaction-Level Verilog (TL-Verilog) constructs into Verilog or SystemVerilog. TL-Verilog supports high-level constructs including pipelines and transactions which provide context for design details. From TL-Verilog designs, SandPiper generates: staging elements (such as flip-flops), signal declarations, clock gating logic, X-injection logic, etc., avoiding human error in these tedious aspects of design. Several options are available to customize the style of the generated Verilog. In addition to source code processing, SandPiper can produce logic diagrams and formatted code. This \fBsandpiper\fR executable provides the option of invoking the M4 macro preprocessor prior to running SandPiper. SandPiper can be utilized online at
-.URL "http://makerchip.com" "Makerchip" .
+The \fBstatus-ctl\fR is a tool to control status site. It lets user easily start, stop, reconfigure and update the status site app. Status site itself is a docker composition, and \fBstatus-ctl\fR is merely a bash wrapper around docker-compose. For the docs on status site itself, please see
+.URL "https://status.dbogatov.org/docs/" "Status site docs" .
 .SH OPTIONS
 For a list of command-line options, run
 .PP
 .nf
 .RS
-sandpiper -h
+status-ctl help
 .RE
 .fi
 .PP
 .SH EXAMPLES
-The following command (Steve, what does it do?):
+The following command will deploy status site from dev branch preserving the database:
 .PP
 .nf
 .RS
-sandpiper -i ~/source.tlv -o /tmp/output.sv
+status-ctl -b dev upgrade
+.RE
+.fi
+.PP
+The following command will deploy status site from master branch recreating the database:
+.PP
+.nf
+.RS
+status-ctl upgrade-clean
 .RE
 .fi
 .PP
 .SH BUGS
-Bug tracking can be found at 
-.URL "http://gitlab.com/rweda/support/" "RedwoodEDA issue tracker" .
+Bug tracking is performed using GitHub issues:
+.URL "https://github.com/Dima4ka/status-site/issues" "GitHub issues" .
 .SH COPYRIGHT
-(C) Redwood EDA 2017. The terms of the license can be found at .../license.md. More information about your organization's license is reported by SandPiper.
+(C) Dmytro Bogatov 2017. Licensed under the terms of MIT.
 .SH "SEE ALSO"
-.URL "http://tl-x.org" "Tl-X" .
+.URL "https://status.dbogatov.org" "Status site demo and docs" .

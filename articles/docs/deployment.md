@@ -12,7 +12,7 @@ Install status site official debian package - control tool.
 
 This will install `status-ctl` in your `/usr/bin/` directory and will create config files in `/etc/status-site/` directory.
 
-* Launch the app. Run `status-site start`.
+* Launch the app. Run `status-ctl start`.
 
 Great! The app is served on port 5555!
 
