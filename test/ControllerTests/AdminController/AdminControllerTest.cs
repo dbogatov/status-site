@@ -33,6 +33,20 @@ namespace StatusMonitor.Tests.ControllerTests
 
 		public AdminControllerTest()
 		{
+			var services = new ServiceCollection();
+
+			var mockEnv = new Mock<IHostingEnvironment>();
+			mockEnv
+				.SetupGet(environment => environment.EnvironmentName)
+				.Returns("Testing");
+			var env = mockEnv.Object;
+
+			services.RegisterSharedServices(env, new Mock<IConfiguration>().Object);
+
+			var context = services
+				.BuildServiceProvider()
+				.GetRequiredService<IDataContext>();
+
 			var mockServiceProvider = new Mock<IServiceProvider>();
 			mockServiceProvider
 				.Setup(provider => provider.GetService(typeof(IApiController)))
@@ -43,7 +57,8 @@ namespace StatusMonitor.Tests.ControllerTests
 				new Mock<ILogger<AdminController>>().Object,
 				_mockMetricService.Object,
 				mockServiceProvider.Object,
-				_mockCleanService.Object
+				_mockCleanService.Object,
+				context
 			);
 			_controller.ControllerContext.HttpContext = new DefaultHttpContext();
 			_controller.TempData = new Mock<ITempDataDictionary>().Object;

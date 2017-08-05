@@ -1,0 +1,33 @@
+<div class="list-group-item media">
+	<div class="pull-left">
+		<i class="zmdi zmdi-@(Model.Resolved ? "check-circle" : "alert-circle-o") zmdi-hc-3x"></i>
+	</div>
+
+	@if (!Model.Resolved)
+	{
+		<div class="pull-right">
+			<div class="actions">
+				<!-- TODO form -->
+				<button type="submit" class="btn btn-success btn-md waves-effect">
+					Resolve
+				</button>
+			</div>
+		</div>
+	}
+
+	<div class="media-body">
+		<div class="lgi-heading">
+			Discrepancy of type <strong>@Model.Type</strong> from <em>@Model.MetricType</em> of <em>@Model.MetricSource</em>.
+		</div>
+		<small class="lgi-text">@Model.Description()</small>
+
+		<ul class="lgi-attrs">
+			<li>Date first offense: <utc-time time="@Model.DateFirstOffense" /></li>
+			@if (Model.Resolved)
+			{
+				<li>Date resolved: <utc-time time="@Model.DateResolved" /></li>
+				<li>Duration: @( Math.Round((@Model.DateResolved - @Model.DateFirstOffense).TotalSeconds) ) seconds</li>
+			}
+		</ul>
+	</div>
+</div>

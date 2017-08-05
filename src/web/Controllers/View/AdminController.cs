@@ -33,6 +33,7 @@ namespace StatusMonitor.Web.Controllers.View
 		private readonly IMetricService _metricService;
 		private readonly IServiceProvider _provider;
 		private readonly ICleanService _cleanService;
+		private readonly IDataContext _context;
 
 
 		public AdminController(
@@ -40,7 +41,8 @@ namespace StatusMonitor.Web.Controllers.View
 			ILogger<AdminController> logger,
 			IMetricService metricService,
 			IServiceProvider provider,
-			ICleanService cleanService
+			ICleanService cleanService,
+			IDataContext context
 		)
 		{
 			_metricService = metricService;
@@ -48,12 +50,18 @@ namespace StatusMonitor.Web.Controllers.View
 			_loggingService = loggingService;
 			_provider = provider;
 			_cleanService = cleanService;
+			_context = context;
 		}
 
 		public async Task<IActionResult> Index()
 		{
 			ViewBag.Metrics = await _metricService
 				.GetMetricsAsync();
+
+			ViewBag.Discrepancies = await _context
+				.Discrepancies
+				.OrderByDescending(d => d.DateFirstOffense)
+				.ToListAsync();
 
 			return View();
 		}
