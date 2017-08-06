@@ -149,7 +149,11 @@
 										{
 											@foreach (var dicrepancy in ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Where(d => !d.Resolved))
 											{
-												<vc:discrepancy-card model=dicrepancy></vc:discrepancy-card>
+												<vc:discrepancy-card 
+													model=dicrepancy
+													number=0
+													hidden=false
+												></vc:discrepancy-card>
 											}
 										}
 										else
@@ -160,10 +164,40 @@
                                     <div role="tabpanel" class="tab-pane" id="resovled">
                                         @if ( ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Any(d => d.Resolved) )
 										{
+											var number = 1;
+
 											@foreach (var dicrepancy in ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Where(d => d.Resolved))
 											{
-												<vc:discrepancy-card model=dicrepancy></vc:discrepancy-card>
+												var hidden = number > 10;
+
+												<vc:discrepancy-card 
+													model=dicrepancy 
+													number=number
+													hidden=hidden
+												></vc:discrepancy-card>
+
+												number++;
 											}
+											<div class="w-100 text-center p-t-10">
+
+												<button 
+													type="type" 
+													id="load-more-resolved-btn" 
+													class="btn btn-primary btn-md waves-effect"
+													style="@( ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Count(d => d.Resolved) <= 10 ? "display: none;" : "")"
+												>
+													Show another 10
+												</button>
+
+												<button 
+													type="type" 
+													id="load-less-resolved-btn" 
+													class="btn btn-warning btn-md waves-effect" 
+													style="display: none;"
+												>
+													Hide another 10
+												</button>
+											</div>
 										}
 										else
 										{

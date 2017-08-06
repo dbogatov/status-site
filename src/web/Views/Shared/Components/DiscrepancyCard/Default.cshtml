@@ -1,17 +1,38 @@
-<div class="list-group-item media">
+<div 
+	class="list-group-item media discrepancy-card discrepancy-@(Model.Resolved ? "resolved" : "unresolved")" 
+	data-number="@ViewBag.Number" 
+	style="@(ViewBag.Hidden ? "display: none;" : "")"
+>
 	<div class="pull-left">
-		<i class="zmdi zmdi-@(Model.Resolved ? "check-circle" : "alert-circle-o") zmdi-hc-3x"></i>
+		<i 
+			class="zmdi zmdi-@(Model.Resolved ? "check-circle" : "alert-circle-o") zmdi-hc-3x"
+			style="color: @(Model.Resolved ? "green" : "red");"
+		>
+		</i>
 	</div>
 
 	@if (!Model.Resolved)
 	{
 		<div class="pull-right">
 			<div class="actions">
-				<!-- TODO form -->
-				<button type="submit" class="btn btn-success btn-md waves-effect">
-					Resolve
-				</button>
+				<form asp-controller="Admin" asp-action="ResolveDiscrepancy" asp-anti-forgery="true">
+
+					<input type="text" hidden name="Date" value="@Model.DateFirstOffense.Ticks">
+					<input type="text" hidden name="DiscrepancyType" value="@Model.Type">
+					<input type="text" hidden name="MetricType" value="@Model.MetricType">
+					<input type="text" hidden name="Source" value="@Model.MetricSource">
+
+					<button type="submit" class="btn btn-success btn-md waves-effect">
+						Resolve
+					</button>
+				</form>
 			</div>
+		</div>
+	}
+	else
+	{
+		<div class="pull-right">
+			<p>#@ViewBag.Number
 		</div>
 	}
 
@@ -22,7 +43,7 @@
 		<small class="lgi-text">@Model.Description()</small>
 
 		<ul class="lgi-attrs">
-			<li>Date first offense: <utc-time time="@Model.DateFirstOffense" /></li>
+			<li>Date started: <utc-time time="@Model.DateFirstOffense" /></li>
 			@if (Model.Resolved)
 			{
 				<li>Date resolved: <utc-time time="@Model.DateResolved" /></li>

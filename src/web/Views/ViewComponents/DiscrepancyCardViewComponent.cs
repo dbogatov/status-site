@@ -13,9 +13,12 @@ namespace StatusMonitor.Web.Views.ViewComponents
 	[ViewComponent(Name = "DiscrepancyCard")]
 	public class DiscrepancyCardViewComponent : ViewComponent
 	{
-		public async Task<IViewComponentResult> InvokeAsync(Discrepancy model)
+		public async Task<IViewComponentResult> InvokeAsync(Discrepancy model, int number = 0, bool hidden = false)
 		{
 			await Task.CompletedTask;
+
+			ViewBag.Number = number;
+			ViewBag.Hidden = hidden;
 
 			return View(model);
 		}
