@@ -44,6 +44,10 @@ namespace StatusMonitor.Shared.Models.Entities
 
 		public override string ToString() => ToStringWithTimeZone();
 
+		/// <summary>
+		/// Human readable description of the discrepancy.
+		/// </summary>
+		/// <returns>Human readable description of the discrepancy</returns>
 		public string Description() {
 			switch (Type)
 			{

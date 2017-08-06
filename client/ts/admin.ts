@@ -17,7 +17,12 @@ $(async () => {
 	document.dispatchEvent(new Event("page-ready"));
 });
 
-function setupDiscrepancyViewer() {
+/**
+ * Controls "load more" and "load less" buttons for
+ * resolved discrepancies list
+ * 
+ */
+function setupDiscrepancyViewer() : void {
 	var resolvedLoaded = 10;
 
 	$("#load-more-resolved-btn").click(() => {

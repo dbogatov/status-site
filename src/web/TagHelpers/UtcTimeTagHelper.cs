@@ -12,6 +12,10 @@ namespace StatusMonitor.Web.TagHelpers
 	/// </summary>
 	public class UtcTimeTagHelper : TagHelper
 	{
+		/// <summary>
+		/// If true, the full date should be rendered
+		/// Otherwise, only time part should be rendered
+		/// </summary>
 		public bool ShowDate { get; set; } = false;
 
 		public DateTime Time { get; set; }

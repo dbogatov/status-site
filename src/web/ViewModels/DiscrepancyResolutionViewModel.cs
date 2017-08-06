@@ -7,10 +7,14 @@ namespace StatusMonitor.Web.ViewModels
 {
 	public class DiscrepancyResolutionViewModel
 	{
+		/// <summary>
+		/// Timestamp when the discrepancy starts.
+		/// </summary>
 		public DateTime DateFirstOffense { get; set; }
 
 		/// <summary>
 		/// Alias for DateFirstOffense.
+		/// Should represent the number of ticks (eq. DateTime.UtcNow.Ticks)
 		/// </summary>
 		[Required]
 		public string Date

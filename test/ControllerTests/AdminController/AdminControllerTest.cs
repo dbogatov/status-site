@@ -27,6 +27,10 @@ namespace StatusMonitor.Tests.ControllerTests
 		private readonly Mock<IMetricService> _mockMetricService = new Mock<IMetricService>();
 		private readonly Mock<IApiController> _mockApiController = new Mock<IApiController>();
 		private readonly Mock<ICleanService> _mockCleanService = new Mock<ICleanService>();
+		private readonly Mock<INotificationService> _mockNotificationService = new Mock<INotificationService>();
+		private readonly Mock<IConfiguration> _mockConfig = new Mock<IConfiguration>();
+		
+		private readonly IDataContext _context;
 		
 
 		private readonly AdminController _controller;
@@ -43,7 +47,7 @@ namespace StatusMonitor.Tests.ControllerTests
 
 			services.RegisterSharedServices(env, new Mock<IConfiguration>().Object);
 
-			var context = services
+			_context = services
 				.BuildServiceProvider()
 				.GetRequiredService<IDataContext>();
 
@@ -58,10 +62,11 @@ namespace StatusMonitor.Tests.ControllerTests
 				_mockMetricService.Object,
 				mockServiceProvider.Object,
 				_mockCleanService.Object,
-				context,
-				new Mock<INotificationService>().Object,
-				new Mock<IConfiguration>().Object
+				_context,
+				_mockNotificationService.Object,
+				_mockConfig.Object
 			);
+
 			_controller.ControllerContext.HttpContext = new DefaultHttpContext();
 			_controller.TempData = new Mock<ITempDataDictionary>().Object;
 		}
