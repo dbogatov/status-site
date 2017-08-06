@@ -58,7 +58,9 @@ namespace StatusMonitor.Tests.ControllerTests
 				_mockMetricService.Object,
 				mockServiceProvider.Object,
 				_mockCleanService.Object,
-				context
+				context,
+				new Mock<INotificationService>().Object,
+				new Mock<IConfiguration>().Object
 			);
 			_controller.ControllerContext.HttpContext = new DefaultHttpContext();
 			_controller.TempData = new Mock<ITempDataDictionary>().Object;
