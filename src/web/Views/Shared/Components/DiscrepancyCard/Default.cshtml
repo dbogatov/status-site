@@ -38,7 +38,16 @@
 
 	<div class="media-body">
 		<div class="lgi-heading">
-			Discrepancy of type <strong>@Model.Type</strong> from <em>@Model.MetricType</em> of <em>@Model.MetricSource</em>.
+			Discrepancy of type <strong>@Model.Type</strong> from
+			<a 
+				asp-controller="Home" 
+				asp-action="Metric" 
+				asp-route-type="@Model.MetricType" 
+				asp-route-source="@Model.MetricSource"
+			>
+				 <em>@Model.MetricType</em> of <em>@Model.MetricSource</em>
+			</a>
+			.
 		</div>
 		<small class="lgi-text">@Model.Description()</small>
 
