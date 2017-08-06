@@ -1,4 +1,7 @@
 @using StatusMonitor.Shared.Models.Entities
+@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration Config
 
 @{ 
     ViewData["Title"] = "Admin panel"; 
@@ -111,7 +114,10 @@
                         <div class="card-header">
                             <h2>Discrepancies
                                 <small>
-									View the list of resolved and unresolved dicrepancies from TODO until now
+									@{
+										var discrepancyDataStartDate = DateTime.UtcNow - new TimeSpan(0, 0, Convert.ToInt32(Config["ServiceManager:CleanService:MaxAge"]));
+									}
+									View the list of resolved and unresolved dicrepancies from <utc-time time="@discrepancyDataStartDate" show-date=true /> until now.
                                 </small>
                             </h2>
                         </div>

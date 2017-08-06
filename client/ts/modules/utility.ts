@@ -161,16 +161,24 @@ export class Utility {
 			);
 		});
 
+		$(".utc-date").each(function () {
+			$(this).text(
+				Utility.toLocalTimezone(
+					new Date($(this).text())
+				).toString()
+			);
+		});
+
 	}
 
-	public static toUtcDate(date : Date): number {
+	public static toUtcDate(date: Date): number {
 		return Date.UTC(
-			date.getUTCFullYear(), 
-			date.getUTCMonth(), 
-			date.getUTCDate(),  
-			date.getUTCHours(), 
-			date.getUTCMinutes(), 
-			date.getUTCSeconds(), 
+			date.getUTCFullYear(),
+			date.getUTCMonth(),
+			date.getUTCDate(),
+			date.getUTCHours(),
+			date.getUTCMinutes(),
+			date.getUTCSeconds(),
 			date.getUTCMilliseconds()
 		);
 	}
