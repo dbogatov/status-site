@@ -33,6 +33,9 @@ namespace StatusMonitor.Web.Controllers.View
 		private readonly IMetricService _metricService;
 		private readonly IServiceProvider _provider;
 		private readonly ICleanService _cleanService;
+		private readonly IDataContext _context;
+		private readonly INotificationService _notification;
+		private readonly IConfiguration _config;
 
 
 		public AdminController(
@@ -40,7 +43,10 @@ namespace StatusMonitor.Web.Controllers.View
 			ILogger<AdminController> logger,
 			IMetricService metricService,
 			IServiceProvider provider,
-			ICleanService cleanService
+			ICleanService cleanService,
+			IDataContext context,
+			INotificationService notification,
+			IConfiguration congig
 		)
 		{
 			_metricService = metricService;
@@ -48,12 +54,20 @@ namespace StatusMonitor.Web.Controllers.View
 			_loggingService = loggingService;
 			_provider = provider;
 			_cleanService = cleanService;
+			_context = context;
+			_notification = notification;
+			_config = congig;
 		}
 
 		public async Task<IActionResult> Index()
 		{
 			ViewBag.Metrics = await _metricService
 				.GetMetricsAsync();
+
+			ViewBag.Discrepancies = await _context
+				.Discrepancies
+				.OrderByDescending(d => d.DateFirstOffense)
+				.ToListAsync();
 
 			return View();
 		}
@@ -74,6 +88,65 @@ namespace StatusMonitor.Web.Controllers.View
 			{
 				return response;
 			}
+		}
+
+		[HttpPost]
+		[ServiceFilter(typeof(ModelValidation))]
+		[AutoValidateAntiforgeryToken]
+		public async Task<IActionResult> ResolveDiscrepancy(DiscrepancyResolutionViewModel model)
+		{
+			if (
+				await _context
+					.Discrepancies
+					.AnyAsync(
+						d =>
+							d.DateFirstOffense == model.DateFirstOffense &&
+							d.MetricSource == model.Source &&
+							d.MetricType == model.EnumMetricType &&
+							d.Type == model.EnumDiscrepancyType
+					)
+			)
+			{
+
+				var discrepancy =
+					await _context
+						.Discrepancies
+						.SingleAsync(
+							d =>
+								d.DateFirstOffense == model.DateFirstOffense &&
+								d.MetricSource == model.Source &&
+								d.MetricType == model.EnumMetricType &&
+								d.Type == model.EnumDiscrepancyType
+						);
+
+				if (discrepancy.Resolved)
+				{
+					TempData["MessageSeverity"] = "warning";
+					TempData["MessageContent"] = $"Discrepancy {model.EnumDiscrepancyType} from {model.EnumMetricType} of {model.Source} at {model.DateFirstOffense} (UTC) has been already resolved.";
+				}
+				else
+				{
+					discrepancy.Resolved = true;
+					discrepancy.DateResolved = DateTime.UtcNow;
+
+					await _notification.ScheduleNotificationAsync(
+						$"Discrepancy \"{discrepancy.ToStringWithTimeZone(_config["ServiceManager:NotificationService:TimeZone"])}\" has been resolved!",
+						NotificationSeverity.Medium
+					);
+
+					await _context.SaveChangesAsync();
+
+					TempData["MessageSeverity"] = "success";
+					TempData["MessageContent"] = $"Discrepancy {model.EnumDiscrepancyType} from {model.EnumMetricType} of {model.Source} at {model.DateFirstOffense} (UTC) has been resolved.";
+				}
+
+				return RedirectToAction("Index", "Admin");
+			}
+			else
+			{
+				return NotFound($"Discrepancy for the following request not found. {model}");
+			}
+
 		}
 
 		public IActionResult Metric([FromQuery] string metric)

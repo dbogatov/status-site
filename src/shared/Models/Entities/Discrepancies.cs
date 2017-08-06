@@ -43,6 +43,26 @@ namespace StatusMonitor.Shared.Models.Entities
 		}
 
 		public override string ToString() => ToStringWithTimeZone();
+
+		/// <summary>
+		/// Human readable description of the discrepancy.
+		/// </summary>
+		/// <returns>Human readable description of the discrepancy</returns>
+		public string Description() {
+			switch (Type)
+			{
+				case DiscrepancyType.GapInData:
+					return "Occurs if difference in timestamps between two consecutive data points exceeds certain value.";
+				case DiscrepancyType.HighLoad:
+					return "Occurs if CPU load exceeds certain value for some number of consecutive data points.";
+				case DiscrepancyType.LowHealth:
+					return "Occurs if system health value drops below certain value for some number of consecutive health reports.";
+				case DiscrepancyType.PingFailedNTimes:
+					return "Occurs if ping fails certain number of consecutive readings.";
+				default:
+					return "Unknown type";
+			}
+		}
 	}
 
 	public enum DiscrepancyType

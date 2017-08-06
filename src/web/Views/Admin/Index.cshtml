@@ -1,4 +1,7 @@
 @using StatusMonitor.Shared.Models.Entities
+@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration Config
 
 @{ 
     ViewData["Title"] = "Admin panel"; 
@@ -11,91 +14,214 @@
 	</div>
 
 	<div class="row">
-		<div class="col-md-3">
-			<div class="card">
-				<div class="card-header">
-					<h2>
-						Manual cleaunup
-						<small>
-							Run clean service manually with a specified max age
-						</small>
-					</h2>
-				</div>
-				<div class="card-body card-padding">
-					<div class="row">
-						<form 
-							role="form" 
-							asp-controller="Admin" 
-							asp-action="Clean" 
-							method="post"
-							novalidate
-						>
-							<div class="col-md-8 col-sm-12">
 
-								<h5>Set max age</h5>
+		<div class="col-md-6">
 
-								<select class="selectpicker" name="maxAge">
-									<option value="0">Everything</option>
-									<option value="1">1 minutes</option>
-									<option value="10">10 minutes</option>
-									<option value="20">30 minutes</option>
-									<option value="60">1 hour</option>
-									<option value="240">4 hours</option>
-									<option value="720">12 hours</option>
-									<option value="1440">1 day</option>
-									<option value="4320">3 days</option>
-									<option value="10080">1 week</option>
-									<option value="43200">1 month</option>
-								</select>
+			<div class="row">
+
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header">
+							<h2>
+								Manual cleaunup
+								<small>
+									Run clean service manually with a specified max age
+								</small>
+							</h2>
+						</div>
+						<div class="card-body card-padding">
+							<div class="row">
+								<form 
+									role="form" 
+									asp-controller="Admin" 
+									asp-action="Clean" 
+									method="post"
+									novalidate
+								>
+									<div class="col-md-8 col-sm-12">
+
+										<h5>Set max age</h5>
+
+										<select class="selectpicker" name="maxAge">
+											<option value="0">Everything</option>
+											<option value="1">1 minutes</option>
+											<option value="10">10 minutes</option>
+											<option value="20">30 minutes</option>
+											<option value="60">1 hour</option>
+											<option value="240">4 hours</option>
+											<option value="720">12 hours</option>
+											<option value="1440">1 day</option>
+											<option value="4320">3 days</option>
+											<option value="10080">1 week</option>
+											<option value="43200">1 month</option>
+										</select>
+									</div>
+									<div class="col-md-4 col-sm-12">
+										<button type="submit" class="btn btn-danger btn-md waves-effect">Clean</button>
+									</div>
+								</form>
 							</div>
-							<div class="col-md-4 col-sm-12">
-								<button type="submit" class="btn btn-danger btn-md waves-effect">Clean</button>
-							</div>
-						</form>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div>
 
-		<div class="col-md-3">
-			<div class="card">
-				<div class="card-header">
-					<h2>
-						Go to metric
-						<small>
-							Go to the metric's page
-						</small>
-					</h2>
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header">
+							<h2>
+								Go to metric
+								<small>
+									Go to the metric's page
+								</small>
+							</h2>
+						</div>
+						<div class="card-body card-padding">
+							<div class="row">
+								<form 
+									role="form" 
+									asp-controller="Admin" 
+									asp-action="Metric" 
+									method="get"
+									novalidate
+								>
+									<div class="col-md-8 col-sm-12">
+
+										<h5>Metric</h5>
+
+										<select class="selectpicker" name="metric" data-live-search="true">
+											@foreach (var metric in ViewBag.Metrics)
+											{
+												<option value="@((Metrics)metric.Type)@@@(metric.Source)">@(metric.Title) from @(metric.Source)</option>
+											}
+										</select>
+									</div>
+									<div class="col-md-4 col-sm-12">
+										<button type="submit" class="btn btn-primary btn-md waves-effect">Go</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div class="card-body card-padding">
-					<div class="row">
-						<form 
-							role="form" 
-							asp-controller="Admin" 
-							asp-action="Metric" 
-							method="get"
-							novalidate
-						>
-							<div class="col-md-8 col-sm-12">
 
-								<h5>Metric</h5>
+			</div>
 
-								<select class="selectpicker" name="metric" data-live-search="true">
-									@foreach (var metric in ViewBag.Metrics)
-									{
-										<option value="@((Metrics)metric.Type)@@@(metric.Source)">@(metric.Title) from @(metric.Source)</option>
+			<div class="row">
+
+				<div class="col-md-12">
+
+					<div class="card">
+                        <div class="card-header">
+                            <h2>Discrepancies
+                                <small>
+									@{
+										var discrepancyDataStartDate = DateTime.UtcNow - new TimeSpan(0, 0, Convert.ToInt32(Config["ServiceManager:CleanService:MaxAge"]));
 									}
-								</select>
-							</div>
-							<div class="col-md-4 col-sm-12">
-								<button type="submit" class="btn btn-primary btn-md waves-effect">Go</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
+									View the list of resolved and unresolved dicrepancies from <utc-time time="@discrepancyDataStartDate" show-date=true /> until now.
+                                </small>
+                            </h2>
+                        </div>
 
+                        <div class="card-body card-padding">
+                            <div role="tabpanel">
+                                <ul class="tab-nav" role="tablist">
+                                    <li class="active">
+										<a 
+											href="#unresolved" 
+											aria-controls="unresolved" 
+											role="tab" 
+											data-toggle="tab" 
+											aria-expanded="true"
+										>
+											Unresolved ( @(((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Count(d => !d.Resolved)) )
+										</a>
+									</li>
+                                    <li class="">
+										<a 
+											href="#resovled" 
+											aria-controls="resovled" 
+											role="tab" 
+											data-toggle="tab" 
+											aria-expanded="false"
+										>
+											Resolved ( @(((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Count(d => d.Resolved)) )
+										</a>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="unresolved">
+										@if ( ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Any(d => !d.Resolved) )
+										{
+											@foreach (var dicrepancy in ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Where(d => !d.Resolved))
+											{
+												<vc:discrepancy-card 
+													model=dicrepancy
+													number=0
+													hidden=false
+												></vc:discrepancy-card>
+											}
+										}
+										else
+										{
+                                        	@: <h3>No outstanding issues! Well done!</h3>
+										}
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane" id="resovled">
+                                        @if ( ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Any(d => d.Resolved) )
+										{
+											var number = 1;
+
+											@foreach (var dicrepancy in ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Where(d => d.Resolved))
+											{
+												var hidden = number > 10;
+
+												<vc:discrepancy-card 
+													model=dicrepancy 
+													number=number
+													hidden=hidden
+												></vc:discrepancy-card>
+
+												number++;
+											}
+											<div class="w-100 text-center p-t-10">
+
+												<button 
+													type="type" 
+													id="load-more-resolved-btn" 
+													class="btn btn-primary btn-md waves-effect"
+													style="@( ((IEnumerable<Discrepancy>)ViewBag.Discrepancies).Count(d => d.Resolved) <= 10 ? "display: none;" : "")"
+												>
+													Show another 10
+												</button>
+
+												<button 
+													type="type" 
+													id="load-less-resolved-btn" 
+													class="btn btn-warning btn-md waves-effect" 
+													style="display: none;"
+												>
+													Hide another 10
+												</button>
+											</div>
+										}
+										else
+										{
+                                        	@: <h3>No discrepancies have been noticed.</h3>
+										}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
 
 		<div class="col-md-6">
 			<div class="card">

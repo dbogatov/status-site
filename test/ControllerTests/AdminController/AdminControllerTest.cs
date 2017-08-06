@@ -27,12 +27,30 @@ namespace StatusMonitor.Tests.ControllerTests
 		private readonly Mock<IMetricService> _mockMetricService = new Mock<IMetricService>();
 		private readonly Mock<IApiController> _mockApiController = new Mock<IApiController>();
 		private readonly Mock<ICleanService> _mockCleanService = new Mock<ICleanService>();
+		private readonly Mock<INotificationService> _mockNotificationService = new Mock<INotificationService>();
+		private readonly Mock<IConfiguration> _mockConfig = new Mock<IConfiguration>();
+		
+		private readonly IDataContext _context;
 		
 
 		private readonly AdminController _controller;
 
 		public AdminControllerTest()
 		{
+			var services = new ServiceCollection();
+
+			var mockEnv = new Mock<IHostingEnvironment>();
+			mockEnv
+				.SetupGet(environment => environment.EnvironmentName)
+				.Returns("Testing");
+			var env = mockEnv.Object;
+
+			services.RegisterSharedServices(env, new Mock<IConfiguration>().Object);
+
+			_context = services
+				.BuildServiceProvider()
+				.GetRequiredService<IDataContext>();
+
 			var mockServiceProvider = new Mock<IServiceProvider>();
 			mockServiceProvider
 				.Setup(provider => provider.GetService(typeof(IApiController)))
@@ -43,8 +61,12 @@ namespace StatusMonitor.Tests.ControllerTests
 				new Mock<ILogger<AdminController>>().Object,
 				_mockMetricService.Object,
 				mockServiceProvider.Object,
-				_mockCleanService.Object
+				_mockCleanService.Object,
+				_context,
+				_mockNotificationService.Object,
+				_mockConfig.Object
 			);
+
 			_controller.ControllerContext.HttpContext = new DefaultHttpContext();
 			_controller.TempData = new Mock<ITempDataDictionary>().Object;
 		}

@@ -154,7 +154,7 @@ namespace StatusMonitor.Shared.Services
 			return
 				unresolved == 0 ?
 				"There are no outstanding issues. Well done." :
-				$"There {(unresolved == 1 ? "is" : "are")} still outstanding {unresolved} issue{(unresolved == 1 ? "" : "s")}."
+				$"There {(unresolved == 1 ? "is" : "are")} still outstanding {unresolved} issue{(unresolved == 1 ? "" : "s")}. See admin panel."
 			;
 
 		}
