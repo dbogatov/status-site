@@ -22,7 +22,7 @@ extra:
     - type: gitlab
       link: https://git.dbogatov.org/dbogatov
     - type: github
-      link: https://github.com/Dima4ka
+      link: https://github.com/dbogatov
     - type: facebook
       link: https://www.facebook.com/Dima4ka007
     - type: twitter
@@ -38,8 +38,8 @@ extra:
 #   - auto
 
 # Repository
-repo_name: Dima4ka/status-site
-repo_url: https://github.com/Dima4ka/status-site
+repo_name: dbogatov/status-site
+repo_url: https://github.com/dbogatov/status-site
 
 # Extensions
 markdown_extensions:
