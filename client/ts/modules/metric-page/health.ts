@@ -193,8 +193,8 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 
 				let code = `
 					<div 
-						class="modal fade"
-						id="modal-details" 
+						class="modal fade health-details-modal"
+						id="modal-details-${timestamp.getTime()}" 
 						tabindex="-1" 
 						role="dialog" 
 						aria-hidden="true" 
@@ -254,16 +254,23 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 					</div>
 				`;
 
-				$("#modal").html(code);
+				$("body").append(code);
 
 				$('#details-table').DataTable({
-					"order": [[0, "desc"]],
+					destroy: true,
+					order: [[0, "desc"]],
 					lengthChange: false,
 					searching: false,
 					pageLength: 10
 				});
 
-				$("#modal-details").modal();
+				$(`#modal-details-${timestamp.getTime()}`).modal();
+
+				$(`#modal-details-${timestamp.getTime()}`).on(
+					"hidden.bs.modal", 
+					() => $(".health-details-modal").remove()
+				);
+				
 			},
 			false);
 
