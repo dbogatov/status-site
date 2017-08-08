@@ -28,11 +28,11 @@ namespace StatusMonitor.Tests.ControllerTests
 			_mockMetricService
 				.Setup(mock => mock.GetMetricsAsync(It.IsAny<Metrics>(), It.IsAny<string>()))
 				.ReturnsAsync(
-					new List<Metric> { 
+					new List<Metric> {
 						new Metric {
-							CurrentValue = 50,							
+							CurrentValue = 50,
 							Public = true
-						} 
+						}
 					}
 				);
 
@@ -70,7 +70,7 @@ namespace StatusMonitor.Tests.ControllerTests
 			// Arrange
 			_mockMetricService
 				.Setup(mock => mock.GetMetricsAsync(It.IsAny<Metrics>(), It.IsAny<string>()))
-				.ReturnsAsync(new List<Metric> { new Metric { Public = false }});
+				.ReturnsAsync(new List<Metric> { new Metric { Public = false } });
 
 			_mockAuth
 				.Setup(auth => auth.IsAuthenticated())
@@ -93,6 +93,124 @@ namespace StatusMonitor.Tests.ControllerTests
 			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
 
 			Assert.Contains("type", (string)badRequestObjectResult.Value);
+		}
+
+		[Fact]
+		public async Task MetricStartDateRequest()
+		{
+			// Act
+			var result = await _controller.Metric(Metrics.CpuLoad.ToString(), "any-source", "invalid-date");
+
+			// Assert
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+
+			Assert.Contains("start", (string)badRequestObjectResult.Value);
+		}
+
+		[Fact]
+		public async Task MetricEndDateRequest()
+		{
+			// Act
+			var result = await _controller.Metric(
+				Metrics.CpuLoad.ToString(),
+				"any-source",
+				DateTime.UtcNow.TotalMilliseconds().ToString(),
+				"invalid-date"
+			);
+
+			// Assert
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+
+			Assert.Contains("end", (string)badRequestObjectResult.Value);
+		}
+
+		[Fact]
+		public async Task MetricStartAfterEndDateRequest()
+		{
+			// Act
+			var result = await _controller.Metric(
+				Metrics.CpuLoad.ToString(),
+				"any-source",
+				DateTime.UtcNow.TotalMilliseconds().ToString(),
+				DateTime.UtcNow.AddHours(-1).TotalMilliseconds().ToString()
+			);
+
+			// Assert
+			var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
+
+			Assert.Contains("greater than", (string)badRequestObjectResult.Value);
+		}
+
+		[Fact]
+		public async Task MetricDatesOK()
+		{
+			// Arrange
+			_mockMetricService
+				.Setup(mock => mock.GetMetricsAsync(It.IsAny<Metrics>(), It.IsAny<string>()))
+				.ReturnsAsync(
+					new List<Metric> {
+						new Metric {
+							CurrentValue = 50,
+							Public = true
+						}
+					}
+				);
+
+			var start = DateTime.UtcNow.AddHours(-1);
+			var end = DateTime.UtcNow;
+
+			// Act
+			var result = await _controller.Metric(
+				Metrics.CpuLoad.ToString(), 
+				"existing-source",
+				start.TotalMilliseconds().ToString(),
+				end.TotalMilliseconds().ToString()
+			);
+
+			// Assert
+			var viewResult = Assert.IsType<ViewResult>(result);
+
+			var model = Assert.IsAssignableFrom<Metric>(
+				viewResult.ViewData.Model
+			);
+
+			Assert.Equal(start.TotalMilliseconds().ToString(), viewResult.ViewData["Start"]);
+			Assert.Equal(end.TotalMilliseconds().ToString(), viewResult.ViewData["End"]);
+		}
+
+		[Fact]
+		public async Task MetricDatesEndNullOK()
+		{
+			// Arrange
+			_mockMetricService
+				.Setup(mock => mock.GetMetricsAsync(It.IsAny<Metrics>(), It.IsAny<string>()))
+				.ReturnsAsync(
+					new List<Metric> {
+						new Metric {
+							CurrentValue = 50,
+							Public = true
+						}
+					}
+				);
+
+			var start = DateTime.UtcNow;
+
+			// Act
+			var result = await _controller.Metric(
+				Metrics.CpuLoad.ToString(), 
+				"existing-source",
+				start.TotalMilliseconds().ToString()
+			);
+
+			// Assert
+			var viewResult = Assert.IsType<ViewResult>(result);
+
+			var model = Assert.IsAssignableFrom<Metric>(
+				viewResult.ViewData.Model
+			);
+
+			Assert.Equal(start.TotalMilliseconds().ToString(), viewResult.ViewData["Start"]);
+			Assert.Equal(0.ToString(), viewResult.ViewData["End"]);
 		}
 	}
 }

@@ -52,10 +52,38 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 	protected detailedPlotOptions: any;
 	protected overviewPlotOptions: any;
 
+	/**
+	 * Date as a number of milliseconds of the first data point
+	 * 
+	 * @protected
+	 * @type {number}
+	 * @memberof MetricPage
+	 */
 	protected minData: number;
+	/**
+	 * Date as a number of milliseconds of the last data point
+	 * 
+	 * @protected
+	 * @type {number}
+	 * @memberof MetricPage
+	 */
 	protected maxData: number;
 
+	/**
+	 * If given, the timestamp of first data point in selected range
+	 * 
+	 * @protected
+	 * @type {Date}
+	 * @memberof MetricPage
+	 */
 	protected start: Date = null;
+	/**
+	 * If given, the timestamp of last data point in selected range
+	 * 
+	 * @protected
+	 * @type {Date}
+	 * @memberof MetricPage
+	 */
 	protected end: Date = null;
 
 	constructor(min: number, max: number) {
@@ -130,6 +158,7 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 			// don't fire event on the overview to prevent eternal loop
 			overview.setSelection(ranges, true);
 
+			// Re-render data table to include only selected data points
 			this.renderTable(true, new Date(ranges.xaxis.from), new Date(ranges.xaxis.to));
 		}));
 
