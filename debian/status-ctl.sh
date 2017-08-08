@@ -10,7 +10,7 @@ BAD_PARAMETERS=4
 # CONSTANTS
 CONFIG_DIR=/etc/status-site
 PROJECT="status-site"
-VERSION="1.1.1"
+VERSION="1.2.0"
 BRANCH="master"
 
 function usage {
