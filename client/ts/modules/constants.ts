@@ -55,4 +55,10 @@ export class Constants {
 	 * of 5 minutes and sums of user actions will be displayed per interval.
 	 */
 	static USER_ACTIONS_AGGREGATION_INTERVAL : number = 30;
+
+	/**
+	 * The interval in milliseconds that defines a default time frame of data
+	 * on metric pages.
+	 */
+	static METRIC_PAGE_DATA_PREVIEW : number = 2 * 60 * 60 * 1000;
 }

@@ -13,6 +13,7 @@ import "bootstrap"
 
 declare var source: string;
 declare var type: number;
+
 declare var min: number;
 declare var max: number;
 

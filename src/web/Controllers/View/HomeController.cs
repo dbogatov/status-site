@@ -65,8 +65,8 @@ namespace StatusMonitor.Web.Controllers.View
 			return View(model);
 		}
 
-		[Route("Home/Metric/{type}/{source}")]
-		public async Task<IActionResult> Metric(string type, string source)
+		[Route("Home/Metric/{type}/{source}/{start?}/{end?}")]
+		public async Task<IActionResult> Metric(string type, string source, string start = null, string end = null)
 		{
 			Metrics metricType;
 
@@ -77,6 +77,41 @@ namespace StatusMonitor.Web.Controllers.View
 			catch (System.Exception)
 			{
 				return BadRequest("Bad type. Needs to be one of Metrics type.");
+			}
+
+			if (start != null)
+			{
+				try
+				{
+					DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(Convert.ToInt64(start));
+				}
+				catch (System.Exception)
+				{
+					return BadRequest("Bad start date. Needs to be the number of milliseconds since Epoch.");
+				}
+			}
+
+			if (end != null)
+			{
+				try
+				{
+					DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(Convert.ToInt64(end));
+				}
+				catch (System.Exception)
+				{
+					return BadRequest("Bad end date. Needs to be the number of milliseconds since Epoch.");
+				}
+			}
+
+			if (start != null && end != null)
+			{
+				if (
+					DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(Convert.ToInt64(start)) >=
+					DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(Convert.ToInt64(end))
+				)
+				{
+					return BadRequest("Bad dates. End date needs to be greater than the start date.");
+				}
 			}
 
 			var model = await _metricService.GetMetricsAsync(metricType, source);
@@ -106,6 +141,9 @@ namespace StatusMonitor.Web.Controllers.View
 
 				ViewBag.Uptime = await _uptime.ComputeUptimeAsync(source);
 			}
+
+			ViewBag.Start = start ?? 0.ToString();
+			ViewBag.End = end ?? 0.ToString();
 
 			return View(model.First());
 		}
