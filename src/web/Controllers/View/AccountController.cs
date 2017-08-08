@@ -75,7 +75,7 @@ namespace StatusMonitor.Web.Controllers.View
 
 				TempData["MessageSeverity"] = "info";
 				TempData["MessageContent"] = $"You have logged in.";
-
+				
 				if (string.IsNullOrEmpty(Request.Query["returnurl"]))
 				{
 					return RedirectToAction("Index", "Home");

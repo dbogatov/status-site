@@ -22,5 +22,14 @@ namespace StatusMonitor.Shared.Extensions
 				? value.ToString() 
 				: TimeZoneInfo.ConvertTime(value, TimeZoneInfo.FindSystemTimeZoneById(timeZoneId)).ToString();
 		}
+
+		/// <summary>
+		/// Return the number of milliseconds between epoch and given date
+		/// </summary>
+		/// <param name="value">The end date of selected range</param>
+		/// <returns>The number of milliseconds between epoch and given date</returns>
+		public static long TotalMilliseconds(this DateTime value) =>
+			Convert.ToInt64((value - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
+		
 	}
 }

@@ -106,9 +106,13 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 		};
 	};
 
-	protected renderTable(): void {
+	protected renderTable(redraw: boolean, start: Date, end: Date): void {
 
-		if (!this.dataTablesRendered) {
+		if (!this.dataTablesRendered || redraw) {
+
+			if (this.dataTablesRendered) {
+				this.dataTable.destroy();
+			}
 
 			let header = `
 				<tr>
@@ -124,6 +128,17 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 				this.metric
 					.data
 					.map(dp => <CpuLoadDataPoint>dp)
+					.filter((value, index, array) => {
+						if (start != null && value.timestamp < start) {
+							return false;
+						}
+
+						if (end != null && value.timestamp > end) {
+							return false;
+						}
+
+						return true;
+					})
 					.map(
 					dp => `
 						<tr>
@@ -135,7 +150,7 @@ export class CpuLoadMetricPage extends MetricPage<Metric<CpuLoadDataPoint>> {
 					.join()
 			);
 
-			$('#metric-data').DataTable({
+			this.dataTable = $('#metric-data').DataTable({
 				"order": [[0, "desc"]],
 				lengthChange: false,
 				searching: false,

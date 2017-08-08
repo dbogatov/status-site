@@ -22,7 +22,13 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h2>Plotted data <small>Data is requested for a day back.</small></h2>
+                    <h2>
+						Plotted data 
+						<small>
+							Data is requested for a 3 days back.
+							Select a range on the plot to zoom.
+						</small>
+					</h2>
                 </div>
                 <div class="card-body card-padding">
                     <div id="metric-detailed-plot" class="flot-chart"></div>
@@ -38,7 +44,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h2>Data points <small>Data is requested for a day back.</small></h2>
+                    <h2>Data points <small>Data is shown for the same interval as selected plot.</small></h2>
                 </div>
                 <div class="card-body card-padding">
 
@@ -186,8 +192,12 @@
     <script>
         var source = "@Model.Source";
         var type = @Model.Type;
+		
 		var min = @ViewData["Min"];
 		var max = @ViewData["Max"];
+
+		var start = @ViewData["Start"];
+		var end = @ViewData["End"];
     </script>
 
     <environment names="Development">

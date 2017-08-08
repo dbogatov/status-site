@@ -111,9 +111,13 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 		};
 	};
 
-	protected renderTable(): void {
+	protected renderTable(redraw: boolean, start: Date, end: Date): void {
 
-		if (!this.dataTablesRendered) {
+		if (!this.dataTablesRendered || redraw) {
+
+			if (this.dataTablesRendered) {
+				this.dataTable.destroy();
+			}
 
 			let header = `
 				<tr>
@@ -130,6 +134,17 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 				this.metric
 					.data
 					.map(dp => <HealthDataPoint>dp)
+					.filter((value, index, array) => {
+						if (start != null && value.timestamp < start) {
+							return false;
+						}
+
+						if (end != null && value.timestamp > end) {
+							return false;
+						}
+
+						return true;
+					})
 					.map(
 					dp => `
 						<tr>
@@ -160,7 +175,7 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 					.join()
 			);
 
-			$('#metric-data').DataTable({
+			this.dataTable = $('#metric-data').DataTable({
 				"order": [[0, "desc"]],
 				lengthChange: false,
 				searching: false,
@@ -173,13 +188,13 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 			'showDetails',
 			(e: CustomEvent) => {
 
-				let data : any[] = e.detail.data;
-				let timestamp : Date = e.detail.timestamp;
+				let data: any[] = e.detail.data;
+				let timestamp: Date = e.detail.timestamp;
 
 				let code = `
 					<div 
-						class="modal fade"
-						id="modal-details" 
+						class="modal fade health-details-modal"
+						id="modal-details-${timestamp.getTime()}" 
 						tabindex="-1" 
 						role="dialog" 
 						aria-hidden="true" 
@@ -192,7 +207,10 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 									<h4 class="modal-title">
 										Health report details | Health ${e.detail.health}% | ${timestamp}
 										<small>
-											Inspect metric labels at the moment report was generated
+											Inspect metric labels at the moment report was generated.
+											<a href="/home/metric/${this.metric.metricType}/${this.metric.source}/${new Date(timestamp.getTime() - 2 * 60 * 1000).getTime()}/${new Date(timestamp.getTime() + 2 * 60 * 1000).getTime()}">
+												View data at that moment.
+											</a>
 										</small>
 									</h4>
 								</div>
@@ -211,17 +229,17 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 												</thead>
 												<tbody>
 													${
-														data
-															.sortByProperty(el => el.Source)
-															.map(el => `
+					data
+						.sortByProperty(el => el.Source)
+						.map(el => `
 																<tr>
 																	<th>${el.Type}</th>
 																	<th>${el.Source}</th>
 																	<th>${el.Label}</th>
 																</tr>
 															`)
-															.join("")
-													}
+						.join("")
+					}
 												</tbody>
 											</table>
 										</div>										
@@ -239,16 +257,23 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 					</div>
 				`;
 
-				$("#modal").html(code);
+				$("body").append(code);
 
 				$('#details-table').DataTable({
-					"order": [[0, "desc"]],
+					destroy: true,
+					order: [[0, "desc"]],
 					lengthChange: false,
 					searching: false,
 					pageLength: 10
 				});
 
-				$("#modal-details").modal();
+				$(`#modal-details-${timestamp.getTime()}`).modal();
+
+				$(`#modal-details-${timestamp.getTime()}`).on(
+					"hidden.bs.modal",
+					() => $(".health-details-modal").remove()
+				);
+
 			},
 			false);
 

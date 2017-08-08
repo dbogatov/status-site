@@ -1,3 +1,5 @@
+@using StatusMonitor.Shared.Extensions
+
 <div 
 	class="list-group-item media discrepancy-card discrepancy-@(Model.Resolved ? "resolved" : "unresolved")" 
 	data-number="@ViewBag.Number" 
@@ -39,11 +41,20 @@
 	<div class="media-body">
 		<div class="lgi-heading">
 			Discrepancy of type <strong>@Model.Type</strong> from
+			@{
+				var start = Convert.ToInt64((Model.DateFirstOffense.AddMinutes(-2) - new DateTime(1970, 1, 1)).TotalMilliseconds);
+				var end =
+					Model.Resolved ?
+					Convert.ToInt64((Model.DateResolved.AddMinutes(2) - new DateTime(1970, 1, 1)).TotalMilliseconds) :
+					Convert.ToInt64((Model.DateFirstOffense.AddMinutes(15) - new DateTime(1970, 1, 1)).TotalMilliseconds);
+			}
 			<a 
 				asp-controller="Home" 
 				asp-action="Metric" 
 				asp-route-type="@Model.MetricType" 
 				asp-route-source="@Model.MetricSource"
+				asp-route-start="@start" 
+				asp-route-end="@end"
 			>
 				 <em>@Model.MetricType</em> of <em>@Model.MetricSource</em>
 			</a>

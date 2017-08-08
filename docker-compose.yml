@@ -44,7 +44,7 @@ services:
       - ./appsettings.yml:/srv/appsettings.production.yml
     restart: on-failure
   postgres:
-    image: postgres:latest
+    image: postgres:9.6.3-alpine
     environment: # define connection credentials to be used in app
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
