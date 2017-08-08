@@ -207,7 +207,10 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 									<h4 class="modal-title">
 										Health report details | Health ${e.detail.health}% | ${timestamp}
 										<small>
-											Inspect metric labels at the moment report was generated
+											Inspect metric labels at the moment report was generated.
+											<a href="/home/metric/${this.metric.metricType}/${this.metric.source}/${new Date(timestamp.getTime() - 2 * 60 * 1000).getTime()}/${new Date(timestamp.getTime() + 2 * 60 * 1000).getTime()}">
+												View data at that moment.
+											</a>
 										</small>
 									</h4>
 								</div>
@@ -267,10 +270,10 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 				$(`#modal-details-${timestamp.getTime()}`).modal();
 
 				$(`#modal-details-${timestamp.getTime()}`).on(
-					"hidden.bs.modal", 
+					"hidden.bs.modal",
 					() => $(".health-details-modal").remove()
 				);
-				
+
 			},
 			false);
 

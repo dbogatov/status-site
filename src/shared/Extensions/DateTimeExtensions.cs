@@ -22,5 +22,9 @@ namespace StatusMonitor.Shared.Extensions
 				? value.ToString() 
 				: TimeZoneInfo.ConvertTime(value, TimeZoneInfo.FindSystemTimeZoneById(timeZoneId)).ToString();
 		}
+
+		public static long TotalMilliseconds(this DateTime value) =>
+			Convert.ToInt64((value - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
+		
 	}
 }
