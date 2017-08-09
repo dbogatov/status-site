@@ -167,6 +167,7 @@ export class UserActionMetricPage extends MetricPage<Metric<UserActionDataPoint>
 					<th>Timestamp</th>
 					<th>Action</th>
 					<th>Count</th>
+					<th>Zoom plot</th>
 				</tr>
 			`;
 
@@ -194,6 +195,11 @@ export class UserActionMetricPage extends MetricPage<Metric<UserActionDataPoint>
 							<td>${dp.timestamp}</td>
 							<td>${dp.action}</td>
 							<td># ${dp.count}</td>
+							<td>
+								<a href="/home/metric/${MetricType[this.metric.metricType]}/${this.metric.source}/${new Date(dp.timestamp.getTime() - 2 * 60 * 1000).getTime()}/${new Date(dp.timestamp.getTime() + 2 * 60 * 1000).getTime()}">
+									Zoom plot
+								</a>
+							</td>
 						</tr>
 					`
 					)

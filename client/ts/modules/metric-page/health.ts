@@ -208,7 +208,7 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 										Health report details | Health ${e.detail.health}% | ${timestamp}
 										<small>
 											Inspect metric labels at the moment report was generated.
-											<a href="/home/metric/${this.metric.metricType}/${this.metric.source}/${new Date(timestamp.getTime() - 2 * 60 * 1000).getTime()}/${new Date(timestamp.getTime() + 2 * 60 * 1000).getTime()}">
+											<a href="/home/metric/${MetricType[this.metric.metricType]}/${this.metric.source}/${new Date(timestamp.getTime() - 2 * 60 * 1000).getTime()}/${new Date(timestamp.getTime() + 2 * 60 * 1000).getTime()}">
 												View data at that moment.
 											</a>
 										</small>
@@ -225,6 +225,7 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 														<th>Type</th>
 														<th>Source</th>
 														<th>Label</th>
+														<th>View data</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -233,9 +234,14 @@ export class HealthMetricPage extends MetricPage<Metric<HealthDataPoint>> {
 						.sortByProperty(el => el.Source)
 						.map(el => `
 																<tr>
-																	<th>${el.Type}</th>
-																	<th>${el.Source}</th>
-																	<th>${el.Label}</th>
+																	<td>${el.Type}</td>
+																	<td>${el.Source}</td>
+																	<td>${el.Label}</td>
+																	<td>
+																		<a href="/home/metric/${el.Type}/${el.Source}/${new Date(timestamp.getTime() - 2 * 60 * 1000).getTime()}/${new Date(timestamp.getTime() + 2 * 60 * 1000).getTime()}">
+																			View data
+																		</a>
+																	</td>
 																</tr>
 															`)
 						.join("")
