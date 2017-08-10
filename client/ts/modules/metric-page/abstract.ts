@@ -27,7 +27,7 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 	protected metric: T;
 
 	protected dataTablesRendered: boolean = false;
-	protected dataTable : DataTables.DataTable;
+	protected dataTable: DataTables.DataTable;
 
 	/**
 	 * Minimal theoretical value for data series.
@@ -189,6 +189,13 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 						),
 						this.minData)
 				;
+
+			console.log("from: " + from);
+			console.log("to: " + to);
+			console.log("maxData: " + this.maxData);
+			console.log("minData: " + this.minData);
+			console.log("start: " + this.start);
+			console.log("end: " + this.end);
 
 			plot.setSelection({ xaxis: { from: from, to: to }, yaxis: { from: 0, to: 0 } });
 		} else {

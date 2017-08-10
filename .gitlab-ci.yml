@@ -51,61 +51,61 @@ build-app:
 
 ## TEST
 
-unit-test-app:
-  stage: test
-  image: microsoft/dotnet:1.1.1-sdk
-  script:
-  - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
-  - cd test
-  - dotnet restore
-  - ./test.sh | tee tests.out
-  - "cat tests.out | grep 'Failed: 0.'"
-  tags:
-  - docker
+# unit-test-app:
+#   stage: test
+#   image: microsoft/dotnet:1.1.1-sdk
+#   script:
+#   - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
+#   - cd test
+#   - dotnet restore
+#   - ./test.sh | tee tests.out
+#   - "cat tests.out | grep 'Failed: 0.'"
+#   tags:
+#   - docker
 
-tidy-app:
-  stage: test
-  image: dbogatov/docker-containers:dotnet-core-latest
-  dependencies:
-  - build-app
-  before_script:
-  - export ASPNETCORE_ENVIRONMENT="Staging"
-  - cd src/web/bin/release/netcoreapp1.1/publish/
-  - dotnet web.dll > /dev/null &
-  - sleep 15
-  script:
-  - curl -Ls http://localhost:5555/ | tidy -e
-  - curl -Ls http://localhost:5555/home/metric/CpuLoad/the-source | tidy -e
-  tags:
-  - docker
+# tidy-app:
+#   stage: test
+#   image: dbogatov/docker-containers:dotnet-core-latest
+#   dependencies:
+#   - build-app
+#   before_script:
+#   - export ASPNETCORE_ENVIRONMENT="Staging"
+#   - cd src/web/bin/release/netcoreapp1.1/publish/
+#   - dotnet web.dll > /dev/null &
+#   - sleep 15
+#   script:
+#   - curl -Ls http://localhost:5555/ | tidy -e
+#   - curl -Ls http://localhost:5555/home/metric/CpuLoad/the-source | tidy -e
+#   tags:
+#   - docker
   
-blc-app:
-  stage: test
-  image: dbogatov/docker-containers:dotnet-core-latest
-  dependencies:
-  - build-app
-  before_script:
-  - export ASPNETCORE_ENVIRONMENT="Staging"
-  - cd src/web/bin/release/netcoreapp1.1/publish/
-  - dotnet web.dll > /dev/null &
-  - sleep 15
-  script:
-  - blc --filter-level 3 --input http://localhost:5555 -rog --exclude "*linkedin.*" --exclude "*authenticate*"
-  tags:
-  - docker
+# blc-app:
+#   stage: test
+#   image: dbogatov/docker-containers:dotnet-core-latest
+#   dependencies:
+#   - build-app
+#   before_script:
+#   - export ASPNETCORE_ENVIRONMENT="Staging"
+#   - cd src/web/bin/release/netcoreapp1.1/publish/
+#   - dotnet web.dll > /dev/null &
+#   - sleep 15
+#   script:
+#   - blc --filter-level 3 --input http://localhost:5555 -rog --exclude "*linkedin.*" --exclude "*authenticate*"
+#   tags:
+#   - docker
 
-blc-docs:
-  stage: test
-  image: dbogatov/docker-containers:jekyll-latest
-  dependencies:
-  - build-docs
-  before_script:
-  - http-server documentation/out/ -p 8080 > /dev/null &
-  - sleep 5
-  script:
-  - blc --filter-level 3 --input http://localhost:8080 -rog --exclude "*linkedin.*" --exclude "*doxygen.*" --exclude "*status.dbogatov.org*"
-  tags:
-  - docker
+# blc-docs:
+#   stage: test
+#   image: dbogatov/docker-containers:jekyll-latest
+#   dependencies:
+#   - build-docs
+#   before_script:
+#   - http-server documentation/out/ -p 8080 > /dev/null &
+#   - sleep 5
+#   script:
+#   - blc --filter-level 3 --input http://localhost:8080 -rog --exclude "*linkedin.*" --exclude "*doxygen.*" --exclude "*status.dbogatov.org*"
+#   tags:
+#   - docker
 
 ## RELEASE
 
