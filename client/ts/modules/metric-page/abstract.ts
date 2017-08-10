@@ -190,12 +190,26 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 						this.minData)
 				;
 
-			console.log("from: " + from);
-			console.log("to: " + to);
-			console.log("maxData: " + this.maxData);
-			console.log("minData: " + this.minData);
-			console.log("start: " + this.start);
-			console.log("end: " + this.end);
+			// fix low time range
+			// if the difference in time is less than 10 minutes, we should extend the range
+			const tenMinutes = 10 * 60 * 1000
+			if (to - from < tenMinutes) {
+				if (this.maxData - to >= tenMinutes) {
+					to += tenMinutes;
+				} else if (from - this.minData >= tenMinutes) {
+					from -= tenMinutes;
+				} else {
+					from = this.minData;
+					to = this.maxData;
+				}
+			}
+
+			// console.log("from: " + from);
+			// console.log("to: " + to);
+			// console.log("maxData: " + this.maxData);
+			// console.log("minData: " + this.minData);
+			// console.log("start: " + this.start);
+			// console.log("end: " + this.end);
 
 			plot.setSelection({ xaxis: { from: from, to: to }, yaxis: { from: 0, to: 0 } });
 		} else {

@@ -191,7 +191,7 @@ export class PingMetricPage extends MetricPage<Metric<PingDataPoint>> {
 							<td>${dp.responseTime} ms</td>
 							<td>${dp.success ? "Success" : dp.message}</td>
 							<td>
-								<a href="/home/metric/${MetricType[this.metric.metricType]}/${this.metric.source}/${new Date(dp.timestamp.getTime() - 2 * 60 * 1000).getTime()}/${new Date(dp.timestamp.getTime() + 2 * 60 * 1000).getTime()}">
+								<a href="/home/metric/${MetricType[this.metric.metricType]}/${this.metric.source}/${new Date(dp.timestamp.getTime() - 10 * 60 * 1000).getTime()}/${new Date(dp.timestamp.getTime() + 10 * 60 * 1000).getTime()}">
 									Zoom plot
 								</a>
 							</td>
