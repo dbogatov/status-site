@@ -42,11 +42,11 @@
 		<div class="lgi-heading">
 			Discrepancy of type <strong>@Model.Type</strong> from
 			@{
-				var start = Convert.ToInt64((Model.DateFirstOffense.AddMinutes(-2) - new DateTime(1970, 1, 1)).TotalMilliseconds);
+				var start = Convert.ToInt64((Model.DateFirstOffense.AddMinutes(-10) - new DateTime(1970, 1, 1)).TotalMilliseconds);
 				var end =
 					Model.Resolved ?
-					Convert.ToInt64((Model.DateResolved.AddMinutes(2) - new DateTime(1970, 1, 1)).TotalMilliseconds) :
-					Convert.ToInt64((Model.DateFirstOffense.AddMinutes(15) - new DateTime(1970, 1, 1)).TotalMilliseconds);
+					Convert.ToInt64((Model.DateResolved.AddMinutes(10) - new DateTime(1970, 1, 1)).TotalMilliseconds) :
+					Convert.ToInt64((Model.DateFirstOffense.AddMinutes(10) - new DateTime(1970, 1, 1)).TotalMilliseconds);
 			}
 			<a 
 				asp-controller="Home" 
