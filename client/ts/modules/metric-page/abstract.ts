@@ -27,7 +27,7 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 	protected metric: T;
 
 	protected dataTablesRendered: boolean = false;
-	protected dataTable : DataTables.DataTable;
+	protected dataTable: DataTables.DataTable;
 
 	/**
 	 * Minimal theoretical value for data series.
@@ -189,6 +189,20 @@ export abstract class MetricPage<T extends Metric<DataPoint>> {
 						),
 						this.minData)
 				;
+
+			// fix low time range
+			// if the difference in time is less than 10 minutes, we should extend the range
+			const tenMinutes = 10 * 60 * 1000
+			if (to - from < tenMinutes) {
+				if (this.maxData - to >= tenMinutes) {
+					to += tenMinutes;
+				} else if (from - this.minData >= tenMinutes) {
+					from -= tenMinutes;
+				} else {
+					from = this.minData;
+					to = this.maxData;
+				}
+			}
 
 			plot.setSelection({ xaxis: { from: from, to: to }, yaxis: { from: 0, to: 0 } });
 		} else {

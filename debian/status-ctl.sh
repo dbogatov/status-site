@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # EXIT CODES
 SUCCESS=0
 GENERIC_ERROR=1
