@@ -54,6 +54,8 @@ namespace StatusMonitor.Daemons.Services
 		public async Task<DataPoint> GenerateDemoDataAsync(Metrics type, string source, DateTime? timestamp = null)
 		{
 			var metric = await _metricService.GetOrCreateMetricAsync(type, source);
+			
+			_context.Attach(metric);
 
 			// Using plain new Random() will result in the same number if called multiple times in short time period
 			var random = new Random(

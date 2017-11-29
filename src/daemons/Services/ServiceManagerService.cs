@@ -287,6 +287,12 @@ namespace StatusMonitor.Daemons.Services
 							.GetRequiredService<IHealthService>()
 							.ProduceHealthReportAsync();
 
+						// May happen in test environment
+						if (report.Metric != null)
+						{
+							context.Attach(report.Metric);
+						}
+
 						await context.HealthReports.AddAsync(report);
 						await context.SaveChangesAsync();
 					}
@@ -352,6 +358,18 @@ namespace StatusMonitor.Daemons.Services
 
 						// Wait completion of all tasks
 						var pingDataPoints = await Task.WhenAll(tasks.ToArray());
+
+						pingDataPoints
+							.ToList()
+							.ForEach(
+								ping => {
+									// May happen in test environment
+									if (ping.Metric != null)
+									{
+										context.Attach(ping.Metric);
+									}
+								}
+							);
 
 						await context.PingDataPoints.AddRangeAsync(pingDataPoints);
 						await context.SaveChangesAsync();

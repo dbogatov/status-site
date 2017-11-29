@@ -9,7 +9,9 @@ strict: true
 copyright: Copyright &copy; 2017 Dmytro Bogatov
 
 # Documentation and theme
-theme_dir: material
+theme:
+  name: 'material'
+  custom_dir: 'material'
 
 # Options
 extra:

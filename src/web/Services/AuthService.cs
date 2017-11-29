@@ -4,6 +4,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
@@ -59,16 +61,17 @@ namespace StatusMonitor.Web.Services
 					new ClaimsIdentity(
 						new List<Claim> {
 							new Claim("UserId", "Admin"),
-						}, "Admin"
+						},
+						CookieAuthenticationDefaults.AuthenticationScheme
 					)
 				);
 				
-			await _http.HttpContext.Authentication.SignInAsync("CookieMiddlewareInstance", principal);
+			await _http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 		}
 
 		public async Task SignOutAsync()
 		{
-			await _http.HttpContext.Authentication.SignOutAsync("CookieMiddlewareInstance");
+			await _http.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 		}
 	}
 }
