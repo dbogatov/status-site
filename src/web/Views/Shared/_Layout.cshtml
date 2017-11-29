@@ -1,6 +1,8 @@
 ﻿@using Microsoft.Extensions.Configuration
+@using StatusMonitor.Web.Services
 
 @inject IConfiguration Config
+@inject IAuthService Auth
 
 <!DOCTYPE html>
 <!--[if IE 9 ]><html class="ie9"><![endif]-->
@@ -44,7 +46,7 @@
 
 					<ul class="hi-menu">
 
-							@if (Context.User.Identity.IsAuthenticated)
+							@if (Auth.IsAuthenticated())
 							{
 								<li>
 									<a asp-controller="Admin" asp-action="Index" >
@@ -108,7 +110,7 @@
 
 			<ul class="f-menu">
 				<li><a asp-controller="Home" asp-action="Index">Home</a></li>
-				@if (Context.User.Identity.IsAuthenticated)
+				@if (Auth.IsAuthenticated())
 				{
 					<li>
 						<a 

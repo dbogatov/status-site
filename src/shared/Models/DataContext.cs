@@ -37,6 +37,7 @@ namespace StatusMonitor.Shared.Models
 		void RemoveRange(params object[] entities);
 		EntityEntry Remove(object entity);
 		EntityEntry Entry(object entity);
+		EntityEntry Attach(object entity);
 	}
 
 	/// <summary>

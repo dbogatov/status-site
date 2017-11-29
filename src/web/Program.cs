@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using StatusMonitor.Shared.Extensions;
 
 namespace StatusMonitor.Web
@@ -10,7 +13,7 @@ namespace StatusMonitor.Web
 	/// This class contains the entry point for the application.
 	/// </summary>
 	public class Program
-	{
+	{           
 		/// <summary>
 		/// The entry point.
 		/// This function is responsible for starting up the server object.
@@ -22,7 +25,7 @@ namespace StatusMonitor.Web
 		public static int Main(string[] args)
 		{
 			int port = 5555;
-            if (args.Length != 0 && (!Int32.TryParse(args[0], out port) || port < 1024 || port > 65534))
+			if (args.Length != 0 && (!Int32.TryParse(args[0], out port) || port < 1024 || port > 65534))
 			{
 				ColoredConsole.WriteLine("Usage: dotnet web.dll [port | number 1024-65534]", ConsoleColor.Red);
 				return 1;
@@ -42,14 +45,18 @@ namespace StatusMonitor.Web
 			{
 				try
 				{
-					var host = new WebHostBuilder()
-						.UseKestrel()
-						.UseContentRoot(Directory.GetCurrentDirectory())
-						.UseIISIntegration()
+					var host = WebHost
+						.CreateDefaultBuilder(args)
 						.UseStartup<Startup>()
+						.ConfigureLogging(
+							logging => {
+								logging.ClearProviders();
+								logging.AddFilter("Microsoft", LogLevel.None);
+							}
+						)
 						.UseUrls($"http://*:{port}")
-						.Build(); // Connection to the database happens in .Build()
-
+						.Build();
+						
 					host.Run();
 
 					return 0;

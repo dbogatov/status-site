@@ -2,7 +2,11 @@
     ViewData["Title"] = Model.Title; 
 } 
 
+@using StatusMonitor.Web.Services
+
 @model StatusMonitor.Shared.Models.Entities.Metric
+
+@inject IAuthService Auth
 
 <div class="container">
     <div class="block-header">
@@ -86,7 +90,7 @@
 
 				</div>
 
-				@if (Context.User.Identity.IsAuthenticated)
+				@if (Auth.IsAuthenticated())
 				{
 
 					<div class="col-md-12">

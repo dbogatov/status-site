@@ -9,7 +9,7 @@ before_script:
 ## BUILD
 
 build-docs:
-  image: dbogatov/docker-containers:mkdocs-latest
+  image: dbogatov/docker-images:mk-docs-latest
   stage: build
   script:
   - ./build.sh -f build-docs
@@ -35,7 +35,7 @@ build-ping:
   - docker
 
 build-app:
-  image: dbogatov/docker-containers:dotnet-core-latest
+  image: dbogatov/docker-images:net-core-latest
   stage: build
   script:
   - export ASPNETCORE_ENVIRONMENT="Production"
@@ -53,24 +53,25 @@ build-app:
 
 unit-test-app:
   stage: test
-  image: microsoft/dotnet:1.1.1-sdk
+  image: microsoft/dotnet:2.0.3-sdk
   script:
   - printf "{\"Version\":{\"GitHash\":\"%s\"}}" $CI_BUILD_REF > src/version.json
   - cd test
   - dotnet restore
+  - dotnet build
   - ./test.sh | tee tests.out
-  - "cat tests.out | grep 'Failed: 0.'"
+  - "cat tests.out | grep 'Test Run Successful.'"
   tags:
   - docker
 
 tidy-app:
   stage: test
-  image: dbogatov/docker-containers:dotnet-core-latest
+  image: dbogatov/docker-images:net-core-latest
   dependencies:
   - build-app
   before_script:
   - export ASPNETCORE_ENVIRONMENT="Staging"
-  - cd src/web/bin/release/netcoreapp1.1/publish/
+  - cd src/web/bin/release/netcoreapp2.0/publish/
   - dotnet web.dll > /dev/null &
   - sleep 15
   script:
@@ -81,12 +82,12 @@ tidy-app:
   
 blc-app:
   stage: test
-  image: dbogatov/docker-containers:dotnet-core-latest
+  image: dbogatov/docker-images:net-core-latest
   dependencies:
   - build-app
   before_script:
   - export ASPNETCORE_ENVIRONMENT="Staging"
-  - cd src/web/bin/release/netcoreapp1.1/publish/
+  - cd src/web/bin/release/netcoreapp2.0/publish/
   - dotnet web.dll > /dev/null &
   - sleep 15
   script:
@@ -96,7 +97,7 @@ blc-app:
 
 blc-docs:
   stage: test
-  image: dbogatov/docker-containers:jekyll-latest
+  image: dbogatov/docker-images:blc-latest
   dependencies:
   - build-docs
   before_script:
@@ -130,7 +131,7 @@ release-app-docs:
 
 release-debian:
   stage: release
-  image: dbogatov/docker-containers:debian-latest
+  image: dbogatov/docker-images:debian-latest
   script:
     - ./build.sh -f build-debian-package
   artifacts:

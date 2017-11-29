@@ -38,22 +38,14 @@ namespace StatusMonitor.Shared.Extensions
 				services
 					.AddEntityFrameworkSqlite()
 					.AddDbContext<DataContext>(
-						b => b.UseSqlite("Data Source=../../../../../development.db")
+						b => b.UseSqlite("Data Source=../development.db")
 					);
 			}
 			else // Testing and Staging
 			{
 				services
 					.AddEntityFrameworkInMemoryDatabase()
-					.AddDbContext<DataContext>(
-						b => b
-							.UseInMemoryDatabase()
-							.UseInternalServiceProvider(
-								new ServiceCollection()
-									.AddEntityFrameworkInMemoryDatabase()
-									.BuildServiceProvider()
-							)
-					);
+					.AddDbContext<DataContext>(b => b.UseInMemoryDatabase("main-db"));
 			}
 
 			services.AddTransient<IDataContext, DataContext>();

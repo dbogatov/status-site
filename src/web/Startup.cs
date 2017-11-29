@@ -64,44 +64,19 @@ namespace StatusMonitor.Web
 		{
 			services.RegisterSharedServices(CurrentEnvironment, Configuration);
 
-			services.AddIdentity<User, IdentityRole>();
-
-			services.Configure<IdentityOptions>(options =>
-			{
-				// Cookie settings
-				options.Cookies.ApplicationCookie.AuthenticationScheme = "CookieMiddlewareInstance";
-				options.Cookies.ApplicationCookie.LoginPath = new PathString("/account/login");
-				options.Cookies.ApplicationCookie.AccessDeniedPath = new PathString("/account/login");
-				options.Cookies.ApplicationCookie.AutomaticAuthenticate = true;
-				options.Cookies.ApplicationCookie.AutomaticChallenge = true;
-				options.Cookies.ApplicationCookie.CookieName = "AUTHCOOKIE";
-				options.Cookies.ApplicationCookie.ExpireTimeSpan = new TimeSpan(1, 0, 0, 0);
-				options.Cookies.ApplicationCookie.CookieHttpOnly = true;
-
-				var cookie = options.Cookies.ApplicationCookie;
-				var events = cookie.Events;
-				cookie.Events = new CookieAuthenticationEvents
-				{
-					OnRedirectToAccessDenied = context =>
+			services
+				.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+				.AddCookie(
+					CookieAuthenticationDefaults.AuthenticationScheme, 
+					options => 
 					{
-						if (context.Request.Path.StartsWithSegments("/api"))
-						{
-							context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-							return Task.CompletedTask;
-						}
-						return events.RedirectToAccessDenied(context);
-					},
-					OnRedirectToLogin = context =>
-					{
-						if (context.Request.Path.Value.Contains("/api"))
-						{
-							context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-							return Task.CompletedTask;
-						}
-						return events.RedirectToLogin(context);
+						options.LoginPath = "/Account/LogIn";;
+						options.AccessDeniedPath = new PathString("/account/login");
+						options.Cookie.Name = "AUTHCOOKIE";
+						options.ExpireTimeSpan = new TimeSpan(1, 0, 0, 0);
+						options.Cookie.HttpOnly = true;
 					}
-				};
-			});
+				);
 
 			services.AddMemoryCache();
 			services.AddSession();
@@ -124,6 +99,7 @@ namespace StatusMonitor.Web
 			services.AddCors();
 
 			// Add application services.
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 			services.AddTransient<IApiController, ApiController>();
 			services.AddTransient<HomeController>();
@@ -155,6 +131,8 @@ namespace StatusMonitor.Web
 					Configuration.StringsFromArray("Logging:Exclude").ToArray()
 				);
 
+			app.UseAuthentication();
+
 			if (env.IsProduction())
 			{
 				app.UseExceptionHandler("/error"); // All serverside exceptions redirect to error page
@@ -165,15 +143,13 @@ namespace StatusMonitor.Web
 				app.UseDatabaseErrorPage();
 				app.UseDeveloperExceptionPage(); // Print full stack trace
 			}
-			
+
 			app.UseSession();
 
 			app.UseCors(builder => builder.WithOrigins("*"));
 
 			app.UseDefaultFiles(); // in wwwroot folder, index.html is served when opening a directory
 			app.UseStaticFiles(); // make accessible and cache wwwroot files
-
-			app.UseIdentity();
 
 			// define routes
 			app.UseMvc(routes =>

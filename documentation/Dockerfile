@@ -1,4 +1,4 @@
-FROM dbogatov/docker-containers:nginx-latest
+FROM dbogatov/docker-images:nginx-latest
 
 MAINTAINER Dmytro Bogatov dmytro@dbogatov.org
 

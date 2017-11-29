@@ -15,11 +15,7 @@ install-node-tools () {
 
 	echo "Installing node modules... Requires Yarn or MPM"
 
-	if hash yarn 2>/dev/null; then
-        yarn --ignore-engines > /dev/null
-    else
-		npm install > /dev/null
-    fi
+	yarn --ignore-engines > /dev/null
 }
 
 clean-doc-folder () {

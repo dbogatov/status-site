@@ -18,7 +18,9 @@ namespace StatusMonitor.Web.Controllers.Api
 		{
 			// Retrieve requested metric
 			var metric = await _metricService.GetOrCreateMetricAsync(Metrics.Compilation, model.Source);
-
+			
+			_context.Attach(metric);
+			
 			// Retrieve requested user action
 			var compilationStage =
 				await _context
