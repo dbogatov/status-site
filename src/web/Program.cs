@@ -24,7 +24,7 @@ namespace StatusMonitor.Web
 		/// <param name="args">Arguments passed to the application through the command line. At the moment not used. </param>
 		public static int Main(string[] args)
 		{
-			int port = 5555;
+			int port = 80;
 			if (args.Length != 0 && (!Int32.TryParse(args[0], out port) || port < 1024 || port > 65534))
 			{
 				ColoredConsole.WriteLine("Usage: dotnet web.dll [port | number 1024-65534]", ConsoleColor.Red);
@@ -46,7 +46,7 @@ namespace StatusMonitor.Web
 				try
 				{
 					var host = WebHost
-						.CreateDefaultBuilder(args)
+						.CreateDefaultBuilder()
 						.UseStartup<Startup>()
 						.ConfigureLogging(
 							logging => {

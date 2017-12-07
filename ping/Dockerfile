@@ -11,6 +11,3 @@ COPY bin/ping /srv
 
 # Indicate the binary as our entrypoint
 ENTRYPOINT /srv/ping
-
-# Expose your port
-EXPOSE 8888

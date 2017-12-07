@@ -1,91 +1,94 @@
 # Deployment
 
-## The new way
+## Deploy to swarm (preferred way)
 
-Install status site official debian package - control tool.
+Status site is designed with swarm in mind.
+The preferred way to deploy the system is using `docker stack deploy` command.
 
-* Make sure you have `docker` [installed](https://docs.docker.com/engine/installation/) and `docker-compose` [installed](https://docs.docker.com/compose/install/).
-* Add `apt.dbogatov.org`'s key. Run `sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7BAD7958`.
-* Add `apt.dbogatov.org` repository. Run `sudo add-apt-repository "deb http://apt.dbogatov.org/ trusty main"`.
-* Update package listings. Run `sudo apt-get update`.
-* Install `status-ctl`. Run `sudo apt-get install status-ctl`.
+### TL;DR
+	
+	#!bash
 
-This will install `status-ctl` in your `/usr/bin/` directory and will create config files in `/etc/status-site/` directory.
+	# init swarm if necessary
+	docker swarm init
+	
+	# download and set configuration
+	curl -L -o appsettings.production.yml https://git.dbogatov.org/dbogatov/status-site/-/jobs/artifacts/master/raw/appsettings.production.yml?job=release-app-docs
+	docker secret create appsettings.production.yml appsettings.production.yml
 
-* Launch the app. Run `status-ctl start`.
+	# download compose file
+	curl -L -o docker-compose.yml https://git.dbogatov.org/dbogatov/status-site/-/jobs/artifacts/master/raw/docker-compose.yml?job=release-app-docs
 
-Great! The app is served on port 5555!
+	# deploy stack
+	docker stack deploy --compose-file docker-compose.yml status
 
-### To update
+	# if you want to bind to port 80
+	docker service update status_nginx --publish-add 80:80
 
-Update control tool the way you would update any other debian package.
-`sudo apt-get update` and `sudo apt-get upgrade`.
+	# if you want to join existing docker network
+	docker service update status_nginx --network-add my-overlay
 
-### What the tool can do
+	# verify your deployment
+	docker stack services status
 
-Run `status-ctl help` or `man status-ctl` to view the available options and commands.
 
-## The old way
+### Prerequisites
 
-Make sure you have [Docker](https://www.docker.com) and [Docker compose](https://docs.docker.com/compose/) installed.
-Run the following command in a directory where you want your configuration files to be.
+You need the following before you can deploy a stack into swarm.
+
+* Your docker node has to operate in [*swarm* mode](https://docs.docker.com/engine/swarm/).
+* You have to have one *secret* in your swarm - [app config](/configuration/).
+* You have to have `docker-compose-yml` file which defines the stack.
+* By default, the stack does not open up ports (eq. 80) because it is designed to be a part of an existing infrastructure.
+You need to manually either open a port, or hook existing reverse proxy to the stack.
+
+Here is the explanation of each of these prerequisites.
+
+In general, it does not hurt to convert a regular node to a swarm node (size 1 cluster).
+General command is `docker swarm init`.
+If you want a truly **highly available** multi-node cluster, you might want to setup a number of nodes.
+Please, refer to [docker swarm documentation](https://docs.docker.com/engine/swarm/) for instructions.
+
+The stack requires one secret - [app config](/configuration/).
+You may download up-to-date example config file [here](https://git.dbogatov.org/dbogatov/status-site/-/jobs/artifacts/master/raw/appsettings.production.yml?job=release-app-docs).
+Please, refer to [Configuration section](/configuration/) for config explanation.
+Once you have the config (eq. `appsettings.production.yml`), run this command `docker secret create appsettings.production.yml appsettings.production.yml`
+
+!!! warning
+    PostgreSQL database connection string is hardwired into the application.
+	It may be changed, though, by manually editing `appsettings.yml` and `docker-compose.yml`.
+	The security relies on internal docker network created for the stack, so nobody can even access database from the outside.
+	See up-to-date connection string in [Configuration section](/configuration/).
+
+`docker-compose.yml` is not intended to be modified.
+Download latest version [here](https://git.dbogatov.org/dbogatov/status-site/-/jobs/artifacts/master/raw/docker-compose.yml?job=release-app-docs)
+
+At this point, you are ready to deploy the stack!
 
 	#!bash
-	curl -Ls https://status.dbogatov.org/docs/deploy.sh | bash -s -- -e
+	docker stack deploy --compose-file docker-compose.yml status
 
-!!! warning
-    This script does not require `sudo` privileges.
-	Nevertheless, it is recommended that you examine the script before running it.
+If you want to serve the website on the node where you are deploying the stack, open up ports for **nginx** service of the stack **after** you deploy the stack.
+
+	#!bash
+	docker service update status_nginx --publish-add 80:80
+
+If you want to add stack to an existing docker network, run the following
+
+	#!bash
+	docker service update status_nginx --network-add my-overlay
+
+You are all set!
+Run `docker stack services status` to verify your deployment.
 
 !!! tip
-    You may use `-b feature-branch` to deploy a specific branch.
+	Debian package is under construction, which will automate these tasks for you.
 
-		#!bash
-		curl -Ls https://status.dbogatov.org/docs/deploy.sh | bash -s -- -b feature-branch
+## Other deployment strategies (on you own risk)
 
+It is possible to run stack as a *docker composition* (using the same `docker-compose.yml` file).
+You might need to modify composition file a little.
 
-!!! note
-	The `e` parameter in `bash -s -- -e` specifies that you want to use example configuration.
-	Example configuration is conservative - most of the features are disabled, but is still enough for a basic operation of the app.
-	If you want to change configuration, modify `appsettings.yml` and re-run the command without `-e` argument, otherwise it will override your changes to default example configuration.
+It is also possible to run composition containers manually.
 
-## appsettings.yml and .env
-
-There are 4 mandatory files that need to be in the directory alongside with `docker-compose.yml`, so that the app can start.
-`appsettings.yml` is the main configuration file, see more in [Configuration](/configuration/).
-`.env` file is simply a collection of environmental variables for composition.
-Its content is self-explanatory, except for `DOTNET_TAG` which needs to point to the branch you want to use (*master* by default).
-
-	POSTGRES_DB=statussite
-	POSTGRES_USER=statususer
-	POSTGRES_PASSWORD=SomethingWeird15
-
-	DOTNET_TAG=master
-
-!!! warning
-    Environmental variables define database connection settings which you will use in `appsettings.yml`.
-	For example, for the above env variables, this would be an appropriate database connection string.
-
-		#!yml hl_lines="2"
-		Secrets:
-			ConnectionString: "User ID=statususer;Password=SomethingWeird15;Host=database;Port=5432;Database=statussite;Pooling=false;CommandTimeout=300;"
-
-## Manual deployment
-
-Application is packaged as a collection of docker images with the `docker-compose.yml` file, which knows how to orchestrate those images, and a couple of config files.
-
-Manual deployment procedure is as follows:
-
-* Download artifacts archive from [GitLab](https://git.dbogatov.org/dbogatov/status-site).
-* Extract its contents.
-* Create `appsettings.yml` and `.env`, or use example files (renaming $1.example to $1).
-* Stop app if it is running - `docker-compose -p statussite stop`.
-* Pull app images - `docker-compose -p statussite pull`.
-* Start app - `docker-compose -p statussite up -d --remove-orphans`.
-
-Now, the app is served on `http://localhost:5555`.
-
-!!! summary
-    Here are the helpful links:
-	
-	* [ASP.Core: Hosting and Deployment](https://docs.microsoft.com/en-us/aspnet/core/publishing/)
+Finally, it is possible to build the app from source and serve it from the bare metal.

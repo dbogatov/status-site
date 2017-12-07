@@ -9,7 +9,7 @@ Data:
     - ServerUrl: "https://google.com"
       MaxFailures: 3
       GetMethodRequired: false
-  PingServerUrl: http://localhost:8888
+  PingServerUrl: http://localhost:80
 ServiceManager:
   PingService:
     Enabled: true

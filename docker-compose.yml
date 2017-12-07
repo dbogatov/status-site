@@ -1,51 +1,71 @@
-version: '2'
+version: "3.3"
+
 services:
+
   nginx:
-    image: dbogatov/status-site:nginx-${DOTNET_TAG}
-    ports:
-      - 5555:5555
-    links:
-      - "web:web"
-      - "docs:docs"
-    depends_on:
-      - web
-      - docs
+    image: dbogatov/status-site:nginx-master
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - internal
+
   docs:
-    image: dbogatov/status-site:docs-${DOTNET_TAG}
-    ports:
-      - 5556:80
-    restart: on-failure
+    image: dbogatov/status-site:docs-master
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - internal
+
   web:
-    image: dbogatov/status-site:web-${DOTNET_TAG}
+    image: dbogatov/status-site:web-master
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      - postgres
-    links:
-      - "postgres:database"
-    volumes:
-      - ./appsettings.yml:/srv/appsettings.production.yml
-    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - internal
+    secrets:
+      - appsettings.production.yml
+
   ping:
-    image: dbogatov/status-site:ping-${DOTNET_TAG}
-    ports:
-      - 8888:8888
-    restart: on-failure
+    image: dbogatov/status-site:ping-master
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - internal
+  
   daemons:
-    image: dbogatov/status-site:daemons-${DOTNET_TAG}
+    image: dbogatov/status-site:daemons-master
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      - postgres
-    links:
-      - "postgres:database"
-      - "ping:ping"
-    volumes:
-      - ./appsettings.yml:/srv/appsettings.production.yml
-    restart: on-failure
-  postgres:
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - internal
+    secrets:
+      - appsettings.production.yml
+
+  database:
     image: postgres:9.6.3-alpine
-    environment: # define connection credentials to be used in app
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      POSTGRES_DB: statussite
+      POSTGRES_USER: statususer
+      POSTGRES_PASSWORD: relyOn1InternalSwarmNetwork
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: overlay
+
+secrets:
+  appsettings.production.yml:
+    external: true

@@ -60,3 +60,5 @@ debian/build
 test/appsettings.*
 
 *lock.json
+
+docker-compose-*.yml

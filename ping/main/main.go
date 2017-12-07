@@ -121,7 +121,7 @@ func main() {
 		w.Write(data)
 	})
 
-	log.Fatal(http.ListenAndServe(":8888", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
 func sendError(w *http.ResponseWriter, error error, response response) {
