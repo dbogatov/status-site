@@ -8,7 +8,7 @@
     "less": "^2.7.2",
     "less-loader": "^2.2.3",
     "optimize-css-assets-webpack-plugin": "^1.3.1",
-    "spectacle-docs": "^0.9.12",
+    "spectacle-docs": "^0.9.13",
     "style-loader": "^0.13.1",
     "typedoc": "^0.5.7",
     "typescript": "^2.1.6",

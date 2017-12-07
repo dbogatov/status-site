@@ -1,3 +1,5 @@
+<!-- cSpell:ignore cpuload -->
+
 # Badges
 
 You may put badges on your websites or in your markdown documents.

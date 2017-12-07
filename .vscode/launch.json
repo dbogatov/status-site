@@ -15,7 +15,7 @@
 			"preLaunchTask": "build-web",
 			"justMyCode": false,
 			"program": "${workspaceRoot}/src/web/bin/Debug/netcoreapp2.0/web.dll",
-			"args": [],
+			"args": ["5555"],
 			"cwd": "${workspaceRoot}/src/web",
 			"externalConsole": false,
 			"stopAtEntry": false,

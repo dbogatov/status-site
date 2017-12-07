@@ -1,9 +1,34 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -e
+shopt -s globstar
 
 # Ensure that the CWD is set to script's location
 cd "${0%/*}"
 CWD=$(pwd)
+
+## TESTS
+
+test-docs-spell-ci () {
+
+	sed -e "s/cSpell\.//g" .vscode/settings.json > .vscode/cspell.json
+	cspell -c .vscode/cspell.json articles/docs/**/*.md
+
+}
+
+test-docs-spell () {
+
+	cd $CWD
+
+	echo "Test cspell..."
+
+	sed -e "s/cSpell\.//g" .vscode/settings.json > .vscode/cspell.json
+	docker run -v $(PWD):/code dbogatov/docker-images:cspell-latest /usr/bin/cspell -c /code/.vscode/cspell.json /code/articles/docs/**/*.md
+	rm .vscode/cspell.json
+
+	echo "cSpell passed!"
+
+}
 
 ## TASKS
 
@@ -13,7 +38,7 @@ install-node-tools () {
 
 	cd $CWD
 
-	echo "Installing node modules... Requires Yarn or MPM"
+	echo "Installing node modules... Requires Yarn"
 
 	yarn --ignore-engines > /dev/null
 }
@@ -157,12 +182,31 @@ move-static-files () {
 	chmod -x documentation/out/deploy.sh
 }
 
+build-compose-files () {
+
+	cd $CWD
+
+	if [ "$DOTNET_TAG" == "master" ]; then
+		echo "Not need to build for master"
+		return
+	fi
+
+	if [ -z "$DOTNET_TAG" ]; then
+		DOTNET_TAG="local"
+	fi
+
+	echo "Building ${DOTNET_TAG} stack..."
+
+	composition=$(<docker-compose.yml)
+	echo "${composition//-master/-$DOTNET_TAG}" > docker-compose.yml
+}
+
 build-ping-server () {
 	cd $CWD/ping
 
 	echo "Building ping server..."
 
-	go build -o bin/ping main/main.go 
+	env GOOS=linux GOARCH=amd64 go build -o bin/ping main/main.go 
 }
 
 build-dev-client () {
@@ -260,7 +304,6 @@ build-debian-package () {
 	cp status-ctl.sh build/status-ctl/
 	cp ../src/appsettings.production.yml build/status-ctl/
 	cp ../docker-compose.yml build/status-ctl/
-	cp ../.env.example build/status-ctl/.env
 	cp -r Makefile debian/ build/status-ctl
 
 	printf "\n\nDOTNET_TAG=master" >> build/status-ctl/.env

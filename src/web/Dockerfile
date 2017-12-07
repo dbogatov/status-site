@@ -6,7 +6,9 @@ WORKDIR /srv
 # Copy the binary
 COPY bin/release/netcoreapp2.0/publish/ /srv
 
-# Expose the port and start the app
-EXPOSE 5555
+RUN \
+	rm -f /srv/appsettings.development.yml && \
+	rm -f /srv/appsettings.testing.yml && \
+	rm -f /srv/appsettings.production.yml
 
 ENTRYPOINT /bin/bash -c "dotnet web.dll"

@@ -9,9 +9,9 @@ strict: true
 copyright: Copyright &copy; 2017 Dmytro Bogatov
 
 # Documentation and theme
-theme:
-  name: 'material'
-  custom_dir: 'material'
+theme: 
+  name: material
+  favicon: 'assets/images/favicon.ico'
 
 # Options
 extra:
@@ -26,7 +26,7 @@ extra:
     - type: github
       link: https://github.com/dbogatov
     - type: facebook
-      link: https://www.facebook.com/Dima4ka007
+      link: https://www.facebook.com/dkbogatov
     - type: twitter
       link: https://twitter.com/Dima4ka007
     - type: linkedin
@@ -85,4 +85,3 @@ pages:
     - API Docs: api/docs.md
   - Testing:
     - Home: testing/index.md
-    

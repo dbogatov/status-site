@@ -1,3 +1,5 @@
+<!-- cSpell:ignore SDKJF 5432 SMDFKL sdahjdjhd _678 ajsdvbja asgfdk _876 ajhsvdjh yourdomain logmessage -->
+
 # Configuration
 
 ## Developer perspective
@@ -26,9 +28,10 @@ Configuration is built in the `Startup` method and is available for [Dependency 
 
 ## User perspective
 
-It is required to supply `appsettings.yml` file when launching the application with *docker-compose*.
-When [deploying with script](deployment/) it is possible to supply *example configuration* to get app up and running.
-Then user is free to change the configuration and restart the app.
+It is required to supply `appsettings.yml` file as a *docker secret* launching the application with `docker stack deploy`.
+Please, refer to [Deployment section](/deployment/) to download example config and supply it as docker secret.
+<!-- When [deploying with script](deployment/) it is possible to supply *example configuration* to get app up and running. -->
+<!-- Then user is free to change the configuration and restart the app. -->
 
 ## Configuration specs
 
@@ -49,7 +52,7 @@ Configuration spec:
 			SecretKey: "asgfdk_876ajhsvdjh" 				# Secret key provided by Google
 		GoogleAnalytics:
 			TrackingId: "UA-XXXXXXX-X"						# Google Analytics tracking number (https://analytics.google.com)
-		ConnectionString: "connection-strings"				# Connection string to PostgreSQL database
+		ConnectionString: "connection-strings"				# Connection string to PostgreSQL database NOT INTENDED TO BE MODIFIED
 		Email: 												# Email settings
 			Enabled: true 									# If false, all messages sent to email service will be logged to STDOUT instead
 			ToEmail: "recipient@domain.com" 				# Email of the recipient
@@ -62,7 +65,7 @@ Configuration spec:
 				Security: "StartTls" 						# SMTP Security option (one of Auto, None, SslOnConnect, StartTls, StartTlsWhenAvailable)
 		Slack: 												# Slack settings
 			Enabled: true 									# If false, all messages sent to slack service will be logged to STDOUT instead
-			WebHook: "https://slack.com/webhooks/a78" 		# Slack webhook URL which uniquely defines chanel (https://api.slack.com/incoming-webhooks)
+			WebHook: "https://slack.com/webhooks/a78" 		# Slack web hook URL which uniquely defines chanel (https://api.slack.com/incoming-webhooks)
 	Data: 													# Static data put into DB during app initialization. Rarely override this section
 		PingSettings: 										# Array of servers to ping
 			-	ServerUrl: "https://google.com" 			# URL to ping (FQDN required)
@@ -76,8 +79,8 @@ Configuration spec:
 		- "Microsoft."										# Example of such string. All messages from "Microsoft" are ignored
 	Guard: 													# This section defines protection settings for some API endpoints
 		Logging: 											# Protection of /api/logmessage endpoint from SPAMing
-		Requests: 10 										# Number of requests to allow from a single source and category per timeframe
-		PerSeconds: 10 										# Timeframe in seconds
+		Requests: 10 										# Number of requests to allow from a single source and category per time frame
+		PerSeconds: 10 										# Time frame in seconds
 	ServiceManager: 										# Settings for daemon part of the app
 		CacheService: 										# Settings for cache service of the app
 			Enabled: true 									# Whether to use the service
@@ -99,9 +102,9 @@ Configuration spec:
 				Enabled: true 								# If true, then the gaps in data will be periodically generated
 				Frequency: 10 								# N, where once in N runs a gap is generated
 		DiscrepancyService: 								# Settings for discrepancy service of the app
-			Enabled: ture 									# Whether to use the service
+			Enabled: true 									# Whether to use the service
 			Interval: 60 									# How many seconds to wait between re-runs of the service
-			DataTimeframe: 800 								# Number of seconds of data to consider counting from the time of running the service when looking for discrepancies
+			DataTimeFrame: 800 								# Number of seconds of data to consider counting from the time of running the service when looking for discrepancies
 			Gaps: 											# Settings for type of discrepancy "Gap in data"
 				MaxDifference: 60 							# Number of seconds multiplied by 1.5 to consider as gap
 			Load: 											# Settings for type of discrepancy "High load" 
