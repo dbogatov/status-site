@@ -148,3 +148,14 @@ release-debian:
       - debian/build/*
   tags:
   - docker
+
+release-deployment:
+  stage: release
+  image: dbogatov/docker-images:alpine-extras-latest
+  script:
+    - ./build.sh -f build-deployment
+  artifacts:
+    paths:
+      - deployment/config.yaml
+  tags:
+  - docker

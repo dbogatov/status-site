@@ -290,6 +290,25 @@ build-for-compose () {
 	build-docker-images
 }
 
+## Deployment
+
+build-deployment () {
+
+	cd $CWD/deployment
+
+	echo "Building deploy configs..."
+
+	if [ -z "$DOTNET_TAG" ]; then
+		DOTNET_TAG="local"
+	fi
+
+	./build-services.sh $DOTNET_TAG
+
+	mv services/namespace.yaml config.yaml
+	cat services/**/*.yaml >> config.yaml
+
+}
+
 ## DEBIAN PACKAGE
 
 build-debian-package () {

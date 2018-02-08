@@ -6,7 +6,7 @@ info:
     Collects, processes and provides various data regarding the status of 
     the services.
   version: "1.0.0"
-host: status.makerchip.com
+host: status.dbogatov.org
 securityDefinitions:
   apiauth:
     type: apiKey
