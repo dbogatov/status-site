@@ -23,7 +23,6 @@ spec:
           volumeMounts:
             - name: appsettings
               mountPath: "/run/secrets/"
-              # readOnly: true
           env:
             - name: POSTGRES_DB
               value: "statussite"

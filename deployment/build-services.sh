@@ -37,9 +37,9 @@ do
 		PORT="5432"
 	fi
 
-	sed -i '' -e "s#__NAME__#$service#g" services/$service/{service,deployment}.yaml
-	sed -i '' -e "s#__IMAGE__#$IMAGE#g" services/$service/{service,deployment}.yaml
-	sed -i '' -e "s#__PORT__#$PORT#g" services/$service/{service,deployment}.yaml
+	sed -i -e "s#__NAME__#$service#g" services/$service/{service,deployment}.yaml
+	sed -i -e "s#__IMAGE__#$IMAGE#g" services/$service/{service,deployment}.yaml
+	sed -i -e "s#__PORT__#$PORT#g" services/$service/{service,deployment}.yaml
 
 done
 

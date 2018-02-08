@@ -140,6 +140,7 @@ release-app-docs:
 
 release-debian:
   stage: release
+  dependencies: []
   image: dbogatov/docker-images:debian-latest
   script:
     - ./build.sh -f build-debian-package
@@ -151,6 +152,7 @@ release-debian:
 
 release-deployment:
   stage: release
+  dependencies: []
   image: dbogatov/docker-images:alpine-extras-latest
   script:
     - ./build.sh -f build-deployment

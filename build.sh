@@ -304,6 +304,8 @@ build-deployment () {
 
 	./build-services.sh $DOTNET_TAG
 
+	rm -rf config.yaml
+
 	mv services/namespace.yaml config.yaml
 	cat services/**/*.yaml >> config.yaml
 
