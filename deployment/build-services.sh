@@ -26,20 +26,22 @@ do
 
 	mkdir -p services/$service
 
-	cp sources/service/{service,deployment}.yaml services/$service
-
 	if [ "$service" != "database" ]
 	then
 		IMAGE="dbogatov/status-site:$service-$TAG"
+		FILE="deployment"
 		PORT="80"
 	else
 		IMAGE="postgres:9.6.3-alpine"
+		FILE="deployment-database"
 		PORT="5432"
 	fi
 
-	sed -i -e "s#__NAME__#$service#g" services/$service/{service,deployment}.yaml
-	sed -i -e "s#__IMAGE__#$IMAGE#g" services/$service/{service,deployment}.yaml
-	sed -i -e "s#__PORT__#$PORT#g" services/$service/{service,deployment}.yaml
+	cp sources/service/{service,$FILE}.yaml services/$service
+
+	sed -i -e "s#__NAME__#$service#g" services/$service/{service,$FILE}.yaml
+	sed -i -e "s#__IMAGE__#$IMAGE#g" services/$service/{service,$FILE}.yaml
+	sed -i -e "s#__PORT__#$PORT#g" services/$service/{service,$FILE}.yaml
 
 done
 

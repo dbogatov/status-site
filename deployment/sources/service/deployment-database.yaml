@@ -21,12 +21,16 @@ spec:
           image: __IMAGE__
           imagePullPolicy: Always
           volumeMounts:
-            - name: appsettings
-              mountPath: "/run/secrets/"
+            - name: database-persistent-storage
+              mountPath: /var/lib/postgresql/data
           env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: "Production"
+            - name: POSTGRES_DB
+              value: "statussite"
+            - name: POSTGRES_USER
+              value: "statususer"
+            - name: POSTGRES_PASSWORD
+              value: "relyOn1InternalSwarmNetwork"
       volumes:
-        - name: appsettings
-          secret:
-            secretName: appsettings.production.yml
+        - name: database-persistent-storage
+          persistentVolumeClaim:
+            claimName: database-pv-claim
