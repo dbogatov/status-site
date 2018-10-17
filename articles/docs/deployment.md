@@ -30,6 +30,8 @@ Lastly, database needs a stable persistent storage, so config include Persistent
 It is cluster administrator's responsibility to provide Volumes that meet claims.
 You may adjust the claim's capacity if needed.
 
+Finally, you may want to add ingress to make website accessible from the world.
+
 By default, all services are not replicated (i.e. replication factor 1).
 You may want to adjust this parameter.
 Be careful, though.
