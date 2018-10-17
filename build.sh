@@ -308,7 +308,7 @@ build-deployment () {
 
 	mv services/namespace.yaml config.yaml
 	cat services/**/*.yaml >> config.yaml
-
+	cat sources/volume-claim.yaml >> config.yaml
 }
 
 ## DEBIAN PACKAGE

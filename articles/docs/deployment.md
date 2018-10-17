@@ -1,6 +1,47 @@
+<!-- cSpell:ignore Kubernetes -->
+
 # Deployment
 
-## Deploy to swarm (preferred way)
+## Kubernetes
+
+Officially supported deployment strategy is using Kubernetes.
+Please, see [Kubernetes docs](https://kubernetes.io/).
+I have to assume some basic experience with Kubernetes.
+
+You can deploy most of the system right away with the following command
+
+	kubectl apply -f https://git.dbogatov.org/dbogatov/status-site/-/jobs/artifacts/master/raw/deployment/config.yaml?job=release-deployment
+
+You also need to supply your settings
+
+	kubectl create secret -n status-site generic appsettings.production.yml --from-file=/path/to/config.yaml
+
+where your settings reside in `/path/to/config.yaml`.
+
+This will download the config file from CI and apply it against your cluster.
+It is recommended to inspect the file before applying it for security considerations.
+
+This config creates a namespace `status-site` and creates resources within it.
+It creates tuples deployment-service for each part of the system.
+Components are designed to communicate with each other by names provided in config.
+Each component also gets `appsettings` secret mounted as volume.
+
+Lastly, database needs a stable persistent storage, so config include Persistent Volume Claim for 10 GB.
+It is cluster administrator's responsibility to provide Volumes that meet claims.
+You may adjust the claim's capacity if needed.
+
+By default, all services are not replicated (i.e. replication factor 1).
+You may want to adjust this parameter.
+Be careful, though.
+The only components that are safe to replicate are `docs`, `ping` and `web`.
+
+If `web` is replicated you may have issues with authorization, as one replica generated the cookie and another one does not recognize it.
+I am working on this issue.
+
+## LEGACY: Deploy to swarm (preferred way)
+
+> This is the old way to deploy the system.
+> It is not officially supported, but will likely work.
 
 Status site is designed with swarm in mind.
 The preferred way to deploy the system is using `docker stack deploy` command.
