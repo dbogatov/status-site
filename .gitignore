@@ -62,3 +62,6 @@ test/appsettings.*
 *lock.json
 
 docker-compose-*.yml
+
+deployment/services/
+deployment/config.yaml

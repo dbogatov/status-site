@@ -1,0 +1,32 @@
+---
+apiVersion: extensions/v1beta1 
+kind: Deployment 
+metadata:
+  name: __NAME__
+  namespace: status-site 
+  labels:
+    application: __NAME__
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      application: __NAME__
+  template:
+    metadata:
+      labels:
+        application: __NAME__
+    spec:
+      containers:
+        - name: __NAME__
+          image: __IMAGE__
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: appsettings
+              mountPath: "/run/secrets/settings/"
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+      volumes:
+        - name: appsettings
+          secret:
+            secretName: appsettings.production.yml

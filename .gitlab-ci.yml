@@ -114,7 +114,7 @@ blc-docs:
   - http-server documentation/out/ -p 80 > /dev/null &
   - sleep 5
   script:
-  - blc --filter-level 3 --input http://localhost -rog --exclude "*linkedin.*" --exclude "*doxygen.*" --exclude "*status.dbogatov.org*" --exclude "*github.com*" --exclude "*git.dbogatov.org*" | tee /dev/stderr | grep 'Finished!' | tail -1 | grep '0 broken.'
+  - blc --filter-level 3 --input http://localhost -rog --exclude "*linkedin.*" --exclude "*doxygen.*" --exclude "*status.dbogatov.org*" --exclude "*github.com*" --exclude "*git.dbogatov.org*" --exclude "*favicon*" --exclude "*fonts.gstatic.com*"  | tee /dev/stderr | grep 'Finished!' | tail -1 | grep '0 broken.'
   tags:
   - docker
 
@@ -140,11 +140,24 @@ release-app-docs:
 
 release-debian:
   stage: release
+  dependencies: []
   image: dbogatov/docker-images:debian-latest
   script:
     - ./build.sh -f build-debian-package
   artifacts:
     paths:
       - debian/build/*
+  tags:
+  - docker
+
+release-deployment:
+  stage: release
+  dependencies: []
+  image: dbogatov/docker-images:alpine-extras-latest
+  script:
+    - ./build.sh -f build-deployment
+  artifacts:
+    paths:
+      - deployment/config.yaml
   tags:
   - docker

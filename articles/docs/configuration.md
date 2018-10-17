@@ -1,4 +1,4 @@
-<!-- cSpell:ignore SDKJF 5432 SMDFKL sdahjdjhd _678 ajsdvbja asgfdk _876 ajhsvdjh yourdomain logmessage -->
+<!-- cSpell:ignore SDKJF 5432 SMDFKL sdahjdjhd Kubernetes _678 ajsdvbja asgfdk _876 ajhsvdjh yourdomain logmessage -->
 
 # Configuration
 
@@ -28,7 +28,7 @@ Configuration is built in the `Startup` method and is available for [Dependency 
 
 ## User perspective
 
-It is required to supply `appsettings.yml` file as a *docker secret* launching the application with `docker stack deploy`.
+It is required to supply `appsettings.yml` file as a *docker secret* when deploying the application to Kubernetes.
 Please, refer to [Deployment section](/deployment/) to download example config and supply it as docker secret.
 <!-- When [deploying with script](deployment/) it is possible to supply *example configuration* to get app up and running. -->
 <!-- Then user is free to change the configuration and restart the app. -->
