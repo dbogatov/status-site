@@ -22,7 +22,7 @@ spec:
           imagePullPolicy: Always
           volumeMounts:
             - name: appsettings
-              mountPath: "/run/secrets/"
+              mountPath: "/run/secrets/settings/"
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Production"

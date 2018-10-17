@@ -40,7 +40,7 @@ namespace StatusMonitor.Daemons
 			var builder = new ConfigurationBuilder()
 				.AddYamlFile("appsettings.yml", optional: false) // read defaults first
 				.AddYamlFile(
-					$"{(env.IsProduction() ? "/run/secrets/" : "")}appsettings.{env.EnvironmentName.ToLower()}.yml",
+					$"{(env.IsProduction() ? "/run/secrets/settings/" : "")}appsettings.{env.EnvironmentName.ToLower()}.yml",
 					optional: env.IsStaging()
 				) // override with specific settings file
 				.AddJsonFile("version.json", optional: true)
