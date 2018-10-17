@@ -1,4 +1,4 @@
-<!-- cSpell:ignore Kubernetes -->
+<!-- cSpell:ignore Kubernetes kubectl -->
 
 # Deployment
 
