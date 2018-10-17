@@ -114,7 +114,7 @@ blc-docs:
   - http-server documentation/out/ -p 80 > /dev/null &
   - sleep 5
   script:
-  - blc --filter-level 3 --input http://localhost -rog --exclude "*linkedin.*" --exclude "*doxygen.*" --exclude "*status.dbogatov.org*" --exclude "*github.com*" --exclude "*git.dbogatov.org*" --exclude "*localhost/assets/images/favicon.ico*" --exclude "*fonts.gstatic.com*"  | tee /dev/stderr | grep 'Finished!' | tail -1 | grep '0 broken.'
+  - blc --filter-level 3 --input http://localhost -rog --exclude "*linkedin.*" --exclude "*doxygen.*" --exclude "*status.dbogatov.org*" --exclude "*github.com*" --exclude "*git.dbogatov.org*" --exclude "*assets/images/favicon.ico*" --exclude "*fonts.gstatic.com*"  | tee /dev/stderr | grep 'Finished!' | tail -1 | grep '0 broken.'
   tags:
   - docker
 
