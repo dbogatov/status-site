@@ -12,7 +12,7 @@ To build/debug/test all parts of the project you will need the following:
 ### Documentation
 
 * [Yarn](https://yarnpkg.com/en/)
-* [Doxygen](http://www.stack.nl/~dimitri/doxygen/)
+* [Doxygen](http://www.doxygen.nl/)
 * [MkDocs](http://www.mkdocs.org) with [Material theme](http://squidfunk.github.io/mkdocs-material/)
 
 ### Extra
